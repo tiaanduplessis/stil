@@ -1,39 +1,70 @@
 # Stil
 
-A minimal native Android launcher. Pin a few apps, find the rest by name, and optionally pause before opening selected apps.
+A minimal Android launcher with a short app list, custom fonts, and daily wallpapers.
 
-## Features
+**Early development.** Android 8.0 or later. The repository is private, and no APK release has been published yet.
 
-- One to six pinned apps, clock and date, local search, aliases, ordering, hidden apps and recovery.
-- Light, black or system appearance; System, Sans, Serif or Mono fonts; alignment and type size.
-- Optional three-second launch pause with explicit Open and immediate Cancel.
-- Daily random wallpapers from Lorem Picsum, skip/keep/off, dimming, Wi-Fi downloads by default, and an offline fallback. Photographer credit links to the source.
-- Default-home setup, app install/removal updates, work-profile controls, and a separate lockable private-space container on supported Android versions.
-- No account, ads, analytics, usage access, accessibility service, or notification access. Core use stays offline.
+[Build and try Stil](#try-stil) · [User guide](docs/usage.md)
 
-Android 8.0 (API 26) or later. Target SDK 36. Private space requires Android 15 or later and selection as the default home app. Private apps stay in their own container; they are excluded from global search and home pins. System gestures and work/private profile availability depend on the device.
+<p>
+  <img src="docs/media/home.png" width="220" alt="Stil home with five text app shortcuts, a clock, and a dimmed forest wallpaper">
+  <img src="docs/media/apps.png" width="220" alt="All apps filtered by name, with an explicit result to open">
+  <img src="docs/media/settings.png" width="220" alt="Stil settings with Dark appearance selected and controls for fonts and wallpapers">
+</p>
 
-## Build and test
+## See it in use
 
-Use JDK 17 and Android SDK 36. Set `ANDROID_HOME` or create an untracked `local.properties` containing `sdk.dir=/absolute/path/to/sdk`.
+https://github.com/user-attachments/assets/5ad7722e-87c7-4bee-888e-dca8443d5cdc
 
-```sh
-./gradlew :app:assembleDebug :app:testDebugUnitTest :app:lintDebug --max-workers=1 --no-parallel
-./gradlew :app:connectedDebugAndroidTest --max-workers=1 --no-parallel
-```
+[Download the walkthrough (MP4)](docs/media/walkthrough.mp4) · [Text walkthrough](docs/usage.md#walkthrough)
 
-The second command requires an Android device or emulator. Install `app/build/outputs/apk/debug/app-debug.apk`, choose home apps, and select Stil as the default home. Change it later under Settings > Default home app. The debug APK is for local testing; release signing is not configured.
+These are captures of the Android app, not the HTML prototype. [Media notes and photo credits](docs/media/README.md).
 
-Verification stays local by request. No hosted CI workflow is configured. Generated test reports, APKs, screenshots, and logs are ignored. Acceptance criteria are in [docs/acceptance.md](docs/acceptance.md).
+## Try Stil
 
-## Implementation
+For now, build the debug APK from source. Repository access is required while Stil is private.
 
-Kotlin, Jetpack Compose, DataStore and WorkManager in one application module. Pure launcher rules and provider parsing have JVM tests. Device tests exercise real app discovery/launch, setup, settings, search, hiding, pause timing, DataStore, and wallpaper failure recovery. The instrumentation APK supplies two launcher activities as intentional test fixtures.
+1. Install JDK 17 and Android SDK 36. Set `ANDROID_HOME`, or add `sdk.dir=/absolute/path/to/sdk` to an untracked `local.properties` file.
+2. Clone the repository and build:
 
-Daily updates use Android background work and a date check on resume. Android may delay background work. Failed downloads retain the current image; the image cache keeps the current and previous download. Off restores Stil's plain home background. Rotation changes the system home wallpaper and leaves the lock-screen target alone. Existing system wallpaper can still be seen elsewhere in Android.
+   ```sh
+   git clone https://github.com/tiaanduplessis/stil.git
+   cd stil
+   ./gradlew :app:assembleDebug --max-workers=1 --no-parallel
+   ```
 
-Photos use an unauthenticated third-party service. Availability is best effort. The bundled fallback is [Alvin Engler's photo](https://unsplash.com/photos/aerial-view-of-trees-LnbWqObX0TQ). See [mockups/assets/README.md](mockups/assets/README.md) for prototype photo credits. No source was copied from Olauncher.
+3. Install `app/build/outputs/apk/debug/app-debug.apk` on your phone. Android may ask you to allow installation from the browser or file manager you used.
+4. Open Stil, choose one to six home apps, then select **Use Stil** in Android's default-home picker.
 
-## Design reference
+The debug APK is for testing. Signed releases and store distribution are not configured. To switch launchers later, use **Settings → Default home app**. More setup and recovery steps are in the [user guide](docs/usage.md).
 
-Open `mockups/index.html` in a browser with `mockups/assets` alongside it. These remain design references; the Android application does not use a WebView. Research and visual decisions are in `docs/research.md` and `docs/design.md`.
+## What it does
+
+- **A short home screen.** Pin up to six apps, rename and reorder them, or hide apps and restore them later. Search finds original names and aliases.
+- **Your type and background.** Choose System, Sans, Serif, or Mono; Light, Dark, or System appearance; alignment and text size. Use daily photos, keep one, or turn wallpaper off.
+- **A deliberate pause.** Selected apps can wait three seconds before an explicit **Open**. **Cancel** returns immediately.
+- **Separate profiles.** Work apps have profile controls. On supported devices, Private space has its own lockable container and search. Private apps stay out of global search and home pins.
+- **Quiet motion.** Short transitions respond to navigation and selection. Android's animation settings control them.
+
+Private space requires Android 15 or later and selection as the default home app. Profile availability and system gestures vary by device. Runtime verification currently uses an Android 16 emulator; physical devices have not yet been tested.
+
+## Privacy
+
+No account, ads, analytics, usage access, accessibility service, or notification access. Core launcher features work offline. Optional photo downloads use Lorem Picsum and retain photographer/source attribution. Failed downloads keep the current photo; Android may delay background updates.
+
+Preferences and cached photos stay on the device. Read the [privacy notes](docs/privacy.md) for network requests, permissions, and wallpaper behavior. Bundled photo credits are in [third-party notices](THIRD_PARTY_NOTICES.md).
+
+## Build, contribute, and get help
+
+- [Build and test](CONTRIBUTING.md#build-and-test)
+- [Report a bug or suggest a change](https://github.com/tiaanduplessis/stil/issues/new/choose)
+- [Usage and troubleshooting](docs/usage.md)
+- [Report a security issue privately](SECURITY.md)
+- [Architecture and motion](docs/development.md)
+- [Release preparation](docs/releasing.md)
+
+Verification stays local by maintainer choice; no hosted CI workflow is configured. Kotlin, Jetpack Compose, DataStore, and WorkManager power the native app. The [HTML prototype](mockups/index.html), [research](docs/research.md), and [design notes](docs/design.md) remain development references. The Android app does not use a WebView, and no source was copied from Olauncher.
+
+## License
+
+Stil's source code is licensed under [MIT](LICENSE). Third-party photos and libraries retain their own terms; see [third-party notices](THIRD_PARTY_NOTICES.md).

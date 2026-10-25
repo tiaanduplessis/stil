@@ -8,7 +8,7 @@ Stil uses typography and empty space to make a short list of chosen apps the mai
 - Dark background: `#000000`; dark foreground: `#F3F4F6`.
 - Muted light text: `#626873`; muted dark text: `#A3A8B1`.
 - Controls use neutral borders and inverse fills; no attention-seeking brand accent.
-- Font: System, Sans, Serif, or Mono across the launcher. HTML uses local font stacks without remote downloads. Native equivalents still need to be selected.
+- Font: System, Sans, Serif, or Mono across the launcher. HTML uses local font stacks without remote downloads. Android uses its local system font families.
 - App labels: 28, 32, or 36 CSS pixels in the prototype, with at least 52px rows. Native type should use scalable `sp` units and adapt the list when system type grows.
 - Home: left aligned by default, optional right alignment; chosen apps sit in the lower portion. The clock anchors the otherwise open upper area.
 
@@ -56,4 +56,4 @@ Use short action labels. Keep review notes and research collapsed by default. Th
 
 Settings > Font previews each family. The choice persists across reloads. Settings > Wallpaper provides Off, Daily, and Keep modes, Next image, Preview home, and Dim. Only home shows the wallpaper; settings and search keep solid backgrounds.
 
-Try Daily, preview home, then return and use Next day below the phone to simulate daily rotation. Keep holds the current image. Off restores the selected light or black theme. The three sample photos are local files in `mockups/assets`; no runtime download is needed for the mockup. Photo credit stays in wallpaper settings.
+Try Daily, preview home, then return and use Next day below the phone to simulate daily rotation. Keep holds the current image. Off restores the selected light or dark theme. The three sample photos are local files in `mockups/assets`; no runtime download is needed for the mockup. Photo credit stays in wallpaper settings.
