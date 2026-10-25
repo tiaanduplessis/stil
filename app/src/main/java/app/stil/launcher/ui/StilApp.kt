@@ -95,8 +95,10 @@ fun StilApp(model: LauncherViewModel, chooseHome: () -> Unit, openClock: () -> U
     val dark = settings.theme == ThemeMode.BLACK || settings.theme == ThemeMode.SYSTEM && isSystemInDarkTheme()
     val background = if (dark) Color.Black else Color(0xFFF7F8FA)
     val foreground = if (dark) Color(0xFFF3F4F6) else Color(0xFF20242B)
-    val colors = if (dark) darkColorScheme(primary = foreground, onPrimary = background, background = background, surface = background, onSurface = foreground)
-        else lightColorScheme(primary = foreground, onPrimary = background, background = background, surface = background, onSurface = foreground)
+    val colors = if (dark) darkColorScheme(primary = foreground, onPrimary = background, secondaryContainer = foreground,
+        onSecondaryContainer = background, background = background, surface = background, onSurface = foreground)
+        else lightColorScheme(primary = foreground, onPrimary = background, secondaryContainer = foreground,
+            onSecondaryContainer = background, background = background, surface = background, onSurface = foreground)
     val family = settings.font.family()
     val typography = remember(family) { Typography().run { copy(
         displayLarge = displayLarge.copy(fontFamily = family), displayMedium = displayMedium.copy(fontFamily = family), displaySmall = displaySmall.copy(fontFamily = family),
