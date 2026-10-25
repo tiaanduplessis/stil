@@ -1,0 +1,38 @@
+name: Bug report
+description: Report a reproducible problem in Stil.
+title: "Bug: "
+body:
+  - type: markdown
+    attributes:
+      value: Use test data in captures. Do not include personal app names, account details, messages, or private vulnerability details.
+  - type: input
+    id: version
+    attributes:
+      label: Stil version or source commit
+      description: Include the commit if you built from source.
+    validations:
+      required: true
+  - type: input
+    id: device
+    attributes:
+      label: Device and Android version
+      description: Include whether this is a physical device or emulator.
+    validations:
+      required: true
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: Steps to reproduce
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected and actual behavior
+    validations:
+      required: true
+  - type: textarea
+    id: context
+    attributes:
+      label: Relevant settings and captures
+      description: Mention work/private profiles, font scaling, or wallpaper settings if they affect the problem.

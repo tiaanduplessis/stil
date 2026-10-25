@@ -1,0 +1,21 @@
+name: Suggest a change
+description: Describe a problem Stil could solve.
+title: "Idea: "
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: What gets in your way?
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: What would help?
+      description: Explain how the change would fit a quiet, minimal launcher.
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives you have tried

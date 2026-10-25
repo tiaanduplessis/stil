@@ -6,4 +6,4 @@ Photos by [Alvin Engler on Unsplash](https://unsplash.com/@englr), downloaded fo
 - [Lake](https://unsplash.com/photos/grass-near-body-of-water-uB1RyCeJl5A): `lake.jpg`
 - [Ferns](https://unsplash.com/photos/green-ferns-during-daytime-vIf2fJN1vdA): `ferns.jpg`
 
-These are bundled prototype samples. A native wallpaper feed and its distribution terms still need to be chosen.
+These are bundled prototype samples under the [Unsplash License](https://unsplash.com/license). The native app also uses the forest photo as its offline fallback and downloads optional photos through Lorem Picsum. See [third-party notices](../../THIRD_PARTY_NOTICES.md) for attribution.

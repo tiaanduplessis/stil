@@ -356,7 +356,7 @@ private fun SettingsScreen(model: LauncherViewModel, settings: LauncherSettings,
     Column(modifier) {
         Header(R.string.settings) { model.navigate(Screen.HOME) }
         Column(Modifier.weight(1f).verticalScroll(rememberScrollState())) {
-            Choices(R.string.appearance, settings.theme, listOf(ThemeMode.LIGHT to R.string.light, ThemeMode.BLACK to R.string.black, ThemeMode.SYSTEM to R.string.system)) { value -> model.update { it.copy(theme = value) } }
+            Choices(R.string.appearance, settings.theme, listOf(ThemeMode.LIGHT to R.string.light, ThemeMode.BLACK to R.string.dark, ThemeMode.SYSTEM to R.string.system)) { value -> model.update { it.copy(theme = value) } }
             SettingLink(R.string.font, stringResource(fontLabel(settings.font))) { model.navigate(Screen.FONT) }
             SettingLink(R.string.wallpaper, stringResource(wallpaperLabel(settings.wallpaper))) { model.navigate(Screen.WALLPAPER) }
             Choices(R.string.alignment, settings.alignment, listOf(Alignment.LEFT to R.string.left, Alignment.RIGHT to R.string.right)) { value -> model.update { it.copy(alignment = value) } }
