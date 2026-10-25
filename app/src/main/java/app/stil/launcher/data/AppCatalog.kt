@@ -118,6 +118,10 @@ class AppCatalog(private val context: Context, private val scope: CoroutineScope
             apps = mutable.value.apps.filterNot { it.id.startsWith("$serial:") && it.profile == ProfileKind.PRIVATE },
             profiles = mutable.value.profiles.map { if (it.serial == serial) it.copy(quiet = true) else it },
         )
-        return runCatching { users.requestQuietModeEnabled(quiet, user) }.getOrDefault(false).also { refresh() }
+        return runCatching {
+            // A false platform result means Android is showing credential confirmation.
+            users.requestQuietModeEnabled(quiet, user)
+            true
+        }.getOrDefault(false).also { refresh() }
     }
 }
