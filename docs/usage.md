@@ -20,7 +20,7 @@ Home contains a clock, date, and chosen apps. Swipe up from the empty area just 
 
 TalkBack exposes **All apps** and **Settings** as actions on Home. With a keyboard, focus Home and press Enter or Space for apps, or the Menu key for settings.
 
-These gestures describe the current source build. The 0.1.0 preview uses visible home buttons.
+These gestures are available in the [0.2.0 preview](https://github.com/tiaanduplessis/stil/releases/tag/v0.2.0). Install it over the signed 0.1.0 preview to keep your home apps and preferences.
 
 ## Change your home apps
 
