@@ -207,10 +207,14 @@ private fun HomeScreen(model: LauncherViewModel, settings: LauncherSettings, mod
             Box(Modifier.weight(1f).fillMaxWidth(), contentAlignment = UiAlignment.BottomStart) {
                 Column(Modifier.fillMaxWidth().verticalScroll(rememberScrollState())) {
                     apps.forEach { app ->
-                        Text(settings.label(app), Modifier.fillMaxWidth().heightIn(min = 54.dp)
+                        Column(Modifier.fillMaxWidth().heightIn(min = 54.dp)
                             .combinedClickable(onClick = { model.open(app) }, onLongClick = { model.editApp(app) })
-                            .padding(vertical = 8.dp).testTag("home_${app.id}"),
-                            fontSize = settings.textSize.sp, lineHeight = (settings.textSize * 1.3).sp, color = ink, textAlign = align)
+                            .padding(vertical = 8.dp).testTag("home_${app.id}")) {
+                            Text(settings.label(app), Modifier.fillMaxWidth(), fontSize = settings.textSize.sp,
+                                lineHeight = (settings.textSize * 1.3).sp, color = ink, textAlign = align)
+                            if (app.profile == ProfileKind.WORK) Text(stringResource(R.string.work), Modifier.fillMaxWidth(),
+                                style = MaterialTheme.typography.labelSmall, color = ink, textAlign = align)
+                        }
                     }
                     if (apps.isEmpty()) TextButton(onClick = { model.navigate(Screen.MANAGE) }) { Text(stringResource(R.string.choose_home_apps), color = ink) }
                 }
@@ -414,7 +418,10 @@ private fun SetupScreen(model: LauncherViewModel, settings: LauncherSettings, mo
         LazyColumn(Modifier.weight(1f)) {
             items(apps, key = { it.id }) { app ->
                 Row(Modifier.fillMaxWidth().heightIn(min = 56.dp).selectable(app.id in model.selection, role = Role.Checkbox, onClick = { model.toggleSelection(app.id) }), verticalAlignment = UiAlignment.CenterVertically) {
-                    Text(settings.label(app), Modifier.weight(1f), fontSize = 22.sp)
+                    Column(Modifier.weight(1f)) {
+                        Text(settings.label(app), fontSize = 22.sp)
+                        if (app.profile == ProfileKind.WORK) Text(stringResource(R.string.work), style = MaterialTheme.typography.labelSmall)
+                    }
                     Checkbox(app.id in model.selection, onCheckedChange = null)
                 }
             }
