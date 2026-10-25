@@ -10,6 +10,7 @@ import androidx.compose.animation.Crossfade
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -29,9 +30,13 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment as UiAlignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.graphics.compositeOver
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.layout.layout
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
@@ -43,11 +48,11 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.view.WindowCompat
@@ -92,6 +97,30 @@ private fun wallpaperLabel(value: WallpaperMode): Int = when (value) {
     WallpaperMode.KEEP -> R.string.keep
 }
 
+// Every Material role resolves to the design tokens, so no default tint or accent leaks into controls.
+private fun neutralColors(dark: Boolean, background: Color, foreground: Color): ColorScheme {
+    val muted = if (dark) Color(0xFFA3A8B1) else Color(0xFF626873)
+    val container = foreground.copy(alpha = 0.06f).compositeOver(background)
+    val containerHigh = foreground.copy(alpha = 0.12f).compositeOver(background)
+    val line = foreground.copy(alpha = 0.16f).compositeOver(background)
+    val base = if (dark) darkColorScheme() else lightColorScheme()
+    return base.copy(
+        primary = foreground, onPrimary = background, primaryContainer = foreground, onPrimaryContainer = background,
+        inversePrimary = background, secondary = foreground, onSecondary = background,
+        secondaryContainer = containerHigh, onSecondaryContainer = foreground,
+        tertiary = foreground, onTertiary = background, tertiaryContainer = containerHigh, onTertiaryContainer = foreground,
+        background = background, onBackground = foreground, surface = background, onSurface = foreground,
+        surfaceVariant = container, onSurfaceVariant = muted, surfaceTint = background,
+        inverseSurface = foreground, inverseOnSurface = background, outline = muted, outlineVariant = line,
+        surfaceBright = background, surfaceDim = container, surfaceContainerLowest = background,
+        surfaceContainerLow = container, surfaceContainer = container, surfaceContainerHigh = containerHigh,
+        surfaceContainerHighest = containerHigh,
+    )
+}
+
+private val ScreenTop = 8.dp
+private val ScreenBottom = 16.dp
+
 @Composable
 fun StilApp(model: LauncherViewModel, chooseHome: () -> Unit, openClock: () -> Unit) {
     val state by model.state.collectAsStateWithLifecycle()
@@ -99,10 +128,7 @@ fun StilApp(model: LauncherViewModel, chooseHome: () -> Unit, openClock: () -> U
     val dark = settings.theme == ThemeMode.BLACK || settings.theme == ThemeMode.SYSTEM && isSystemInDarkTheme()
     val background = if (dark) Color.Black else Color(0xFFF7F8FA)
     val foreground = if (dark) Color(0xFFF3F4F6) else Color(0xFF20242B)
-    val colors = if (dark) darkColorScheme(primary = foreground, onPrimary = background, secondaryContainer = foreground,
-        onSecondaryContainer = background, background = background, surface = background, onSurface = foreground)
-        else lightColorScheme(primary = foreground, onPrimary = background, secondaryContainer = foreground,
-            onSecondaryContainer = background, background = background, surface = background, onSurface = foreground)
+    val colors = neutralColors(dark, background, foreground)
     val family = settings.font.family()
     val typography = remember(family) { Typography().run { copy(
         displayLarge = displayLarge.copy(fontFamily = family), displayMedium = displayMedium.copy(fontFamily = family), displaySmall = displaySmall.copy(fontFamily = family),
@@ -140,44 +166,31 @@ fun StilApp(model: LauncherViewModel, chooseHome: () -> Unit, openClock: () -> U
             if (photoHome) WallpaperImage(model, settings)
             Scaffold(containerColor = Color.Transparent, contentColor = foreground, snackbarHost = { SnackbarHost(snackbar) }) { padding ->
                 val content = Modifier.fillMaxSize().padding(padding).consumeWindowInsets(padding).imePadding().padding(horizontal = 28.dp)
+                // Home keeps its gesture strip directly above the navigation bar; other screens get breathing room.
+                val page = content.padding(top = ScreenTop, bottom = ScreenBottom)
                 if (!state.ready) {
                     val loadingLabel = stringResource(R.string.loading)
                     Box(content, contentAlignment = UiAlignment.Center) { CircularProgressIndicator(Modifier.semantics { contentDescription = loadingLabel }, color = foreground) }
                 } else ScreenTransition(screen) { destination -> when (destination) {
                     Screen.HOME -> HomeScreen(model, settings, content, photoHome, openClock)
-                    Screen.APPS -> AppsScreen(model, settings, content)
-                    Screen.SETTINGS -> SettingsScreen(model, settings, content, chooseHome)
-                    Screen.FONT -> Column(content) {
-                        Header(R.string.font) { model.navigate(Screen.SETTINGS) }
-                        Column(Modifier.weight(1f).verticalScroll(rememberScrollState())) {
-                            FontChoice.entries.forEach { font ->
-                                val selectionColor by animateColorAsState(
-                                    if (settings.font == font) foreground.copy(alpha = 0.06f) else Color.Transparent,
-                                    tween(120), label = "font selection")
-                                Row(Modifier.fillMaxWidth().heightIn(min = 72.dp).background(selectionColor, MaterialTheme.shapes.small)
-                                    .selectable(settings.font == font, role = Role.RadioButton, onClick = { model.update { it.copy(font = font) } })
-                                    .testTag("font_${font.name}"), verticalAlignment = UiAlignment.CenterVertically) {
-                                    Text(stringResource(fontLabel(font)), Modifier.weight(1f), fontFamily = font.family(), fontSize = 28.sp)
-                                    RadioButton(selected = settings.font == font, onClick = null)
-                                }
-                            }
-                        }
-                        OutlinedButton(onClick = { model.navigate(Screen.HOME) }, Modifier.fillMaxWidth()) { Text(stringResource(R.string.preview_home)) }
-                    }
-                    Screen.WALLPAPER -> WallpaperScreen(model, settings, content)
-                    Screen.MANAGE -> ManageScreen(model, settings, content)
-                    Screen.EDIT -> EditScreen(model, settings, content)
-                    Screen.HIDDEN -> HiddenScreen(model, settings, content)
-                    Screen.SETUP -> SetupScreen(model, settings, content)
-                    Screen.DEFAULT -> Column(content, verticalArrangement = Arrangement.Center) {
-                        Text(stringResource(R.string.use_as_home), style = MaterialTheme.typography.headlineLarge)
-                        Text(stringResource(R.string.home_gestures), Modifier.padding(top = 16.dp), style = MaterialTheme.typography.bodyMedium)
-                        Spacer(Modifier.height(28.dp))
+                    Screen.APPS -> AppsScreen(model, settings, page)
+                    Screen.SETTINGS -> SettingsScreen(model, settings, page, chooseHome)
+                    Screen.FONT -> FontScreen(model, settings, page)
+                    Screen.WALLPAPER -> WallpaperScreen(model, settings, page)
+                    Screen.MANAGE -> ManageScreen(model, settings, page)
+                    Screen.EDIT -> EditScreen(model, settings, page)
+                    Screen.HIDDEN -> HiddenScreen(model, settings, page)
+                    Screen.SETUP -> SetupScreen(model, settings, page)
+                    Screen.DEFAULT -> Column(page, verticalArrangement = Arrangement.Center) {
+                        Text(stringResource(R.string.use_as_home), Modifier.semantics { heading() }, style = MaterialTheme.typography.headlineLarge)
+                        Text(stringResource(R.string.home_gestures), Modifier.padding(top = 12.dp), style = MaterialTheme.typography.bodyLarge,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant)
+                        Spacer(Modifier.height(32.dp))
                         Button(onClick = { model.navigate(Screen.HOME); chooseHome() }, Modifier.fillMaxWidth()) { Text(stringResource(R.string.use_stil)) }
-                        TextButton(onClick = { model.navigate(Screen.HOME) }, Modifier.fillMaxWidth()) { Text(stringResource(R.string.not_now)) }
+                        TextButton(onClick = { model.navigate(Screen.HOME) }, Modifier.fillMaxWidth().padding(top = 8.dp)) { Text(stringResource(R.string.not_now)) }
                     }
                     Screen.PAUSE -> model.pending?.let { app ->
-                        PauseScreen(settings.label(app), model.remaining, content, model::confirmOpen, model::cancelPause)
+                        PauseScreen(settings.label(app), model.remaining, page, model::confirmOpen, model::cancelPause)
                     }
                 }
                 }
@@ -241,19 +254,83 @@ private fun HomeScreen(model: LauncherViewModel, settings: LauncherSettings, mod
 }
 
 @Composable
-private fun Header(title: Int, onBack: () -> Unit) {
-    TextButton(onClick = onBack, contentPadding = PaddingValues(0.dp)) { Text(stringResource(R.string.back)) }
-    Text(stringResource(title), Modifier.padding(top = 8.dp, bottom = 20.dp).semantics { heading() }, style = MaterialTheme.typography.headlineLarge)
+private fun Muted(text: String, modifier: Modifier = Modifier) {
+    Text(text, modifier, style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
+}
+
+/** Navigation text buttons sit in a 48dp bar and align their label with the screen's text edge. */
+@Composable
+private fun NavButton(label: Int, end: Boolean = false, onClick: () -> Unit) {
+    TextButton(onClick = onClick, Modifier.offset(x = if (end) 12.dp else (-12).dp)) { Text(stringResource(label)) }
 }
 
 @Composable
-private fun AppRow(app: LaunchableApp, settings: LauncherSettings, trailing: String? = null, onClick: () -> Unit) {
-    Row(Modifier.fillMaxWidth().heightIn(min = 56.dp).clickable(onClick = onClick).padding(vertical = 8.dp), verticalAlignment = UiAlignment.CenterVertically) {
-        Column(Modifier.weight(1f)) {
-            Text(settings.label(app), fontSize = 22.sp)
-            if (app.profile == ProfileKind.WORK) Text(stringResource(R.string.work), style = MaterialTheme.typography.labelSmall)
+private fun Header(title: String, bar: @Composable RowScope.() -> Unit) {
+    Row(Modifier.fillMaxWidth().heightIn(min = 48.dp), horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = UiAlignment.CenterVertically, content = bar)
+    Text(title, Modifier.padding(top = 4.dp, bottom = 16.dp).semantics { heading() }, style = MaterialTheme.typography.headlineLarge)
+}
+
+@Composable
+private fun Header(title: Int, onBack: () -> Unit) {
+    Header(stringResource(title)) { NavButton(R.string.back, onClick = onBack) }
+}
+
+@Composable
+private fun HeaderContext(text: String) {
+    Text(text, style = MaterialTheme.typography.labelLarge, color = MaterialTheme.colorScheme.onSurfaceVariant)
+}
+
+@Composable
+private fun SectionLabel(text: String, modifier: Modifier = Modifier) {
+    Text(text, modifier.padding(top = 24.dp, bottom = 8.dp).semantics { heading() },
+        style = MaterialTheme.typography.labelLarge, color = MaterialTheme.colorScheme.onSurfaceVariant)
+}
+
+/** One settings line: label, optional supporting text, optional trailing control. The modifier supplies the interaction. */
+@Composable
+private fun SettingRow(label: String, modifier: Modifier = Modifier, supporting: String? = null, enabled: Boolean = true,
+    trailing: (@Composable () -> Unit)? = null) {
+    Row(modifier.fillMaxWidth().heightIn(min = 56.dp).padding(vertical = 8.dp), verticalAlignment = UiAlignment.CenterVertically) {
+        Column(Modifier.weight(1f).alpha(if (enabled) 1f else 0.38f)) {
+            Text(label, style = MaterialTheme.typography.bodyLarge)
+            supporting?.let { Muted(it, Modifier.padding(top = 2.dp)) }
         }
-        trailing?.let { Text(it, style = MaterialTheme.typography.labelMedium) }
+        trailing?.let { Spacer(Modifier.width(16.dp)); it() }
+    }
+}
+
+@Composable
+private fun SettingLink(label: Int, value: String? = null, supporting: String? = null, enabled: Boolean = true, onClick: () -> Unit) {
+    SettingRow(stringResource(label), Modifier.clickable(enabled = enabled, role = Role.Button, onClick = onClick), supporting, enabled,
+        value?.let { { Text(it, style = MaterialTheme.typography.bodyLarge, color = MaterialTheme.colorScheme.onSurfaceVariant) } })
+}
+
+@Composable
+private fun Toggle(label: Int, checked: Boolean, supporting: String? = null, onChange: (Boolean) -> Unit) {
+    SettingRow(stringResource(label), Modifier.toggleable(checked, role = Role.Switch, onValueChange = onChange), supporting) {
+        Switch(checked, null)
+    }
+}
+
+@Composable
+private fun AppRow(app: LaunchableApp, settings: LauncherSettings, trailing: String? = null, trailingAction: Boolean = false, onClick: () -> Unit) {
+    Row(Modifier.fillMaxWidth().heightIn(min = 56.dp).clickable(onClick = onClick).padding(vertical = 8.dp), verticalAlignment = UiAlignment.CenterVertically) {
+        AppLabel(app, settings, Modifier.weight(1f))
+        trailing?.let {
+            Spacer(Modifier.width(16.dp))
+            Text(it, style = MaterialTheme.typography.bodyLarge,
+                color = if (trailingAction) MaterialTheme.colorScheme.onSurface else MaterialTheme.colorScheme.onSurfaceVariant)
+        }
+    }
+}
+
+@Composable
+private fun AppLabel(app: LaunchableApp, settings: LauncherSettings, modifier: Modifier = Modifier) {
+    Column(modifier) {
+        Text(settings.label(app), style = MaterialTheme.typography.titleLarge)
+        if (app.profile == ProfileKind.WORK) Text(stringResource(R.string.work), style = MaterialTheme.typography.labelMedium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant)
     }
 }
 
@@ -264,18 +341,18 @@ private fun AppsScreen(model: LauncherViewModel, settings: LauncherSettings, mod
     val keyboard = LocalSoftwareKeyboardController.current
     val results = LauncherRules.search(state.catalog.apps, settings, query)
     Column(modifier) {
-        Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-            TextButton(onClick = { model.navigate(Screen.HOME) }) { Text(stringResource(R.string.home)) }
-            TextButton(onClick = { model.navigate(Screen.MANAGE) }) { Text(stringResource(R.string.edit)) }
+        Header(stringResource(R.string.all_apps)) {
+            NavButton(R.string.home) { model.navigate(Screen.HOME) }
+            NavButton(R.string.edit, end = true) { model.navigate(Screen.MANAGE) }
         }
-        Text(stringResource(R.string.all_apps), Modifier.padding(vertical = 12.dp), style = MaterialTheme.typography.headlineLarge)
         LazyColumn(Modifier.weight(1f).testTag("app_list")) {
             if (results.isEmpty()) item {
-                Text(stringResource(R.string.no_matches), Modifier.padding(vertical = 24.dp))
-                if (query.isNotEmpty()) TextButton(onClick = { query = "" }) { Text(stringResource(R.string.clear_search)) }
+                Text(stringResource(R.string.no_matches), Modifier.padding(vertical = 16.dp), style = MaterialTheme.typography.bodyLarge,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant)
+                if (query.isNotEmpty()) TextButton(onClick = { query = "" }, Modifier.offset(x = (-12).dp)) { Text(stringResource(R.string.clear_search)) }
             }
             items(results.filter { it.profile == ProfileKind.PERSONAL }, key = { it.id }) { app -> AppRow(app, settings, if (app.id in settings.paused) stringResource(R.string.pause) else null) { keyboard?.hide(); model.open(app) } }
-            if (results.any { it.profile == ProfileKind.WORK }) item { Text(stringResource(R.string.work_apps), Modifier.padding(top = 16.dp).semantics { heading() }) }
+            if (results.any { it.profile == ProfileKind.WORK }) item { SectionLabel(stringResource(R.string.work_apps)) }
             items(results.filter { it.profile == ProfileKind.WORK }, key = { it.id }) { app -> AppRow(app, settings, if (app.id in settings.paused) stringResource(R.string.pause) else null) { keyboard?.hide(); model.open(app) } }
             state.catalog.profiles.filter { it.kind == ProfileKind.WORK }.forEach { profile ->
                 item(key = "work_${profile.serial}") { ProfileAction(model, profile) }
@@ -286,7 +363,7 @@ private fun AppsScreen(model: LauncherViewModel, settings: LauncherSettings, mod
                 }
             }
         }
-        OutlinedTextField(query, { query = it }, Modifier.fillMaxWidth().testTag("app_search"),
+        OutlinedTextField(query, { query = it }, Modifier.fillMaxWidth().padding(top = 8.dp).testTag("app_search"),
             label = { Text(stringResource(R.string.search_apps)) }, singleLine = true,
             keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
             keyboardActions = KeyboardActions(onSearch = { results.firstOrNull { it.available }?.let { keyboard?.hide(); model.open(it) } }))
@@ -297,7 +374,7 @@ private fun AppsScreen(model: LauncherViewModel, settings: LauncherSettings, mod
 private fun ProfileAction(model: LauncherViewModel, profile: AppProfile) {
     TextButton(onClick = {
         if (!model.graph.catalog.setProfileQuiet(profile.serial, !profile.quiet)) model.messages.tryEmit(R.string.profile_action_failed)
-    }) { Text(stringResource(if (Build.VERSION.SDK_INT < 28) R.string.manage_work else if (profile.quiet) R.string.resume_work else R.string.pause_work)) }
+    }, Modifier.offset(x = (-12).dp)) { Text(stringResource(if (Build.VERSION.SDK_INT < 28) R.string.manage_work else if (profile.quiet) R.string.resume_work else R.string.pause_work)) }
 }
 
 @Composable
@@ -306,16 +383,17 @@ private fun PrivateSpace(model: LauncherViewModel, settings: LauncherSettings, p
     var expanded by rememberSaveable(profile.serial) { mutableStateOf(false) }
     var query by rememberSaveable(profile.serial) { mutableStateOf("") }
     LaunchedEffect(profile.quiet) { if (profile.quiet) { expanded = false; query = "" } }
-    HorizontalDivider(Modifier.padding(top = 20.dp))
-    Row(Modifier.fillMaxWidth(), verticalAlignment = UiAlignment.CenterVertically) {
-        TextButton(onClick = { expanded = !expanded }, Modifier.weight(1f)) { Text(stringResource(R.string.private_space)) }
-        TextButton(onClick = {
+    Row(Modifier.fillMaxWidth().padding(top = 16.dp), verticalAlignment = UiAlignment.CenterVertically) {
+        TextButton(onClick = { expanded = !expanded }, Modifier.weight(1f).offset(x = (-12).dp)) {
+            Text(stringResource(R.string.private_space), Modifier.weight(1f))
+        }
+        NavButton(if (profile.quiet) R.string.unlock else R.string.lock, end = true) {
             expanded = false; query = ""
             if (!model.graph.catalog.setProfileQuiet(profile.serial, !profile.quiet)) model.messages.tryEmit(R.string.profile_action_failed)
-        }) { Text(stringResource(if (profile.quiet) R.string.unlock else R.string.lock)) }
+        }
     }
     if (expanded && !profile.quiet) {
-        OutlinedTextField(query, { query = it }, Modifier.fillMaxWidth(), label = { Text(stringResource(R.string.private_search)) }, singleLine = true)
+        OutlinedTextField(query, { query = it }, Modifier.fillMaxWidth().padding(vertical = 8.dp), label = { Text(stringResource(R.string.private_search)) }, singleLine = true)
         state.catalog.apps.filter { it.profile == ProfileKind.PRIVATE && it.id.startsWith("${profile.serial}:") &&
             it.id !in settings.hidden && (query.isBlank() || it.name.contains(query, ignoreCase = true) || settings.label(it).contains(query, ignoreCase = true))
         }.sortedBy { settings.label(it) }.forEach { app -> AppRow(app, settings) { model.open(app) } }
@@ -324,30 +402,15 @@ private fun PrivateSpace(model: LauncherViewModel, settings: LauncherSettings, p
 
 @Composable
 private fun <T> Choices(label: Int, selected: T, options: List<Pair<T, Int>>, onSelect: (T) -> Unit) {
-    Column(Modifier.padding(vertical = 12.dp)) {
-        Text(stringResource(label), style = MaterialTheme.typography.labelLarge)
-        FlowRow(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+    Column(Modifier.fillMaxWidth().padding(vertical = 8.dp)) {
+        Text(stringResource(label), style = MaterialTheme.typography.bodyLarge)
+        FlowRow(Modifier.fillMaxWidth().padding(top = 4.dp), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             options.forEach { (value, name) ->
-                FilterChip(selected == value, { onSelect(value) }, label = { Text(stringResource(name)) }, Modifier.heightIn(min = 48.dp))
+                FilterChip(selected == value, { onSelect(value) }, label = { Text(stringResource(name)) }, Modifier.heightIn(min = 40.dp),
+                    colors = FilterChipDefaults.filterChipColors(
+                        selectedContainerColor = MaterialTheme.colorScheme.primary, selectedLabelColor = MaterialTheme.colorScheme.onPrimary))
             }
         }
-    }
-}
-
-@Composable
-private fun SettingLink(label: Int, value: String? = null, onClick: () -> Unit) {
-    Row(Modifier.fillMaxWidth().heightIn(min = 56.dp).clickable(onClick = onClick), verticalAlignment = UiAlignment.CenterVertically) {
-        Text(stringResource(label), Modifier.weight(1f))
-        value?.let { Text(it, style = MaterialTheme.typography.labelMedium) }
-    }
-    HorizontalDivider()
-}
-
-@Composable
-private fun Toggle(label: Int, checked: Boolean, onChange: (Boolean) -> Unit) {
-    Row(Modifier.fillMaxWidth().heightIn(min = 56.dp).toggleable(checked, role = Role.Switch, onValueChange = onChange), verticalAlignment = UiAlignment.CenterVertically) {
-        Text(stringResource(label), Modifier.weight(1f))
-        Switch(checked, null)
     }
 }
 
@@ -366,6 +429,35 @@ private fun SettingsScreen(model: LauncherViewModel, settings: LauncherSettings,
             Toggle(R.string.show_private, settings.privateSpaceVisible) { value -> model.update { it.copy(privateSpaceVisible = value) } }
             SettingLink(R.string.default_home, onClick = chooseHome)
         }
+    }
+}
+
+/** Widens a selection highlight past the text edge so labels stay aligned with the rest of the screen. */
+private fun Modifier.bleed(amount: Dp) = layout { measurable, constraints ->
+    val extra = amount.roundToPx()
+    val placeable = measurable.measure(constraints.copy(
+        minWidth = constraints.minWidth + extra * 2,
+        maxWidth = if (constraints.hasBoundedWidth) constraints.maxWidth + extra * 2 else constraints.maxWidth))
+    layout(placeable.width - extra * 2, placeable.height) { placeable.place(-extra, 0) }
+}
+
+@Composable
+private fun FontScreen(model: LauncherViewModel, settings: LauncherSettings, modifier: Modifier) {
+    val highlight = MaterialTheme.colorScheme.surfaceVariant
+    Column(modifier) {
+        Header(R.string.font) { model.navigate(Screen.SETTINGS) }
+        Column(Modifier.weight(1f).verticalScroll(rememberScrollState())) {
+            FontChoice.entries.forEach { font ->
+                val selectionColor by animateColorAsState(if (settings.font == font) highlight else Color.Transparent, tween(120), label = "font selection")
+                Row(Modifier.bleed(12.dp).fillMaxWidth().heightIn(min = 72.dp).clip(MaterialTheme.shapes.small).background(selectionColor)
+                    .selectable(settings.font == font, role = Role.RadioButton, onClick = { model.update { it.copy(font = font) } })
+                    .padding(horizontal = 12.dp).testTag("font_${font.name}"), verticalAlignment = UiAlignment.CenterVertically) {
+                    Text(stringResource(fontLabel(font)), Modifier.weight(1f), style = MaterialTheme.typography.headlineMedium.copy(fontFamily = font.family()))
+                    RadioButton(selected = settings.font == font, onClick = null)
+                }
+            }
+        }
+        OutlinedButton(onClick = { model.navigate(Screen.HOME) }, Modifier.fillMaxWidth().padding(top = 12.dp)) { Text(stringResource(R.string.preview_home)) }
     }
 }
 
@@ -388,23 +480,30 @@ private fun EditScreen(model: LauncherViewModel, settings: LauncherSettings, mod
     val state by model.state.collectAsStateWithLifecycle()
     val app = state.catalog.apps.find { it.id == model.editId } ?: model.editId?.takeIf { it in settings.pins }
         ?.let { LaunchableApp(it, "", stringResource(R.string.missing_app), available = false) }
-    if (app == null) { Column(modifier) { Header(R.string.home_apps) { model.navigate(Screen.MANAGE) }; Text(stringResource(R.string.app_unavailable)) }; return }
+    if (app == null) {
+        Column(modifier) {
+            Header(R.string.home_apps) { model.navigate(Screen.MANAGE) }
+            Text(stringResource(R.string.app_unavailable), style = MaterialTheme.typography.bodyLarge, color = MaterialTheme.colorScheme.onSurfaceVariant)
+        }
+        return
+    }
     var label by rememberSaveable(app.id) { mutableStateOf(settings.label(app)) }
     val pinned = app.id in settings.pins
-    Column(modifier.verticalScroll(rememberScrollState())) {
-        TextButton(onClick = { model.navigate(Screen.MANAGE) }) { Text(stringResource(R.string.back)) }
-        Text(app.name, Modifier.padding(vertical = 12.dp), style = MaterialTheme.typography.headlineLarge)
-        OutlinedTextField(label, { label = it.take(LauncherSettings.MAX_NAME_LENGTH) }, Modifier.fillMaxWidth().testTag("rename_input"), label = { Text(stringResource(R.string.name)) }, singleLine = true)
-        Button(onClick = { model.edit { LauncherRules.rename(it, app.id, label) } }, Modifier.fillMaxWidth(), enabled = label.isNotBlank()) { Text(stringResource(R.string.save)) }
-        SettingLink(if (pinned) R.string.remove_home else R.string.add_home) { model.edit { if (pinned) LauncherRules.remove(it, app.id) else LauncherRules.pin(it, app) } }
-        if (pinned) Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-            OutlinedButton(onClick = { model.update { LauncherRules.move(it, app.id, -1) } }, Modifier.weight(1f), enabled = settings.pins.indexOf(app.id) > 0) { Text(stringResource(R.string.move_up)) }
-            OutlinedButton(onClick = { model.update { LauncherRules.move(it, app.id, 1) } }, Modifier.weight(1f), enabled = settings.pins.indexOf(app.id) < settings.pins.lastIndex) { Text(stringResource(R.string.move_down)) }
+    val position = settings.pins.indexOf(app.id)
+    Column(modifier) {
+        Header(app.name) { NavButton(R.string.back) { model.navigate(Screen.MANAGE) } }
+        Column(Modifier.weight(1f).verticalScroll(rememberScrollState())) {
+            OutlinedTextField(label, { label = it.take(LauncherSettings.MAX_NAME_LENGTH) }, Modifier.fillMaxWidth().testTag("rename_input"), label = { Text(stringResource(R.string.name)) }, singleLine = true)
+            Button(onClick = { model.edit { LauncherRules.rename(it, app.id, label) } }, Modifier.fillMaxWidth().padding(top = 12.dp), enabled = label.isNotBlank()) { Text(stringResource(R.string.save)) }
+            Spacer(Modifier.height(16.dp))
+            SettingLink(if (pinned) R.string.remove_home else R.string.add_home) { model.edit { if (pinned) LauncherRules.remove(it, app.id) else LauncherRules.pin(it, app) } }
+            if (pinned) {
+                SettingLink(R.string.move_up, enabled = position > 0) { model.update { LauncherRules.move(it, app.id, -1) } }
+                SettingLink(R.string.move_down, enabled = position < settings.pins.lastIndex) { model.update { LauncherRules.move(it, app.id, 1) } }
+            }
+            Toggle(R.string.pause, app.id in settings.paused, stringResource(R.string.pause_hint)) { value -> model.update { it.copy(paused = if (value) it.paused + app.id else it.paused - app.id) } }
+            SettingLink(R.string.hide, supporting = stringResource(R.string.hide_hint)) { model.edit { LauncherRules.remove(it, app.id, hide = true) } }
         }
-        Toggle(R.string.pause, app.id in settings.paused) { value -> model.update { it.copy(paused = if (value) it.paused + app.id else it.paused - app.id) } }
-        Text(stringResource(R.string.pause_hint), style = MaterialTheme.typography.bodySmall)
-        SettingLink(R.string.hide) { model.edit { LauncherRules.remove(it, app.id, hide = true) } }
-        Text(stringResource(R.string.hide_hint), style = MaterialTheme.typography.bodySmall)
     }
 }
 
@@ -415,8 +514,10 @@ private fun HiddenScreen(model: LauncherViewModel, settings: LauncherSettings, m
     Column(modifier) {
         Header(R.string.hidden_apps) { model.navigate(Screen.SETTINGS) }
         LazyColumn {
-            if (apps.isEmpty()) item { Text(stringResource(R.string.no_hidden_apps)) }
-            items(apps, key = { it.id }) { app -> AppRow(app, settings, stringResource(R.string.restore)) { model.update { it.copy(hidden = it.hidden - app.id) } } }
+            if (apps.isEmpty()) item {
+                Text(stringResource(R.string.no_hidden_apps), style = MaterialTheme.typography.bodyLarge, color = MaterialTheme.colorScheme.onSurfaceVariant)
+            }
+            items(apps, key = { it.id }) { app -> AppRow(app, settings, stringResource(R.string.restore), trailingAction = true) { model.update { it.copy(hidden = it.hidden - app.id) } } }
         }
     }
 }
@@ -426,20 +527,17 @@ private fun SetupScreen(model: LauncherViewModel, settings: LauncherSettings, mo
     val state by model.state.collectAsStateWithLifecycle()
     val apps = state.catalog.apps.filter { it.profile != ProfileKind.PRIVATE && it.available }.sortedBy { it.name }
     Column(modifier) {
-        Text(stringResource(R.string.app_name), Modifier.padding(top = 20.dp, bottom = 24.dp), fontSize = 40.sp)
-        Text(stringResource(R.string.choose_home_apps), style = MaterialTheme.typography.headlineLarge)
+        Header(stringResource(R.string.choose_home_apps)) { HeaderContext(stringResource(R.string.app_name)) }
         LazyColumn(Modifier.weight(1f)) {
             items(apps, key = { it.id }) { app ->
-                Row(Modifier.fillMaxWidth().heightIn(min = 56.dp).selectable(app.id in model.selection, role = Role.Checkbox, onClick = { model.toggleSelection(app.id) }), verticalAlignment = UiAlignment.CenterVertically) {
-                    Column(Modifier.weight(1f)) {
-                        Text(settings.label(app), fontSize = 22.sp)
-                        if (app.profile == ProfileKind.WORK) Text(stringResource(R.string.work), style = MaterialTheme.typography.labelSmall)
-                    }
+                Row(Modifier.fillMaxWidth().heightIn(min = 56.dp).selectable(app.id in model.selection, role = Role.Checkbox, onClick = { model.toggleSelection(app.id) })
+                    .padding(vertical = 8.dp), verticalAlignment = UiAlignment.CenterVertically) {
+                    AppLabel(app, settings, Modifier.weight(1f))
                     Checkbox(app.id in model.selection, onCheckedChange = null)
                 }
             }
         }
-        Text(stringResource(R.string.selected_count, model.selection.size), style = MaterialTheme.typography.bodySmall)
+        Muted(stringResource(R.string.selected_count, model.selection.size), Modifier.padding(vertical = 12.dp))
         Button(onClick = model::finishSetup, Modifier.fillMaxWidth().testTag("finish_setup"), enabled = model.selection.isNotEmpty()) { Text(stringResource(R.string.continue_label)) }
     }
 }
@@ -447,42 +545,44 @@ private fun SetupScreen(model: LauncherViewModel, settings: LauncherSettings, mo
 @Composable
 fun PauseScreen(label: String, remaining: Int, modifier: Modifier = Modifier, open: () -> Unit, cancel: () -> Unit) {
     Column(modifier) {
-        Spacer(Modifier.height(32.dp))
-        Text(stringResource(R.string.pause), style = MaterialTheme.typography.labelLarge)
-        Text(label, Modifier.padding(top = 16.dp), style = MaterialTheme.typography.headlineLarge)
+        Header(label) { HeaderContext(stringResource(R.string.pause)) }
         Box(Modifier.weight(1f).fillMaxWidth(), contentAlignment = UiAlignment.Center) {
-            Text(if (remaining > 0) remaining.toString() else stringResource(R.string.ready), fontSize = 64.sp, fontWeight = FontWeight.Light)
+            Text(if (remaining > 0) remaining.toString() else stringResource(R.string.ready), style = MaterialTheme.typography.displayLarge, fontWeight = FontWeight.Light)
         }
         Button(open, Modifier.fillMaxWidth().testTag("confirm_open"), enabled = remaining == 0) { Text(stringResource(R.string.open)) }
-        TextButton(cancel, Modifier.fillMaxWidth()) { Text(stringResource(R.string.cancel)) }
+        TextButton(cancel, Modifier.fillMaxWidth().padding(top = 8.dp)) { Text(stringResource(R.string.cancel)) }
     }
 }
 
 @Composable
 private fun WallpaperScreen(model: LauncherViewModel, settings: LauncherSettings, modifier: Modifier) {
     val context = LocalContext.current
+    val photo = settings.wallpaper != WallpaperMode.OFF
     Column(modifier) {
         Header(R.string.wallpaper) { model.navigate(Screen.SETTINGS) }
         Column(Modifier.weight(1f).verticalScroll(rememberScrollState())) {
-            Surface(shape = MaterialTheme.shapes.large) {
-                Box(Modifier.fillMaxWidth().height(210.dp)) {
-                    if (settings.wallpaper != WallpaperMode.OFF) WallpaperImage(model, settings)
-                    Text("09:41", Modifier.padding(24.dp), color = if (settings.wallpaper != WallpaperMode.OFF) Color.White else MaterialTheme.colorScheme.onSurface, fontSize = 40.sp)
+            Surface(shape = MaterialTheme.shapes.large, border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)) {
+                Box(Modifier.fillMaxWidth().height(168.dp)) {
+                    if (photo) WallpaperImage(model, settings)
+                    Text("09:41", Modifier.padding(20.dp), color = if (photo) Color.White else MaterialTheme.colorScheme.onSurface,
+                        style = MaterialTheme.typography.displaySmall, fontWeight = FontWeight.Light)
                 }
             }
+            Spacer(Modifier.height(8.dp))
             Choices(R.string.rotation, settings.wallpaper, listOf(WallpaperMode.OFF to R.string.off, WallpaperMode.DAILY to R.string.daily, WallpaperMode.KEEP to R.string.keep)) { value -> model.update { it.copy(wallpaper = value) } }
-            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                OutlinedButton(model::nextWallpaper, Modifier.weight(1f), enabled = !model.busy && settings.wallpaper != WallpaperMode.OFF) { Text(stringResource(if (model.busy) R.string.updating else R.string.next_image)) }
-                OutlinedButton(onClick = { model.navigate(Screen.HOME) }, Modifier.weight(1f)) { Text(stringResource(R.string.preview_home)) }
+            SettingLink(if (model.busy) R.string.updating else R.string.next_image, enabled = !model.busy && photo, onClick = model::nextWallpaper)
+            SettingRow(stringResource(R.string.dim), enabled = photo) {
+                Text(stringResource(R.string.percent, settings.dim), Modifier.alpha(if (photo) 1f else 0.38f), style = MaterialTheme.typography.bodyLarge,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant)
             }
-            Text(stringResource(R.string.dim) + " " + stringResource(R.string.percent, settings.dim), Modifier.padding(top = 16.dp))
-            Slider(settings.dim.toFloat(), { value -> model.update { it.copy(dim = value.toInt()) } }, valueRange = 60f..85f, steps = 4, enabled = settings.wallpaper != WallpaperMode.OFF,
+            Slider(settings.dim.toFloat(), { value -> model.update { it.copy(dim = value.toInt()) } }, valueRange = 60f..85f, steps = 4, enabled = photo,
                 modifier = Modifier.testTag("wallpaper_dim"))
             Toggle(R.string.wifi_only, settings.wifiOnly) { value -> model.update { it.copy(wifiOnly = value) } }
-            TextButton(onClick = { runCatching { context.startActivity(Intent(Intent.ACTION_VIEW, settings.wallpaperSource.toUri())) } }) {
-                Text(stringResource(R.string.photo_credit, settings.wallpaperAuthor), style = MaterialTheme.typography.bodySmall)
-            }
-            Text(stringResource(R.string.photo_provider), style = MaterialTheme.typography.bodySmall)
+            Muted(stringResource(R.string.photo_credit, settings.wallpaperAuthor), Modifier.fillMaxWidth().heightIn(min = 48.dp)
+                .clickable(role = Role.Button) { runCatching { context.startActivity(Intent(Intent.ACTION_VIEW, settings.wallpaperSource.toUri())) } }
+                .wrapContentHeight(UiAlignment.CenterVertically))
+            Muted(stringResource(R.string.photo_provider))
         }
+        OutlinedButton(onClick = { model.navigate(Screen.HOME) }, Modifier.fillMaxWidth().padding(top = 12.dp)) { Text(stringResource(R.string.preview_home)) }
     }
 }
