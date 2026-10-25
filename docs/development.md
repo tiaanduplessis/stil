@@ -29,3 +29,9 @@ The instrumentation APK provides two exported launcher activities in its test-on
 Storage and wallpaper tests use separate temporary DataStore files and injected photo sources. They establish persistence, invalid-state recovery, network/decode failure handling, and disabled-worker behavior. Live photo delivery is a separate manual check and depends on the provider/network.
 
 API 26–27 work-profile controls open Android settings because the public quiet-mode API begins at API 28. Private-space controls require the default-home role and supported Android/user profiles. Physical OEM navigation and accessibility service behavior need device-specific follow-up beyond emulator proof.
+
+## Motion
+
+Navigation uses a 160 ms entrance fade from 92% opacity with an 8 dp shift that follows navigation depth and layout direction. Initial rendering and the launch-pause flow stay immediate. Each new screen disposes the old content at once, including private app content and input fields; navigation never waits for an animation.
+
+Wallpaper changes crossfade over 240 ms, with 120 ms dimming and font-selection feedback. There are no repeating or idle animations. Compose's platform motion-duration scale controls these effects, including Android's disabled-animation setting. Device tests use a controlled animation clock to check interrupted navigation, interaction during transitions, and zero-duration motion.
