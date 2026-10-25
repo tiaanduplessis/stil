@@ -7,14 +7,14 @@ A minimal Android launcher with a short app list, custom fonts, and daily wallpa
 [Build and try Stil](#try-stil) · [User guide](docs/usage.md)
 
 <p>
-  <img src="docs/media/home.png" width="220" alt="Stil home with five text app shortcuts, a clock, and a dimmed forest wallpaper">
+  <img src="docs/media/home.png" width="220" alt="Stil home with a clock, date, and five text app shortcuts on a plain Dark background">
   <img src="docs/media/apps.png" width="220" alt="All apps filtered by name, with an explicit result to open">
   <img src="docs/media/settings.png" width="220" alt="Stil settings with Dark appearance selected and controls for fonts and wallpapers">
 </p>
 
 ## See it in use
 
-https://github.com/user-attachments/assets/5ad7722e-87c7-4bee-888e-dca8443d5cdc
+https://github.com/user-attachments/assets/4e99b983-85cf-4190-975d-9b2992e97891
 
 [Download the walkthrough (MP4)](docs/media/walkthrough.mp4) · [Text walkthrough](docs/usage.md#walkthrough)
 
@@ -44,7 +44,7 @@ Remove a debug install before installing the signed preview; their signing ident
 
 ## What it does
 
-- **A short home screen.** Pin up to six apps, rename and reorder them, or hide apps and restore them later. Search finds original names and aliases.
+- **A short home screen.** Swipe up for apps; hold empty space for settings. Pin up to six apps, rename and reorder them, or hide apps and restore them later. Search finds original names and aliases. Gestures are in the current source build; the 0.1.0 preview uses home buttons.
 - **Your type and background.** Choose System, Sans, Serif, or Mono; Light, Dark, or System appearance; alignment and text size. Use daily photos, keep one, or turn wallpaper off.
 - **A deliberate pause.** Selected apps can wait three seconds before an explicit **Open**. **Cancel** returns immediately.
 - **Separate profiles.** Work apps have profile controls. On supported devices, Private space has its own lockable container and search. Private apps stay out of global search and home pins.

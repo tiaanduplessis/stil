@@ -12,7 +12,7 @@ The following bundled photos are by [Alvin Engler](https://unsplash.com/@englr) 
 
 The application downloads optional photos through [Lorem Picsum](https://picsum.photos/). It retains each photo's author and source URL and exposes that credit in Wallpaper settings. Downloaded photos retain their own rights and terms.
 
-README screenshots and video also show [James Forbes's forest photo](https://unsplash.com/photos/jrzvClypPq8), downloaded through Lorem Picsum (photo 190). That photo remains under the Unsplash License; its use in the documentation is separate from the project's MIT license.
+Earlier README screenshots and video in Git history show [James Forbes's forest photo](https://unsplash.com/photos/jrzvClypPq8), downloaded through Lorem Picsum (photo 190). That photo remains under the Unsplash License; its use in the documentation is separate from the project's MIT license. Current captures use a plain background.
 
 ## Gradle wrapper
 

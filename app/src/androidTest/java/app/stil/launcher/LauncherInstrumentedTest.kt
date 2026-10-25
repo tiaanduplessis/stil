@@ -1,6 +1,9 @@
 package app.stil.launcher
 
 import androidx.compose.ui.test.*
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.input.key.Key
+import androidx.compose.ui.semantics.SemanticsActions
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import android.content.BroadcastReceiver
@@ -38,7 +41,7 @@ class LauncherInstrumentedTest {
         firstId = fixtures[0].id
         secondId = fixtures[1].id
         runBlocking { graph.settings.update { LauncherSettings(onboarded = true, pins = listOf(firstId, secondId)) } }
-        rule.waitUntil(10_000) { rule.onAllNodesWithText("Settings").fetchSemanticsNodes().isNotEmpty() }
+        rule.waitUntil(10_000) { rule.onAllNodesWithTag("home_surface").fetchSemanticsNodes().isNotEmpty() }
     }
 
     @Test fun setupWritesTheChosenHomeApps() {
@@ -50,11 +53,11 @@ class LauncherInstrumentedTest {
         assertTrue(saved.onboarded)
         assertTrue(saved.pins.size in 1..6)
         rule.onNodeWithText("Not now").performClick()
-        rule.onNodeWithText("All apps").assertIsDisplayed()
+        rule.onNodeWithTag("home_surface").assertIsDisplayed()
     }
 
     @Test fun fontSelectionPersistsThroughActivityRecreation() {
-        rule.onNodeWithText("Settings").performClick()
+        openSettings()
         rule.onNodeWithText("Font").performClick()
         rule.onNodeWithTag("font_SERIF").performClick()
         rule.waitUntil(5_000) { runBlocking { graph.settings.current().font == FontChoice.SERIF } }
@@ -62,14 +65,14 @@ class LauncherInstrumentedTest {
         rule.onNodeWithText("Back").performClick()
         rule.activityRule.scenario.recreate()
         assertEquals(FontChoice.SERIF, runBlocking { graph.settings.current().font })
-        rule.onNodeWithText("Settings").performClick()
+        openSettings()
         rule.onNodeWithText("Serif").assertIsDisplayed()
     }
 
     @Test fun blackThemeRendersReadableSettingsText() {
         runBlocking { graph.settings.update { it.copy(theme = ThemeMode.BLACK) } }
         rule.waitForIdle()
-        rule.onNodeWithText("Settings").performClick()
+        openSettings()
         val pixels = rule.onNodeWithText("Settings").captureToImage().toPixelMap()
         var lightPixels = 0
         for (y in 0 until pixels.height) for (x in 0 until pixels.width) {
@@ -86,7 +89,7 @@ class LauncherInstrumentedTest {
         rule.waitUntil(5_000) { runBlocking { graph.settings.current().aliases[firstId] == "Go places" } }
         repeat(3) { rule.onNodeWithText("Back").performClick() }
         rule.activityRule.scenario.recreate()
-        rule.onNodeWithText("All apps").performClick()
+        openApps()
         rule.onNodeWithTag("app_search").performTextInput("Go places")
         rule.waitUntil(5_000) { rule.onNode(hasText("Go places") and hasAnyAncestor(hasTestTag("app_list"))).isDisplayed() }
         rule.onNode(hasText("Go places") and hasAnyAncestor(hasTestTag("app_list"))).assertIsDisplayed()
@@ -102,12 +105,12 @@ class LauncherInstrumentedTest {
         rule.waitUntil(5_000) { runBlocking { firstId in graph.settings.current().hidden } }
         repeat(3) { rule.onNodeWithText("Back").performClick() }
         rule.activityRule.scenario.recreate()
-        rule.onNodeWithText("All apps").performClick()
+        openApps()
         rule.onNodeWithTag("app_search").performTextInput("Stil fixture")
         rule.onNode(hasText("Stil fixture", substring = false) and hasAnyAncestor(hasTestTag("app_list"))).assertDoesNotExist()
         rule.onNodeWithText("Home", substring = false).performClick()
         rule.activityRule.scenario.recreate()
-        rule.onNodeWithText("Settings").performClick()
+        openSettings()
         rule.onNodeWithText("Hidden apps").performScrollTo().performClick()
         rule.onNodeWithText("Stil fixture", substring = false).performClick()
         rule.waitUntil(5_000) { runBlocking { firstId !in graph.settings.current().hidden } }
@@ -122,7 +125,7 @@ class LauncherInstrumentedTest {
             rule.onNodeWithText("Cancel").performClick()
             val deadline = SystemClock.elapsedRealtime() + 3_200
             rule.waitUntil(5_000) { SystemClock.elapsedRealtime() >= deadline }
-            rule.onNodeWithText("Settings").assertIsDisplayed()
+            rule.onNodeWithTag("home_surface").assertIsDisplayed()
             assertNull(launched.get())
         }
     }
@@ -150,6 +153,88 @@ class LauncherInstrumentedTest {
         assertEquals(ListenableWorker.Result.success(), worker.doWork())
         assertEquals(before, graph.settings.current())
         assertEquals(WallpaperMode.OFF, graph.settings.current().wallpaper)
+    }
+
+    private fun openSettings() {
+        rule.onNodeWithTag("home_surface").performTouchInput {
+            longClick(Offset(centerX, height * 0.4f))
+        }
+        rule.onNodeWithText("Settings").assertIsDisplayed()
+    }
+
+    private fun openApps() {
+        rule.onNodeWithTag("home_surface").performTouchInput {
+            swipe(Offset(centerX, bottom - 8f), Offset(centerX, bottom - 300f), 300)
+        }
+        rule.onNodeWithTag("app_search").assertIsDisplayed()
+    }
+
+    @Test fun homeIsQuietAndSwipeFromBottomOpensApps() {
+        rule.onNodeWithText("All apps").assertDoesNotExist()
+        rule.onNodeWithText("Settings").assertDoesNotExist()
+        openApps()
+        rule.onNodeWithText("All apps").assertIsDisplayed()
+    }
+
+    @Test fun holdingEmptySpaceOpensSettings() {
+        openSettings()
+        rule.onNodeWithText("Appearance").assertIsDisplayed()
+    }
+
+    @Test fun tapsShortHorizontalDownwardAndCancelledSwipesKeepHome() {
+        val home = rule.onNodeWithTag("home_surface")
+        home.performTouchInput { click(Offset(centerX, height * 0.4f)) }
+        home.assertIsDisplayed()
+        home.performTouchInput { swipe(Offset(centerX, bottom - 8f), Offset(centerX, bottom - 18f), 200) }
+        home.assertIsDisplayed()
+        home.performTouchInput { swipe(Offset(centerX, bottom - 24f), Offset(right - 16f, bottom - 24f), 300) }
+        home.assertIsDisplayed()
+        home.performTouchInput { swipe(Offset(centerX, bottom - 70f), Offset(centerX, bottom - 4f), 300) }
+        home.assertIsDisplayed()
+        home.performTouchInput {
+            down(Offset(centerX, bottom - 8f))
+            moveBy(Offset(0f, -300f), 300)
+            cancel()
+        }
+        home.assertIsDisplayed()
+        rule.onNodeWithText("Settings").assertDoesNotExist()
+    }
+
+    @Test fun swipeOutsideBottomDoesNotOpenDrawerAndPinDragDoesNotLaunch() {
+        observeLaunch { launched ->
+            val home = rule.onNodeWithTag("home_surface")
+            home.performTouchInput { swipe(Offset(centerX, height * 0.5f), Offset(centerX, height * 0.3f), 300) }
+            home.assertIsDisplayed()
+            rule.onNodeWithTag("home_$firstId").performTouchInput { swipeUp() }
+            home.assertIsDisplayed()
+            assertNull(launched.get())
+        }
+    }
+
+    @Test fun accessibilityActionsOpenAppsAndSettings() {
+        fun action(label: String) {
+            val actions = rule.onNodeWithTag("home_surface").fetchSemanticsNode().config[SemanticsActions.CustomActions]
+            rule.runOnIdle { assertTrue(actions.single { it.label == label }.action()) }
+        }
+        action("All apps")
+        rule.onNodeWithTag("app_search").assertIsDisplayed()
+        rule.onNodeWithText("Home", substring = false).performClick()
+        action("Settings")
+        rule.onNodeWithText("Appearance").assertIsDisplayed()
+    }
+
+    @OptIn(ExperimentalTestApi::class)
+    @Test fun keyboardOpensAppsAndSettingsWithoutVisibleHomeControls() {
+        fun focusHome() {
+            rule.onNodeWithTag("home_surface").performSemanticsAction(SemanticsActions.RequestFocus)
+        }
+        focusHome()
+        rule.onNodeWithTag("home_surface").performKeyInput { pressKey(Key.Enter) }
+        rule.onNodeWithTag("app_search").assertIsDisplayed()
+        rule.onNodeWithText("Home", substring = false).performClick()
+        focusHome()
+        rule.onNodeWithTag("home_surface").performKeyInput { pressKey(Key.Menu) }
+        rule.onNodeWithText("Appearance").assertIsDisplayed()
     }
 
     private fun observeLaunch(block: (AtomicReference<String?>) -> Unit) {
