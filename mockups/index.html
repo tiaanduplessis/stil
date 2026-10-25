@@ -1,0 +1,340 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Stil launcher</title>
+<style>
+:root { color-scheme: light dark; font-family: Arial, Helvetica, sans-serif; --study-ink:#20242b; --study-paper:#fff; --study-quiet:#626873; --study-line:#d8dce2; color:var(--foreground,var(--study-ink)); --line:var(--border,var(--study-line)); --quiet:var(--muted-foreground,var(--study-quiet)); }
+* { box-sizing:border-box; }
+body { margin:0; background:transparent; }
+button,input,select { font:inherit; }
+button { cursor:pointer; }
+button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible { outline:3px solid #6788c0; outline-offset:3px; }
+button { -webkit-tap-highlight-color:transparent; }
+button:disabled { cursor:default; opacity:.55; }
+button svg { width:20px; height:20px; vertical-align:middle; }
+a { color:inherit; text-underline-offset:4px; }
+.study { max-width:1000px; margin:0 auto; padding:4px 0 24px; }
+.masthead { display:flex; gap:24px; align-items:baseline; padding:14px 0 20px; }
+.wordmark { font-size:48px; letter-spacing:-3px; font-weight:400; margin:0; line-height:1; }
+.masthead p { font-size:15px; color:var(--quiet); margin:0; line-height:1.5; }
+.tabs { display:flex; gap:4px; flex-wrap:wrap; border-bottom:1px solid var(--line); padding-bottom:12px; margin-bottom:24px; }
+.tab { min-height:44px; padding:8px 14px; border:0; border-radius:24px; background:transparent; color:inherit; }
+.tab[aria-pressed=true] { background:var(--foreground,var(--study-ink)); color:var(--background,var(--study-paper)); }
+.workspace { display:grid; grid-template-columns:1fr; gap:12px; }
+.device-column { width:100%; max-width:360px; margin:auto; }
+.device { --paper:#f7f8fa; --ink:#20242b; --sub:#626873; --rule:#d8dce2; --wash:#e9ecf1; width:100%; max-width:360px; height:728px; padding:7px; border:1px solid #858b94; background:#353a42; border-radius:42px; box-shadow:0 12px 30px #00000015; }
+.device[data-theme=dark] { --paper:#000; --ink:#f3f4f6; --sub:#a3a8b1; --rule:#353a42; --wash:#1a1c20; }
+.glass { height:100%; position:relative; background:var(--paper); background-size:cover; background-position:center; color:var(--ink); border-radius:34px; overflow:hidden; display:flex; flex-direction:column; color-scheme:light; font-family:var(--launcher-font,system-ui,sans-serif); }
+.glass.has-wallpaper { --ink:#fff; --sub:#e7e9ed; --rule:#ffffff50; }
+.device[data-theme=dark] .glass { color-scheme:dark; }
+.status { display:flex; height:45px; flex-shrink:0; padding:14px 23px 8px; font-size:12px; font-weight:600; align-items:center; justify-content:space-between; font-family:Arial,Helvetica,sans-serif; }
+.status-right { display:flex; align-items:center; gap:6px; }
+.status svg { width:15px; height:15px; }
+.camera-dot { position:absolute; left:calc(50% - 5px); top:13px; width:10px; height:10px; background:#353a42; border-radius:50%; }
+#screen { flex:1; min-height:0; position:relative; display:flex; flex-direction:column; }
+.screen { flex:1; min-height:0; display:flex; flex-direction:column; padding:0 25px; }
+.screen button { background:transparent; color:var(--ink); border:0; }
+.screen .sub,.sub { color:var(--sub); }
+.phone-nav { height:30px; flex-shrink:0; display:flex; align-items:center; justify-content:center; }
+.phone-nav button { width:96px; min-height:28px; border:0; background:transparent; display:grid; place-items:center; }
+.phone-nav span { height:4px; width:90px; background:var(--ink); border-radius:4px; }
+.home { justify-content:flex-end; padding-top:24px; }
+.clock { margin:0 auto auto 0; padding:4px 0; text-align:left; }
+.clock strong { display:block; font-size:76px; line-height:1.08; font-weight:300; letter-spacing:-5px; }
+.clock span { display:block; font-size:14px; margin-top:10px; letter-spacing:.1px; color:var(--sub); }
+.home-list { margin-top:35px; overflow-y:auto; }
+.home-app { display:block; min-height:54px; width:100%; text-align:left; font-size:var(--app-size,32px); font-weight:400; line-height:1.25; padding:8px 0; overflow-wrap:anywhere; letter-spacing:-.6px; }
+.home[data-align=right] .home-app { text-align:right; }
+.home[data-align=right] .clock { margin-left:auto; margin-right:0; text-align:right; }
+.home-footer { display:flex; align-items:center; justify-content:space-between; padding:18px 0 0; }
+.home-footer button { min-height:48px; padding:8px 0; font-size:15px; }
+.home-footer button:last-child { min-width:48px; }
+.topbar { display:flex; justify-content:space-between; align-items:center; min-height:52px; flex-shrink:0; }
+.topbar button { min-height:48px; min-width:48px; padding:8px 0; font-size:14px; }
+.topbar button:last-child { text-align:right; }
+h2 { font-size:29px; font-weight:400; letter-spacing:-.8px; margin:16px 0; line-height:1.2; }
+.scroll { flex:1; min-height:0; overflow-y:auto; padding:0 2px 12px; scrollbar-width:thin; scrollbar-color:var(--rule) transparent; }
+.app-row { min-height:53px; width:100%; display:flex; gap:10px; align-items:center; justify-content:space-between; text-align:left; padding:9px 0; font-size:21px; line-height:1.35; }
+.app-row span:first-child { overflow-wrap:anywhere; }
+.app-row .mark { color:var(--sub); font-size:12px; flex-shrink:0; }
+.searchbox { padding:12px 0 7px; flex-shrink:0; }
+.searchbox input { width:100%; min-height:50px; border:1px solid var(--rule); border-radius:12px; background:transparent; color:var(--ink); padding:12px 14px; font-size:16px; }
+.searchbox input::placeholder { color:var(--sub); opacity:1; }
+.hint { font-size:12px; line-height:1.5; margin:8px 0; color:var(--sub); }
+.empty { font-size:17px; line-height:1.6; padding:30px 0; }
+.setting { padding:15px 0; border-bottom:1px solid var(--rule); }
+.setting label { display:block; font-size:15px; margin:0 0 10px; }
+.segmented { display:flex; padding:3px; gap:3px; background:var(--wash); border-radius:11px; }
+.segmented button { flex:1; min-height:48px; font-size:14px; border-radius:8px; padding:8px 5px; }
+.segmented button[aria-pressed=true] { background:var(--ink); color:var(--paper); }
+.setting-link { display:flex; justify-content:space-between; align-items:center; width:100%; min-height:56px; text-align:left; font-size:16px; padding:8px 0; gap:12px; border-bottom:1px solid var(--rule)!important; }
+.setting-link small { color:var(--sub); font-size:12px; }
+.font-option { border-bottom:1px solid var(--rule)!important; min-height:72px; font-size:27px; }
+.font-option[aria-checked=true] .choice { background:var(--ink); color:var(--paper); }
+.wallpaper-preview { height:215px; flex-shrink:0; border-radius:16px; background-color:var(--paper); background-position:center; background-size:cover; border:1px solid var(--rule); padding:24px; display:flex; flex-direction:column; justify-content:space-between; }
+.wallpaper-preview.photo { color:#fff; }
+.wallpaper-preview strong { font-size:38px; font-weight:400; letter-spacing:-1.5px; }
+.wallpaper-preview span { font-size:23px; }
+.wallpaper-actions { display:flex; gap:8px; margin-top:12px; }
+.wallpaper-actions button { flex:1; }
+.dim-row { display:flex; align-items:center; justify-content:space-between; gap:12px; }
+.dim-row label { margin:0; }
+.setting input[type=range] { width:100%; min-height:48px; accent-color:var(--ink); margin:4px 0 0; }
+.photo-credit { font-size:12px; color:var(--sub); line-height:1.5; margin:12px 0; }
+.photo-credit a { display:inline-block; padding:7px 0; }
+.plain-copy { font-size:14px; line-height:1.6; color:var(--sub); }
+.screen .primary { background:var(--ink); color:var(--paper); border-radius:12px; min-height:50px; padding:12px 16px; width:100%; font-size:16px; }
+.screen .secondary { border:1px solid var(--rule); border-radius:12px; min-height:48px; width:100%; padding:10px; font-size:15px; }
+.screen .quiet-button { min-height:48px; width:100%; color:var(--sub); font-size:15px; }
+.pause { padding-top:36px; }
+.pause-label { color:var(--sub); font-size:14px; }
+.pause h2 { font-size:38px; margin-top:20px; letter-spacing:-1.3px; }
+.pause .reason { font-size:17px; line-height:1.6; max-width:22ch; color:var(--sub); }
+.pause-center { flex:1; min-height:140px; display:flex; align-items:center; justify-content:center; flex-direction:column; gap:10px; }
+.count { font-size:74px; line-height:1; font-weight:300; letter-spacing:-3px; }
+.pause-actions { padding:10px 0; }
+.pause-actions .hint { text-align:center; margin-top:12px; }
+.launch { justify-content:center; text-align:center; gap:12px; }
+.launch h2 { font-size:38px; overflow-wrap:anywhere; }
+.launch p { margin:0 0 24px; }
+.setup-brand { font-size:40px; letter-spacing:-2px; margin:12px 0 30px; }
+.setup h2 { font-size:32px; max-width:14ch; }
+.setup .app-row { min-height:49px; font-size:18px; }
+.choice { width:22px; height:22px; border:1px solid var(--sub); border-radius:50%; display:inline-grid; place-items:center; font-size:13px; }
+.app-row[aria-pressed=true] .choice { background:var(--ink); color:var(--paper); border-color:var(--ink); }
+.bottom-action { flex-shrink:0; padding:10px 0; }
+.edit-form { padding:12px 0; }
+.edit-form label { display:block; font-size:14px; margin-bottom:8px; }
+.edit-form input { width:100%; border:1px solid var(--rule); background:transparent; color:var(--ink); min-height:48px; padding:10px; border-radius:9px; }
+.edit-form .primary { margin-top:10px; }
+.edit-actions { display:flex; gap:8px; margin:12px 0; }
+.edit-actions button { flex:1; }
+.toast { position:absolute; bottom:12px; left:18px; right:18px; background:var(--ink); color:var(--paper); border-radius:10px; padding:12px 15px; font-size:13px; line-height:1.5; pointer-events:none; z-index:5; }
+.demo-themes { display:flex; justify-content:center; gap:4px; margin:17px 0 8px; }
+.demo-themes button { min-height:42px; padding:8px 18px; border:1px solid var(--line); background:transparent; color:inherit; border-radius:24px; }
+.demo-themes button[aria-pressed=true] { background:var(--foreground,var(--study-ink)); color:var(--background,var(--study-paper)); border-color:transparent; }
+.device-caption { text-align:center; font-size:12px; line-height:1.5; color:var(--quiet); margin:8px 0; }
+.notes { padding-top:0; }
+.notes details { margin-top:8px; }
+.notes h2 { font-size:24px; margin:0 0 14px; }
+.notes p,.notes li { font-size:15px; line-height:1.65; color:var(--quiet); }
+.notes ol { padding-left:21px; }
+.notes li { margin:10px 0; padding-left:3px; }
+.scope { border-top:1px solid var(--line); padding-top:18px; margin-top:22px; }
+.scope h3 { font-size:15px; margin:0 0 8px; font-weight:600; }
+.scope p { font-size:14px; margin:0; }
+.reset { min-height:44px; border:0; border-bottom:1px solid var(--line); padding:8px 0; color:var(--quiet); background:transparent; font-size:13px; margin-top:20px; }
+.proposal { border-top:1px solid var(--line); margin-top:28px; padding-top:22px; }
+.proposal h2 { font-size:22px; margin:0 0 14px; }
+.feature-list { display:grid; grid-template-columns:1fr 1fr; gap:20px 24px; }
+.feature-list h3 { font-size:15px; font-weight:600; margin:0 0 5px; }
+.feature-list p { font-size:14px; line-height:1.6; color:var(--quiet); margin:0; }
+details { margin-top:24px; border-top:1px solid var(--line); padding-top:18px; }
+summary { cursor:pointer; min-height:36px; font-size:15px; }
+.research-list { font-size:14px; line-height:1.65; padding-left:20px; color:var(--quiet); }
+.research-list li { margin:12px 0; }
+.research-foot { color:var(--quiet); font-size:12px; line-height:1.6; margin:22px 0 0; }
+@media(max-width:659px) { .workspace { grid-template-columns:1fr; gap:18px; } .device-column { max-width:360px; margin:auto; } .notes { max-width:440px; } .masthead { gap:18px; } .masthead p { max-width:22ch; font-size:14px; } .overview { font-size:16px; } .tab { padding:8px 11px; } .feature-list { grid-template-columns:1fr; gap:17px; } }
+@media(max-width:350px) { .screen { padding-left:20px; padding-right:20px; } .tab { padding:8px 8px; font-size:14px; } .clock strong { font-size:70px; } }
+@media(prefers-color-scheme:dark) { :root { --study-ink:#f3f4f6; --study-paper:#121212; --study-quiet:#a3a8b1; --study-line:#353a42; } }
+@media(prefers-reduced-motion:no-preference) { button { transition:background-color .12s ease,color .12s ease; } }
+</style>
+</head>
+<body>
+<main class="study">
+  <header class="masthead"><h1 class="wordmark">stil</h1><p>Android launcher</p></header>
+  <nav class="tabs" aria-label="Mockup screens">
+    <button class="tab" data-view="home" aria-pressed="true">Home</button>
+    <button class="tab" data-view="apps" aria-pressed="false">Apps</button>
+    <button class="tab" data-view="pause" aria-pressed="false">Pause</button>
+    <button class="tab" data-view="settings" aria-pressed="false">Settings</button>
+    <button class="tab" data-view="setup" aria-pressed="false">Setup</button>
+  </nav>
+  <div class="workspace">
+    <div class="device-column">
+      <div class="device" id="device" data-theme="light" aria-label="Interactive Android launcher concept">
+        <div class="glass">
+          <div class="camera-dot" aria-hidden="true"></div>
+          <div class="status" aria-hidden="true"><span>9:41</span><span class="status-right"><svg viewBox="0 0 20 20" fill="currentColor"><path d="M2 14h3v4H2zm5-4h3v8H7zm5-4h3v12h-3zm5-4h2v16h-2z"/></svg><svg viewBox="0 0 24 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1" y="2" width="19" height="12" rx="3"/><path d="M23 6v4"/><rect x="3" y="4" width="13" height="8" rx="1" fill="currentColor" stroke="none"/></svg></span></div>
+          <div id="screen"></div>
+          <div class="phone-nav"><button aria-label="Return to home" data-action="home"><span></span></button></div>
+        </div>
+      </div>
+      <div class="demo-themes" role="group" aria-label="Preview controls"><button id="day" data-theme="light" aria-pressed="true">Day</button><button id="night" data-theme="dark" aria-pressed="false">Night</button><button id="reset">Reset</button><button id="next-day" hidden>Next day</button></div>
+      <p class="device-caption">Prototype. App launches are simulated.</p>
+    </div>
+    <aside class="notes" aria-label="Design notes"><details><summary>Review notes</summary><div id="notes"></div></details></aside>
+  </div>
+  <details class="proposal"><summary>Features and research</summary>
+    <div class="feature-list">
+      <div><h3>Home</h3><p>One to six apps, clock, and date. Rename and reorder apps.</p></div>
+      <div><h3>Search</h3><p>Local app search. Tap or press Enter to open.</p></div>
+      <div><h3>Appearance</h3><p>Font, text size, alignment, and light or black themes.</p></div>
+      <div><h3>Wallpaper</h3><p>Optional daily shuffle. Skip or keep an image. Adjustable dimming.</p></div>
+      <div><h3>Pause</h3><p>Optional three-second delay for selected apps opened through Stil.</p></div>
+    </div>
+    <ul class="research-list">
+      <li><a href="https://github.com/tanujnotes/Olauncher" target="_blank" rel="noreferrer">Olauncher</a>: text-first home. Its <a href="https://tanujnotes.substack.com/p/olauncher-minimal-af-launcher" target="_blank" rel="noreferrer">guide</a> documents hidden controls. Stil uses visible settings.</li>
+      <li><a href="https://niagaralauncher.com/" target="_blank" rel="noreferrer">Niagara</a>: list navigation. <a href="https://kisslauncher.com/" target="_blank" rel="noreferrer">KISS</a>: search and speed.</li>
+      <li><a href="https://beforelabs.com/" target="_blank" rel="noreferrer">Before</a>: notification filtering, deferred for Stil.</li>
+      <li><a href="https://faq.minimalistphone.com/en/article/what-do-mindful-launch-delay-and-mindful-extension-delay-features-do-o5krfw/" target="_blank" rel="noreferrer">minimalist phone</a>: launch delays. Stil's pause needs user testing.</li>
+      <li>Android <a href="https://developer.android.com/about/versions/15/behavior-changes-all#private-space" target="_blank" rel="noreferrer">private space</a> needs separate handling. Only personal apps appear here.</li>
+    </ul>
+    <p class="research-foot">25 October 2026. Local core, optional wallpaper downloads. No account or ads. Android implementation pending. Full scope: docs/research.md.</p>
+  </details>
+</main>
+<script>
+(() => {
+'use strict';
+const catalog = [
+ {id:'calendar',name:'Calendar'}, {id:'camera',name:'Camera'}, {id:'clock',name:'Clock'},
+ {id:'files',name:'Files'}, {id:'gmail',name:'Gmail'}, {id:'instagram',name:'Instagram'},
+ {id:'maps',name:'Maps'}, {id:'messages',name:'Messages'}, {id:'notes',name:'Notes'},
+ {id:'phone',name:'Phone'}, {id:'photos',name:'Photos'}, {id:'settings',name:'System settings'},
+ {id:'spotify',name:'Spotify'}, {id:'whatsapp',name:'WhatsApp'}, {id:'youtube',name:'YouTube'}
+];
+const fonts = [
+ {id:'system',name:'System',family:'system-ui, sans-serif'},
+ {id:'sans',name:'Sans',family:'Arial, Helvetica, sans-serif'},
+ {id:'serif',name:'Serif',family:'Georgia, "Times New Roman", serif'},
+ {id:'mono',name:'Mono',family:'ui-monospace, "Courier New", monospace'}
+];
+const wallpapers = [
+ {src:'assets/forest.jpg',name:'Forest',credit:'Alvin Engler',url:'https://unsplash.com/photos/aerial-view-of-trees-LnbWqObX0TQ'},
+ {src:'assets/lake.jpg',name:'Lake',credit:'Alvin Engler',url:'https://unsplash.com/photos/grass-near-body-of-water-uB1RyCeJl5A'},
+ {src:'assets/ferns.jpg',name:'Ferns',credit:'Alvin Engler',url:'https://unsplash.com/photos/green-ferns-during-daytime-vIf2fJN1vdA'}
+];
+const fresh = () => ({theme:'light',align:'left',size:32,font:'system',wallpaper:'off',wallpaperIndex:0,wallpaperDay:'',dim:65,pins:['phone','messages','maps','camera','spotify'],aliases:{},hidden:[],paused:['instagram']});
+const key = 'stil-design-study-v1';
+let state=fresh();
+try { const saved=JSON.parse(localStorage.getItem(key)); if(saved && ['light','dark','system'].includes(saved.theme) && ['left','right'].includes(saved.align) && [28,32,36].includes(saved.size) && Array.isArray(saved.pins) && Array.isArray(saved.hidden) && Array.isArray(saved.paused) && saved.aliases && typeof saved.aliases==='object') {
+ const valid=x=>catalog.some(a=>a.id===x); state={...fresh(),...saved,pins:[...new Set(saved.pins.filter(valid))].slice(0,6),hidden:saved.hidden.filter(valid),paused:saved.paused.filter(valid)};
+ if(!state.pins.length) state.pins=['phone'];
+} } catch {}
+if(!fonts.some(f=>f.id===state.font))state.font='system';
+if(!['off','daily','keep'].includes(state.wallpaper))state.wallpaper='off';
+if(!Number.isInteger(state.wallpaperIndex)||state.wallpaperIndex<0||state.wallpaperIndex>=wallpapers.length)state.wallpaperIndex=0;
+if(![60,65,70,75,80,85].includes(state.dim))state.dim=65;
+if(typeof state.wallpaperDay!=='string')state.wallpaperDay='';
+let view='home', activeApp='instagram', origin='apps', query='', timer=null, remaining=3, setupPins=[...state.pins], toastTimer=null;
+let demoDays=0;
+const screen=document.getElementById('screen');
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const name=id=>state.aliases[id] || catalog.find(a=>a.id===id)?.name || id;
+const icon=(type)=>type==='gear'?'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="m9.5 3-.6 2.1-1.7 1-2.1-.5-2.5 4.3 1.5 1.6v2L2.6 15l2.5 4.3 2.1-.5 1.7 1 .6 2.1h5l.6-2.1 1.7-1 2.1.5 2.5-4.3-1.5-1.5v-2l1.5-1.6-2.5-4.3-2.1.5-1.7-1L14.5 3z"/><circle cx="12" cy="12.5" r="3"/></svg>':'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="m14 6-6 6 6 6"/></svg>';
+const back=(to='home',label='Back')=>`<div class="topbar"><button data-action="${to}" aria-label="${label}">${icon('back')} ${label}</button></div>`;
+const save=()=>{try{localStorage.setItem(key,JSON.stringify(state));}catch{}};
+function dayStamp(){const d=new Date();d.setDate(d.getDate()+demoDays);return `${d.getFullYear()}-${d.getMonth()+1}-${d.getDate()}`;}
+function nextWallpaper(){state.wallpaperIndex=(state.wallpaperIndex+1+Math.floor(Math.random()*(wallpapers.length-1)))%wallpapers.length;state.wallpaperDay=dayStamp();save();}
+function syncWallpaper(){if(state.wallpaper==='daily'&&state.wallpaperDay!==dayStamp()){nextWallpaper();return true;}return false;}
+function wallpaperBackground(){const image=wallpapers[state.wallpaperIndex];return `linear-gradient(rgb(0 0 0 / ${state.dim/100}),rgb(0 0 0 / ${state.dim/100})),url("${image.src}")`;}
+function applyStyle(){
+ const glass=document.querySelector('.glass');
+ glass.style.setProperty('--launcher-font',fonts.find(f=>f.id===state.font).family);
+ const photo=view==='home'&&state.wallpaper!=='off';
+ glass.classList.toggle('has-wallpaper',photo);
+ glass.style.backgroundImage=photo?wallpaperBackground():'';
+ const preview=document.querySelector('.wallpaper-preview');
+ if(preview)preview.style.backgroundImage=state.wallpaper==='off'?'':wallpaperBackground();
+ document.getElementById('next-day').hidden=view!=='wallpaper'||state.wallpaper!=='daily';
+}
+function theme(){ const dark=state.theme==='dark'||(state.theme==='system'&&matchMedia('(prefers-color-scheme: dark)').matches); document.getElementById('device').dataset.theme=dark?'dark':'light'; document.getElementById('day').setAttribute('aria-pressed',!dark); document.getElementById('night').setAttribute('aria-pressed',dark); }
+function toast(text){clearTimeout(toastTimer);screen.querySelector('.toast')?.remove();const el=document.createElement('div');el.className='toast';el.setAttribute('role','status');el.textContent=text;screen.append(el);toastTimer=setTimeout(()=>el.remove(),2600);}
+const descriptions={
+ home:['Pin up to six apps. Try Day or Night.','The app order stays fixed until you edit it.'],
+ apps:['Search app names or aliases. Try Instagram for the pause.','This catalog contains personal apps only.'],
+ pause:['Open unlocks after three seconds. Cancel returns without launching.','Only launches through Stil pause. Notifications, links, and recent apps can bypass it.'],
+ settings:['Choose a font or wallpaper.','Native accessibility and system text scaling still need device checks.'],
+ font:['Font changes apply across the launcher.','These previews use local browser fonts. Native font families still need to be bundled.'],
+ wallpaper:['Daily shuffles the sample photos. Keep stops rotation.','Next day simulates a date change. Native downloads and background scheduling remain unimplemented.'],
+ setup:['Choose up to six apps, then continue.','The default-home step is simulated. Device settings stay unchanged.'],
+ manage:['Select an app to edit it.','Hidden apps can be restored in Settings.'],
+ edit:['Rename, reorder, or hide this app.','Hiding removes it from Stil, but does not lock it.'],
+ hidden:['Tap Restore to return an app to the list.','Hidden apps remain installed and visible elsewhere in Android.'],
+ launch:['The real launcher would open this app.','Native launch speed and navigation remain untested.'],
+ default:["The real app would open Android's home chooser.",'This demo only saves your selected apps.']
+};
+function notes(){const d=descriptions[view]||descriptions.home;document.getElementById('notes').innerHTML=`<p>${d[0]}</p><p>${d[1]}</p>`;}
+function selectButtons(label,field,options){return `<div class="setting"><label>${label}</label><div class="segmented" role="group" aria-label="${label}">${options.map(([value,text])=>`<button data-pref="${field}" data-value="${value}" aria-pressed="${state[field]===value}">${text}</button>`).join('')}</div></div>`;}
+function results(){const q=query.trim().toLocaleLowerCase();return catalog.filter(a=>!state.hidden.includes(a.id)&&(!q||[a.name,name(a.id)].some(n=>n.toLocaleLowerCase().includes(q)))).sort((a,b)=>name(a.id).localeCompare(name(b.id)));}
+function listResults(){const rows=results();document.getElementById('results').innerHTML=rows.length?rows.map(a=>`<button class="app-row" data-open="${a.id}"><span>${esc(name(a.id))}</span>${state.paused.includes(a.id)?'<span class="mark">Pause</span>':''}</button>`).join(''):`<div class="empty"><strong>No matches</strong><button class="secondary" data-action="clear-search">Clear search</button></div>`;}
+function render(){
+ syncWallpaper();theme();notes();applyStyle();
+ document.querySelectorAll('.tab').forEach(b=>b.setAttribute('aria-pressed', b.dataset.view===view || (['manage','edit','hidden','font','wallpaper'].includes(view)&&b.dataset.view==='settings')));
+ if(view==='home'){
+ screen.innerHTML=`<section class="screen home" data-align="${state.align}" style="--app-size:${state.size}px" aria-label="Home screen"><button class="clock" data-open="clock" aria-label="9:41, Sunday 25 October. Open Clock"><strong>09:41</strong><span>Sunday, 25 October</span></button><div class="home-list">${state.pins.filter(id=>!state.hidden.includes(id)).map(id=>`<button class="home-app" data-open="${id}">${esc(name(id))}</button>`).join('')}</div><div class="home-footer"><button data-action="apps">All apps</button><button data-action="settings" aria-label="Settings">${icon('gear')}</button></div></section>`;
+ } else if(view==='apps'){
+ screen.innerHTML=`<section class="screen" aria-label="All apps"><div class="topbar"><button data-action="home">${icon('back')} Home</button><button data-action="manage">Edit</button></div><h2>All apps</h2><div id="results" class="scroll" aria-live="polite"></div><div class="searchbox"><input aria-label="Search apps" id="app-search" type="search" autocomplete="off" placeholder="Search apps" value="${esc(query)}"></div></section>`;listResults();
+ } else if(view==='pause'){
+ screen.innerHTML=`<section class="screen pause" aria-label="Launch pause"><span class="pause-label">Pause</span><h2>${esc(name(activeApp))}</h2><div class="pause-center"><span class="count" id="count">${remaining||'Ready'}</span></div><div class="pause-actions"><button class="primary" id="continue" data-action="continue" ${remaining?'disabled':''}>Open</button><button class="quiet-button" data-action="stay">Cancel</button></div></section>`;
+ } else if(view==='settings'){
+ screen.innerHTML=`<section class="screen" aria-label="Settings">${back()}<h2>Settings</h2><div class="scroll">${selectButtons('Appearance','theme',[['light','Light'],['dark','Black'],['system','System']])}<button class="setting-link" data-action="font"><span>Font</span><small>${fonts.find(f=>f.id===state.font).name}</small></button><button class="setting-link" data-action="wallpaper"><span>Wallpaper</span><small>${{off:'Off',daily:'Daily',keep:'Keep'}[state.wallpaper]}</small></button>${selectButtons('Alignment','align',[['left','Left'],['right','Right']])}${selectButtons('Text size','size',[[28,'Small'],[32,'Default'],[36,'Large']])}<button class="setting-link" data-action="manage"><span>Home apps</span><small>${state.pins.length} apps</small></button><button class="setting-link" data-action="hidden"><span>Hidden apps</span><small>${state.hidden.length}</small></button><button class="setting-link" data-action="setup"><span>Setup</span></button></div></section>`;
+ } else if(view==='font'){
+ screen.innerHTML=`<section class="screen" aria-label="Font">${back('settings','Settings')}<h2>Font</h2><div class="scroll" role="radiogroup" aria-label="Font family">${fonts.map(f=>`<button class="app-row font-option" style='font-family:${f.family}' data-font="${f.id}" role="radio" tabindex="${state.font===f.id?0:-1}" aria-checked="${state.font===f.id}"><span>${f.name}</span><span class="choice" aria-hidden="true">${state.font===f.id?'✓':''}</span></button>`).join('')}</div><div class="bottom-action"><button class="secondary" data-action="home">Preview home</button></div></section>`;
+ } else if(view==='wallpaper'){
+ const current=wallpapers[state.wallpaperIndex],photo=state.wallpaper!=='off';
+ screen.innerHTML=`<section class="screen" aria-label="Wallpaper">${back('settings','Settings')}<h2>Wallpaper</h2><div class="scroll"><div class="wallpaper-preview ${photo?'photo':''}" aria-label="${photo?current.name:'Plain'} wallpaper preview"><strong>09:41</strong><span>Phone<br>Messages</span></div>${selectButtons('Rotation','wallpaper',[['off','Off'],['daily','Daily'],['keep','Keep']])}<div class="wallpaper-actions"><button class="secondary" data-action="next-wallpaper" ${photo?'':'disabled'}>Next image</button><button class="secondary" data-action="home">Preview home</button></div><div class="setting"><div class="dim-row"><label for="wallpaper-dim">Dim</label><output id="dim-value" for="wallpaper-dim">${state.dim}%</output></div><input id="wallpaper-dim" type="range" min="60" max="85" step="5" value="${state.dim}" ${photo?'':'disabled'}></div><p class="photo-credit">${photo?`${current.name} by <a href="${current.url}" target="_blank" rel="noreferrer">${current.credit}</a>`:'Plain background'}</p><p class="hint">Sample photos</p></div></section>`;
+ } else if(view==='manage'){
+ const pinned=state.pins.filter(id=>!state.hidden.includes(id));const others=catalog.filter(a=>!state.pins.includes(a.id)&&!state.hidden.includes(a.id));
+ screen.innerHTML=`<section class="screen" aria-label="Manage home">${back('settings','Settings')}<h2>Home apps</h2><div class="scroll"><p class="hint">Home (${pinned.length}/6)</p>${pinned.map((id,i)=>`<button class="app-row" data-edit="${id}"><span>${esc(name(id))}</span><span class="mark">${i+1}</span></button>`).join('')}<p class="hint">Other apps</p>${others.map(a=>`<button class="app-row" data-edit="${a.id}"><span>${esc(name(a.id))}</span></button>`).join('')}</div></section>`;
+ } else if(view==='edit'){
+ const pinned=state.pins.includes(activeApp), index=state.pins.indexOf(activeApp);
+ screen.innerHTML=`<section class="screen" aria-label="Edit app">${back('manage','Apps')}<div class="scroll"><h2>${esc(catalog.find(a=>a.id===activeApp).name)}</h2><form class="edit-form" id="rename-form"><label for="app-name">Name</label><input id="app-name" maxlength="32" value="${esc(name(activeApp))}" required><button class="primary" type="submit">Save</button></form><button class="setting-link" data-action="pin"><span>${pinned?'Remove from home':'Add to home'}</span><small>${pinned?'Pinned':`${state.pins.length} of 6`}</small></button>${pinned?`<div class="edit-actions"><button class="secondary" data-move="-1" ${index===0?'disabled':''}>Move up</button><button class="secondary" data-move="1" ${index===state.pins.length-1?'disabled':''}>Move down</button></div>`:''}<button class="setting-link" data-action="toggle-pause"><span>Launch pause</span><small>${state.paused.includes(activeApp)?'On':'Off'}</small></button><p class="hint">3 seconds. Only in Stil.</p><button class="setting-link" data-action="hide"><span>Hide from Stil</span></button><p class="hint">Restore in Settings > Hidden apps.</p></div></section>`;
+ } else if(view==='hidden'){
+ screen.innerHTML=`<section class="screen" aria-label="Hidden apps">${back('settings','Settings')}<h2>Hidden apps</h2><p class="plain-copy">Apps stay installed.</p><div class="scroll">${state.hidden.length?state.hidden.map(id=>`<button class="app-row" data-restore="${id}" aria-label="Restore ${esc(name(id))}"><span>${esc(name(id))}</span><span class="mark">Restore</span></button>`).join(''):'<p class="empty">No hidden apps.</p>'}</div></section>`;
+ } else if(view==='setup'){
+ screen.innerHTML=`<section class="screen setup" aria-label="Setup"><div class="setup-brand">stil</div><h2>Choose home apps</h2><div class="scroll">${catalog.filter(a=>!state.hidden.includes(a.id)).map(a=>`<button class="app-row" data-choose="${a.id}" aria-pressed="${setupPins.includes(a.id)}"><span>${esc(name(a.id))}</span><span class="choice" aria-hidden="true">${setupPins.includes(a.id)?'✓':''}</span></button>`).join('')}</div><div class="bottom-action"><p class="hint" id="setup-count">${setupPins.length}/6 selected</p><button class="primary" data-action="default" ${setupPins.length?'':'disabled'}>Continue</button></div></section>`;
+ } else if(view==='default'){
+ screen.innerHTML=`<section class="screen launch" aria-label="Simulated default launcher chooser"><span class="hint">Demo</span><h2>Use Stil as home?</h2><button class="primary" data-action="use-stil">Use Stil</button><button class="quiet-button" data-action="setup">Not now</button><p class="hint">Device settings stay unchanged.</p></section>`;
+ } else if(view==='launch'){
+ screen.innerHTML=`<section class="screen launch" aria-label="Simulated app launch"><span class="hint">Demo launch</span><h2>${esc(name(activeApp))}</h2><button class="primary" data-action="home">Home</button></section>`;
+ }
+ applyStyle();
+}
+function go(next,{focus=true}={}){clearInterval(timer);clearTimeout(toastTimer);view=next;if(next==='setup')setupPins=state.pins.filter(id=>!state.hidden.includes(id));render();if(focus){const heading=screen.querySelector('h2')||screen.querySelector('button');heading?.setAttribute('tabindex','-1');heading?.focus({preventScroll:true});}}
+function pause(id,from){clearInterval(timer);origin=from;activeApp=id;remaining=3;go('pause');timer=setInterval(()=>{if(view!=='pause'){clearInterval(timer);return;}remaining--;const count=document.getElementById('count'),button=document.getElementById('continue');count.textContent=remaining||'Ready';button.textContent='Open';button.disabled=remaining>0;if(!remaining){clearInterval(timer);}},1000);}
+function open(id){if(state.paused.includes(id))pause(id,view);else{activeApp=id;go('launch');}}
+document.addEventListener('click',event=>{
+ const b=event.target.closest('button');if(!b||b.disabled)return;
+ if(b.dataset.view){if(b.dataset.view==='pause')pause('instagram','home');else go(b.dataset.view);return;}
+ if(b.dataset.theme){state.theme=b.dataset.theme;save();theme();if(view==='settings')render();return;}
+ if(b.dataset.font){state.font=b.dataset.font;save();render();screen.querySelector(`[data-font="${state.font}"]`)?.focus({preventScroll:true});return;}
+ if(b.dataset.pref){state[b.dataset.pref]=b.dataset.pref==='size'?Number(b.dataset.value):b.dataset.value;save();render();const target=[...screen.querySelectorAll('[data-pref]')].find(n=>n.dataset.pref===b.dataset.pref&&n.dataset.value===b.dataset.value);target?.focus({preventScroll:true});return;}
+ if(b.dataset.open){open(b.dataset.open);return;}
+ if(b.dataset.edit){activeApp=b.dataset.edit;go('edit');return;}
+ if(b.dataset.choose){const id=b.dataset.choose;if(setupPins.includes(id))setupPins=setupPins.filter(x=>x!==id);else if(setupPins.length<6)setupPins.push(id);else{toast('Six apps max. Remove one first.');return;}b.setAttribute('aria-pressed',setupPins.includes(id));b.querySelector('.choice').textContent=setupPins.includes(id)?'✓':'';document.getElementById('setup-count').textContent=`${setupPins.length}/6 selected`;screen.querySelector('[data-action=default]').disabled=!setupPins.length;return;}
+ if(b.dataset.restore){state.hidden=state.hidden.filter(x=>x!==b.dataset.restore);save();render();toast(`${name(b.dataset.restore)} restored.`);return;}
+ if(b.dataset.move){const i=state.pins.indexOf(activeApp),j=i+Number(b.dataset.move);if(i>=0&&j>=0&&j<state.pins.length){[state.pins[i],state.pins[j]]=[state.pins[j],state.pins[i]];save();render();}return;}
+ const a=b.dataset.action;
+ if(a==='next-wallpaper'){nextWallpaper();render();return;}
+ if(a==='continue'){go('launch');return;}
+ if(a==='stay'){go(origin==='pause'?'apps':origin);return;}
+ if(a==='clear-search'){query='';render();screen.querySelector('input').focus();return;}
+ if(a==='use-stil'){state.pins=[...setupPins];save();go('home');toast('Home saved.');return;}
+ if(a==='pin'){if(state.pins.includes(activeApp)){if(state.pins.length===1){toast('Keep one home app.');return;}state.pins=state.pins.filter(x=>x!==activeApp);}else if(state.pins.length<6)state.pins.push(activeApp);else{toast('Six apps max. Remove one first.');return;}save();render();return;}
+ if(a==='toggle-pause'){state.paused=state.paused.includes(activeApp)?state.paused.filter(x=>x!==activeApp):[...state.paused,activeApp];save();render();return;}
+ if(a==='hide'){if(state.pins.includes(activeApp)&&state.pins.length===1){toast('Keep one home app.');return;}state.hidden.push(activeApp);state.pins=state.pins.filter(x=>x!==activeApp);save();go('manage');toast('Hidden. Restore in Settings.');return;}
+ if(a)go(a);
+});
+screen.addEventListener('input',event=>{if(event.target.id==='app-search'){query=event.target.value;listResults();}if(event.target.id==='wallpaper-dim'){state.dim=Number(event.target.value);document.getElementById('dim-value').textContent=`${state.dim}%`;applyStyle();save();}});
+screen.addEventListener('keydown',event=>{
+ if(event.target.id==='app-search'&&event.key==='Enter'){event.preventDefault();const first=results()[0];if(first)open(first.id);}
+ if(event.target.dataset.font&&['ArrowUp','ArrowDown','ArrowLeft','ArrowRight','Home','End'].includes(event.key)){
+  event.preventDefault();const index=fonts.findIndex(f=>f.id===state.font);
+  const next=event.key==='Home'?0:event.key==='End'?fonts.length-1:(index+(['ArrowUp','ArrowLeft'].includes(event.key)?-1:1)+fonts.length)%fonts.length;
+  screen.querySelector(`[data-font="${fonts[next].id}"]`).click();
+ }
+});
+screen.addEventListener('submit',event=>{if(event.target.id==='rename-form'){event.preventDefault();const input=document.getElementById('app-name');const next=input.value.trim();if(!next){input.setCustomValidity('Enter an app name.');input.reportValidity();input.addEventListener('input',()=>input.setCustomValidity(''),{once:true});return;}state.aliases[activeApp]=next;save();go('manage');toast('Name saved.');}});
+document.getElementById('reset').addEventListener('click',()=>{state=fresh();query='';demoDays=0;save();go('home');toast('Reset.');});
+document.getElementById('next-day').addEventListener('click',()=>{demoDays++;render();toast('Next day.');});
+document.addEventListener('visibilitychange',()=>{if(!document.hidden&&syncWallpaper()){if(view==='wallpaper')render();else applyStyle();}});
+document.addEventListener('keydown',event=>{if(event.key==='Escape'&&view!=='home'){event.preventDefault();if(view==='pause')go(origin);else go('home');}});
+matchMedia('(prefers-color-scheme: dark)').addEventListener('change',theme);
+render();
+})();
+</script>
+</body>
+</html>
