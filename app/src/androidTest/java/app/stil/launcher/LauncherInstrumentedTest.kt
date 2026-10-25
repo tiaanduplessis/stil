@@ -12,6 +12,8 @@ import androidx.core.content.ContextCompat
 import androidx.work.ListenableWorker
 import androidx.work.testing.TestListenableWorkerBuilder
 import app.stil.launcher.core.FontChoice
+import app.stil.launcher.core.ThemeMode
+import androidx.compose.ui.graphics.toPixelMap
 import app.stil.launcher.core.LauncherSettings
 import app.stil.launcher.core.WallpaperMode
 import app.stil.launcher.data.DailyWallpaperWorker
@@ -64,6 +66,19 @@ class LauncherInstrumentedTest {
         rule.onNodeWithText("Serif").assertIsDisplayed()
     }
 
+    @Test fun blackThemeRendersReadableSettingsText() {
+        runBlocking { graph.settings.update { it.copy(theme = ThemeMode.BLACK) } }
+        rule.waitForIdle()
+        rule.onNodeWithText("Settings").performClick()
+        val pixels = rule.onNodeWithText("Settings").captureToImage().toPixelMap()
+        var lightPixels = 0
+        for (y in 0 until pixels.height) for (x in 0 until pixels.width) {
+            val color = pixels[x, y]
+            if (color.red + color.green + color.blue > 1.5f) lightPixels++
+        }
+        assertTrue("Settings text must be visible on the black background", lightPixels > pixels.width * pixels.height / 100)
+    }
+
     @Test fun renameIsSearchableByAliasAndOriginalName() {
         rule.onNodeWithTag("home_$firstId").performTouchInput { longClick() }
         rule.onNodeWithTag("rename_input").performTextReplacement("Go places")
@@ -73,8 +88,11 @@ class LauncherInstrumentedTest {
         rule.activityRule.scenario.recreate()
         rule.onNodeWithText("All apps").performClick()
         rule.onNodeWithTag("app_search").performTextInput("Go places")
+        rule.waitUntil(5_000) { rule.onNode(hasText("Go places") and hasAnyAncestor(hasTestTag("app_list"))).isDisplayed() }
         rule.onNode(hasText("Go places") and hasAnyAncestor(hasTestTag("app_list"))).assertIsDisplayed()
+        rule.onNodeWithText("All apps").assertIsDisplayed()
         rule.onNodeWithTag("app_search").performTextReplacement("Stil fixture")
+        rule.waitUntil(5_000) { rule.onNode(hasText("Go places") and hasAnyAncestor(hasTestTag("app_list"))).isDisplayed() }
         rule.onNode(hasText("Go places") and hasAnyAncestor(hasTestTag("app_list"))).assertIsDisplayed()
     }
 

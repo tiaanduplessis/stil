@@ -134,7 +134,7 @@ fun StilApp(model: LauncherViewModel, chooseHome: () -> Unit, openClock: () -> U
     MaterialTheme(colorScheme = colors, typography = typography) {
         Box(Modifier.fillMaxSize().background(background)) {
             if (photoHome) WallpaperImage(model, settings)
-            Scaffold(containerColor = Color.Transparent, snackbarHost = { SnackbarHost(snackbar) }) { padding ->
+            Scaffold(containerColor = Color.Transparent, contentColor = foreground, snackbarHost = { SnackbarHost(snackbar) }) { padding ->
                 val content = Modifier.fillMaxSize().padding(padding).consumeWindowInsets(padding).imePadding().padding(horizontal = 28.dp)
                 if (!state.ready) {
                     val loadingLabel = stringResource(R.string.loading)
