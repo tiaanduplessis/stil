@@ -12,7 +12,7 @@
 
 `data/WallpaperRepository.kt` serializes updates, bounds download size and decoded dimensions, writes a new cache file before applying, and retains the previous image on provider/decode failures. Worker and foreground actions share this repository. WorkManager uses unique periodic and catch-up requests, with network constraints. Mode Off/Keep cancels automatic work. Native scheduling is inexact; no exact alarm is requested.
 
-`ui/StilApp.kt` renders Compose screens. Android owns system indicators and role selection. Home uses the selected typeface and optional dimmed photo; other screens use solid backgrounds. Text uses scalable units, rows have minimum touch targets, and toggle/radio controls expose semantics.
+`ui/StilApp.kt` renders Compose screens. Android owns system indicators and role selection. Home uses the selected typeface and optional dimmed photo; other screens use solid backgrounds. Screens share a header, setting row, and app row, and a neutral Material color scheme mapped to the design tokens. Text uses theme type roles in scalable units, rows have minimum touch targets, and toggle/radio controls expose semantics.
 
 ## Quality gates
 

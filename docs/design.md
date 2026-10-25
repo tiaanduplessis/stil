@@ -11,6 +11,7 @@ Stil uses typography and empty space to make a short list of chosen apps the mai
 - Font: System, Sans, Serif, or Mono across the launcher. HTML uses local font stacks without remote downloads. Android uses its local system font families.
 - App labels: 28, 32, or 36 CSS pixels in the prototype, with at least 52px rows. Native type should use scalable `sp` units and adapt the list when system type grows.
 - Home: left aligned by default, optional right alignment; chosen apps sit in the lower portion. The clock anchors the otherwise open upper area.
+- Native list and settings screens share one structure: a 48dp navigation bar, a headline title, then rows. The one-time home prompt stays centered. App names use the title-large role; setting labels use body-large with muted supporting text or values. Spacing, not dividers, separates rows. Chips and buttons share a 40dp visual height with 48dp touch targets.
 
 ## Layout sketch
 
