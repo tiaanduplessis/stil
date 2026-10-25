@@ -10,3 +10,5 @@ evidence/
 captures/
 *.jks
 *.keystore
+__pycache__/
+*.pyc

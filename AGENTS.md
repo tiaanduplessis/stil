@@ -13,7 +13,7 @@ Stil is a native Android launcher in one Kotlin/Compose application module. Read
 ## Constraints
 
 - Before editing, inspect the working tree and fetch the primary branch. Preserve unrelated work.
-- Keep verification local. Do not add hosted CI, publish releases, or change repository visibility without an explicit request.
+- GitHub Actions runs builds, unit tests, lint, emulator tests, and signing-tool tests. Use focused local checks and hosted CI for full runs. Release preparation is manual and creates a draft; publishing releases or changing repository visibility requires an explicit request.
 - Check CPU load, RAM, memory pressure and swap before expensive work. Serialize heavy jobs, keep Gradle to one worker, and do not stop unrelated services or devices.
 - Keep UI copy short. Preserve scalable type, RTL, contrast, touch targets, and Android's disabled-animation setting.
 - Remove outgoing screen content immediately. Never retain private app content or duplicate input fields for a transition.
