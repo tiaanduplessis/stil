@@ -1,6 +1,8 @@
 # Changelog
 
-## Unreleased (0.2.0)
+## 0.2.0 - 2026-10-25
+
+Signed [preview release](https://github.com/tiaanduplessis/stil/releases/tag/v0.2.0). Updates the signed 0.1.0 preview without removing settings.
 
 - Replace home navigation buttons with swipe up for All apps and a hold on empty space for Settings. Keep app editing, accessibility actions, and keyboard navigation available.
 
