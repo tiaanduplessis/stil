@@ -4,6 +4,8 @@ A minimal Android launcher with a short app list, custom fonts, and daily wallpa
 
 **Early development.** Android 8.0 or later. The repository is private, and no APK release has been published yet.
 
+[Build and try Stil](#try-stil) · [User guide](docs/usage.md)
+
 <p>
   <img src="docs/media/home.png" width="220" alt="Stil home with five text app shortcuts, a clock, and a dimmed forest wallpaper">
   <img src="docs/media/apps.png" width="220" alt="All apps filtered by name, with an explicit result to open">
@@ -12,9 +14,9 @@ A minimal Android launcher with a short app list, custom fonts, and daily wallpa
 
 ## See it in use
 
-<a href="docs/media/walkthrough.mp4"><img src="docs/media/walkthrough.gif" width="320" alt="Native walkthrough: open settings, change the font, and return home"></a>
+https://github.com/user-attachments/assets/5ad7722e-87c7-4bee-888e-dca8443d5cdc
 
-[Watch the walkthrough with playback controls (MP4)](docs/media/walkthrough.mp4) · [Text walkthrough](docs/usage.md#walkthrough)
+[Download the walkthrough (MP4)](docs/media/walkthrough.mp4) · [Text walkthrough](docs/usage.md#walkthrough)
 
 These are captures of the Android app, not the HTML prototype. [Media notes and photo credits](docs/media/README.md).
 
