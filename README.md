@@ -14,7 +14,7 @@ A minimal Android launcher with a short app list, custom fonts, and daily wallpa
 
 ## See it in use
 
-https://github.com/user-attachments/assets/4e99b983-85cf-4190-975d-9b2992e97891
+https://github.com/user-attachments/assets/48e13ffa-54a2-4293-bafd-1ffc1d12d761
 
 [Download the walkthrough (MP4)](docs/media/walkthrough.mp4) · [Text walkthrough](docs/usage.md#walkthrough)
 
