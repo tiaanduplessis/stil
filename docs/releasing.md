@@ -1,6 +1,6 @@
 # Releases
 
-Stil uses private GitHub build downloads and manual GitHub Releases. The repository remains private. No signed release has been published, and the durable release key is not configured yet. Publishing a release or changing repository visibility requires an explicit maintainer decision.
+Stil uses private GitHub build downloads and manual GitHub Releases. The first signed preview is [0.1.0](https://github.com/tiaanduplessis/stil/releases/tag/v0.1.0). A durable signing identity is configured in the GitHub `release` environment. The maintainer keeps the encrypted keystore locally, with its password in macOS Keychain; back up both separately. The repository remains private. Publishing a release or changing repository visibility requires an explicit maintainer decision.
 
 ## Test builds
 
@@ -42,7 +42,7 @@ The draft receives:
 - `stil-<version>.apk`, the signed APK.
 - `SHA256SUMS`, its SHA-256 checksum.
 - `release.json`, its source commit, version code, certificate fingerprint, and APK digest.
-- `mapping.txt`, the R8 mapping needed to interpret obfuscated crash traces.
+- `mapping.txt.gz`, the compressed R8 mapping needed to interpret obfuscated crash traces. Decompress it before use.
 
 Verified files and mapping are also retained as a private Actions artifact for 30 days. Draft release assets persist independently of that artifact retention. Existing releases are not overwritten. No release runs automatically on a merge or tag push.
 

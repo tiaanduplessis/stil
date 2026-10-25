@@ -2,7 +2,7 @@
 
 A minimal Android launcher with a short app list, custom fonts, and daily wallpapers.
 
-**Early development.** Android 8.0 or later. The repository is private, and no APK release has been published yet.
+**Preview.** Android 8.0 or later. Repository access is required while Stil is private. [Download Stil 0.1.0](https://github.com/tiaanduplessis/stil/releases/tag/v0.1.0).
 
 [Build and try Stil](#try-stil) · [User guide](docs/usage.md)
 
@@ -22,7 +22,9 @@ These are captures of the Android app, not the HTML prototype. [Media notes and 
 
 ## Try Stil
 
-Download a test APK from a successful [CI run](https://github.com/tiaanduplessis/stil/actions/workflows/ci.yml): open the run, download its `stil-debug` artifact, and extract the APK. Repository access is required while Stil is private. Build downloads expire after seven days.
+Download the signed [0.1.0 APK](https://github.com/tiaanduplessis/stil/releases/download/v0.1.0/stil-0.1.0.apk) and install it on your phone. Android may ask you to allow installation from your browser or file manager. Open Stil, choose your home apps, then select **Use Stil** in Android's default-home picker.
+
+Development APKs are available from successful [CI runs](https://github.com/tiaanduplessis/stil/actions/workflows/ci.yml) as `stil-debug` artifacts. Those downloads expire after seven days.
 
 Or build from source:
 
@@ -38,7 +40,7 @@ Or build from source:
 3. Install `app/build/outputs/apk/debug/app-debug.apk` on your phone. Android may ask you to allow installation from the browser or file manager you used.
 4. Open Stil, choose one to six home apps, then select **Use Stil** in Android's default-home picker.
 
-Debug APKs are for testing; builds from different runners may require uninstalling the previous debug build, which removes its settings. The manual release workflow requires a configured signing key; no signed release has been published. To switch launchers later, use **Settings → Default home app**. More setup and recovery steps are in the [user guide](docs/usage.md).
+Remove a debug install before installing the signed preview; their signing identities differ, and uninstalling removes settings. Debug builds from different runners may also require a fresh install. To switch launchers later, use **Settings → Default home app**. More setup and recovery steps are in the [user guide](docs/usage.md).
 
 ## What it does
 
