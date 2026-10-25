@@ -99,13 +99,13 @@ jobs:
           --tag "$TAG" --commit "$SOURCE_COMMIT"
           --build-tools "$ANDROID_HOME/build-tools/35.0.0"
           --output .artifacts/release
+      - name: Compress crash mapping
+        run: gzip -c app/build/outputs/mapping/release/mapping.txt > .artifacts/release/mapping.txt.gz
       - name: Retain verified files and obfuscation mapping
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: signed-${{ inputs.tag }}-${{ github.run_id }}
-          path: |
-            .artifacts/release/
-            app/build/outputs/mapping/release/mapping.txt
+          path: .artifacts/release/
           include-hidden-files: true
           if-no-files-found: error
           retention-days: 30
@@ -117,6 +117,6 @@ jobs:
         run: |
           remote_commit=$(gh api "repos/$GITHUB_REPOSITORY/commits/$TAG" --jq .sha)
           [[ "$remote_commit" == "$SOURCE_COMMIT" ]] || { echo 'The tag moved during verification.'; exit 1; }
-          gh release create "$TAG" .artifacts/release/*.apk .artifacts/release/SHA256SUMS .artifacts/release/release.json app/build/outputs/mapping/release/mapping.txt \
+          gh release create "$TAG" .artifacts/release/*.apk .artifacts/release/SHA256SUMS .artifacts/release/release.json .artifacts/release/mapping.txt.gz \
             --verify-tag --draft --title "Stil $TAG" --generate-notes
           echo "Draft release prepared for $TAG at $SOURCE_COMMIT. Review and publish it manually." >> "$GITHUB_STEP_SUMMARY"
