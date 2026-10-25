@@ -2,7 +2,7 @@
 
 A minimal Android launcher with a short app list, custom fonts, and daily wallpapers.
 
-**Preview.** Android 8.0 or later. Repository access is required while Stil is private. [Download Stil 0.1.0](https://github.com/tiaanduplessis/stil/releases/tag/v0.1.0).
+**Preview.** Android 8.0 or later. Repository access is required while Stil is private. [Download Stil 0.2.0](https://github.com/tiaanduplessis/stil/releases/tag/v0.2.0).
 
 [Build and try Stil](#try-stil) · [User guide](docs/usage.md)
 
@@ -22,7 +22,7 @@ These are captures of the Android app, not the HTML prototype. [Media notes and 
 
 ## Try Stil
 
-Download the signed [0.1.0 APK](https://github.com/tiaanduplessis/stil/releases/download/v0.1.0/stil-0.1.0.apk) and install it on your phone. Android may ask you to allow installation from your browser or file manager. Open Stil, choose your home apps, then select **Use Stil** in Android's default-home picker.
+Download the signed [0.2.0 APK](https://github.com/tiaanduplessis/stil/releases/download/v0.2.0/stil-0.2.0.apk) and install it on your phone. Android may ask you to allow installation from your browser or file manager. Open Stil, choose your home apps, then select **Use Stil** in Android's default-home picker.
 
 Development APKs are available from successful [CI runs](https://github.com/tiaanduplessis/stil/actions/workflows/ci.yml) as `stil-debug` artifacts. Those downloads expire after seven days.
 
@@ -44,7 +44,7 @@ Remove a debug install before installing the signed preview; their signing ident
 
 ## What it does
 
-- **A short home screen.** Swipe up for apps; hold empty space for settings. Pin up to six apps, rename and reorder them, or hide apps and restore them later. Search finds original names and aliases. Gestures are in the current source build; the 0.1.0 preview uses home buttons.
+- **A short home screen.** Swipe up for apps; hold empty space for settings. Pin up to six apps, rename and reorder them, or hide apps and restore them later. Search finds original names and aliases.
 - **Your type and background.** Choose System, Sans, Serif, or Mono; Light, Dark, or System appearance; alignment and text size. Use daily photos, keep one, or turn wallpaper off.
 - **A deliberate pause.** Selected apps can wait three seconds before an explicit **Open**. **Cancel** returns immediately.
 - **Separate profiles.** Work apps have profile controls. On supported devices, Private space has its own lockable container and search. Private apps stay out of global search and home pins.
