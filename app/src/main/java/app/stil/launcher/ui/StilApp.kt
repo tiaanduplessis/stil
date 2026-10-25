@@ -171,6 +171,7 @@ fun StilApp(model: LauncherViewModel, chooseHome: () -> Unit, openClock: () -> U
                     Screen.SETUP -> SetupScreen(model, settings, content)
                     Screen.DEFAULT -> Column(content, verticalArrangement = Arrangement.Center) {
                         Text(stringResource(R.string.use_as_home), style = MaterialTheme.typography.headlineLarge)
+                        Text(stringResource(R.string.home_gestures), Modifier.padding(top = 16.dp), style = MaterialTheme.typography.bodyMedium)
                         Spacer(Modifier.height(28.dp))
                         Button(onClick = { model.navigate(Screen.HOME); chooseHome() }, Modifier.fillMaxWidth()) { Text(stringResource(R.string.use_stil)) }
                         TextButton(onClick = { model.navigate(Screen.HOME) }, Modifier.fillMaxWidth()) { Text(stringResource(R.string.not_now)) }
@@ -207,7 +208,9 @@ private fun HomeScreen(model: LauncherViewModel, settings: LauncherSettings, mod
     val context = LocalContext.current
     val clockFormat = if (DateFormat.is24HourFormat(context)) "HH:mm" else "h:mm"
     val align = if (settings.alignment == Alignment.LEFT) TextAlign.Left else TextAlign.Right
-    BoxWithConstraints(modifier) {
+    BoxWithConstraints(modifier.homeNavigation(
+        onAllApps = { model.navigate(Screen.APPS) }, onSettings = { model.navigate(Screen.SETTINGS) },
+    )) {
         val scale = LocalDensity.current.fontScale
         val time = now.format(DateTimeFormatter.ofPattern(clockFormat))
         val clockSize = minOf(72f, maxWidth.value / (time.length * 0.65f * scale), maxHeight.value * 0.22f / scale).coerceAtLeast(24f)
@@ -221,7 +224,7 @@ private fun HomeScreen(model: LauncherViewModel, settings: LauncherSettings, mod
                 Column(Modifier.fillMaxWidth().verticalScroll(rememberScrollState())) {
                     apps.forEach { app ->
                         Column(Modifier.fillMaxWidth().heightIn(min = 54.dp)
-                            .combinedClickable(onClick = { model.open(app) }, onLongClick = { model.editApp(app) })
+                            .combinedClickable(onClick = { model.open(app) }, onLongClickLabel = stringResource(R.string.edit), onLongClick = { model.editApp(app) })
                             .padding(vertical = 8.dp).testTag("home_${app.id}")) {
                             Text(settings.label(app), Modifier.fillMaxWidth(), fontSize = settings.textSize.sp,
                                 lineHeight = (settings.textSize * 1.3).sp, color = ink, textAlign = align)
@@ -232,10 +235,7 @@ private fun HomeScreen(model: LauncherViewModel, settings: LauncherSettings, mod
                     if (apps.isEmpty()) TextButton(onClick = { model.navigate(Screen.MANAGE) }) { Text(stringResource(R.string.choose_home_apps), color = ink) }
                 }
             }
-            Row(Modifier.fillMaxWidth().padding(top = 12.dp), horizontalArrangement = Arrangement.SpaceBetween) {
-                TextButton(onClick = { model.navigate(Screen.APPS) }) { Text(stringResource(R.string.all_apps), color = ink) }
-                TextButton(onClick = { model.navigate(Screen.SETTINGS) }) { Text(stringResource(R.string.settings), color = ink) }
-            }
+            Spacer(Modifier.fillMaxWidth().height(56.dp).homeDrawerGesture { model.navigate(Screen.APPS) })
         }
     }
 }

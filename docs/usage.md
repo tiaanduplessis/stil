@@ -12,11 +12,15 @@ If the picker does not appear, open Android's default-app settings and choose St
 
 The [README video](media/walkthrough.mp4) shows the native app:
 
-1. Open **Settings** from home.
+1. Hold an empty area of home to open **Settings**.
 2. Open **Font**, choose **Serif**, and select **Preview home**.
-3. Open **All apps** and type **Clock** to filter the list.
+3. Swipe up from the bottom of home and type **Clock** to filter the app list.
 
-Home contains a clock, date, chosen apps, **All apps**, and **Settings**. Tapping the clock opens the device's alarm app when one is available.
+Home contains a clock, date, and chosen apps. Swipe up from the empty area just above Android's navigation bar for **All apps**. Hold empty space for **Settings**. Holding an app opens its edit controls. Tapping the clock opens the device's alarm app when one is available.
+
+TalkBack exposes **All apps** and **Settings** as actions on Home. With a keyboard, focus Home and press Enter or Space for apps, or the Menu key for settings.
+
+These gestures describe the current source build. The 0.1.0 preview uses visible home buttons.
 
 ## Change your home apps
 

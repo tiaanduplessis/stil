@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- Replace home navigation buttons with swipe up for All apps and a hold on empty space for Settings. Keep app editing, accessibility actions, and keyboard navigation available.
+
 ## 0.1.0 - 2026-10-25
 
 First signed [preview release](https://github.com/tiaanduplessis/stil/releases/tag/v0.1.0).

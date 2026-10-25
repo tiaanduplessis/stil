@@ -27,7 +27,7 @@ Messages                   ...
 Maps                       ...
 Camera                     Search apps
 Spotify                    Home / system navigation
-All apps        Settings
+swipe up for apps
 ```
 
 The first design pass considered a decorative wordmark inside the home screen and a focus-session badge. Both were removed: they occupied space without helping someone open an app. The brand belongs in setup and settings. Black and white are deliberate choices for this launcher, not a theme applied to every screen around it.
@@ -45,6 +45,8 @@ Open `mockups/index.html`. The navigation above the phone switches between indep
 7. Reload: supported browser storage retains demo preferences. Reset demo returns to the original sample state.
 
 The browser's own keyboard handles text input; the mockup does not draw a fake keyboard. Phone hardware, system indicators, and Android app launches are illustrative. Swipe-up and long-press shortcuts are not implemented; visible controls cover every demonstrated action.
+
+The current native home removes those navigation controls. Swipe up in the empty bottom area to open All apps; hold empty space to open Settings. Holding a pinned app still edits it. The bottom gesture area sits above Android's navigation bar and outside the scrollable app list. Home exposes both routes as accessibility actions and supports keyboard navigation. Setup explains the gestures once; home adds no hint text or icons.
 
 The mockup is responsive at narrow widths and supports keyboard focus and reduced motion. Native accessibility, system font scaling, profiles, and OEM compatibility still require Android implementation and device testing.
 
