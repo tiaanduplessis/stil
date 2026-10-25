@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Usage and troubleshooting
+    url: https://github.com/tiaanduplessis/stil/blob/main/docs/usage.md
+    about: Setup, fonts, wallpapers, profiles, and switching launchers.
+  - name: Report a security issue privately
+    url: https://github.com/tiaanduplessis/stil/blob/main/SECURITY.md
+    about: Use the maintainer's private email contact rather than an ordinary issue.

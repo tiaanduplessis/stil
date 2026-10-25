@@ -30,7 +30,7 @@ These are product descriptions, not independent evidence of wellbeing benefits. 
 | Quiet home | Five apps by default; allow one to six. Show clock and date. No icons, feeds, badges, or suggested apps. | A predictable starting point without visual competition. |
 | All apps and search | Alphabetical list. Search original names and user aliases locally. Explicit tap or keyboard confirmation to launch. | Find rarely used apps without cluttering home or triggering accidental launches. |
 | Home customization | Pin, unpin, rename, and reorder. Explicit editing screen; long press is a shortcut only. | Personal names and stable ordering without hidden controls. |
-| Appearance | Configurable font family, light/black/system theme, left/right alignment, and text size. Respect system font scaling. | Personal typography without adding home-screen controls. |
+| Appearance | Configurable font family, Light/Dark/System theme, left/right alignment, and text size. Respect system font scaling. | Personal typography without adding home-screen controls. |
 | Daily wallpaper | Optional random daily photo, skip, keep current image, and dimming. Keep the current image when a download fails or the device is offline. | Adds visual variety while preserving readable app names. |
 | Hidden apps | Hide from Stil's home and search; restore through Settings > Hidden apps. Explain that hiding does not secure an app. | Reduce clutter without trapping the user. |
 | Optional launch pause | Off by default. Select apps and require a short pause followed by an explicit Open button. Back out immediately. | Explore deliberate use without delaying every task. |

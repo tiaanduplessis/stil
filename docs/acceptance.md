@@ -8,7 +8,7 @@ The baseline is the HTML prototype. No Android application existed before this i
 | App discovery and launch | Enumerate real launcher activities by component and user serial; react to package changes; start the selected activity | Catalog tests and actual app launch on emulator |
 | Search | Find original names and aliases; confirm before opening; hide excluded apps | Domain tests and Compose tests |
 | Customization | Pin, unpin, rename, reorder, hide, recover; keep 1–6 valid pins | Domain invariants, persistence and UI tests |
-| Appearance | Light/black/system, four font presets, alignment, type sizes; survive process restart | DataStore and device checks |
+| Appearance | Light/Dark/System, four font presets, alignment, type sizes; survive process restart | DataStore and device checks |
 | Pause | Optional per app, off initially; wait three seconds and require Open; Cancel never launches | Timing and Compose tests, device journey |
 | Wallpapers | Optional daily random photo, skip, keep, off, dimming; cache and retain last good image on network failure | Provider, policy, repository and worker tests; live provider/device check |
 | Profiles | Separate work/private containers; paused/locked profiles cannot launch or leak into global search | Domain isolation tests and available profile/device checks |
