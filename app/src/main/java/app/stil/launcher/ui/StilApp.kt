@@ -313,9 +313,9 @@ private fun PrivateSpace(model: LauncherViewModel, settings: LauncherSettings, p
 private fun <T> Choices(label: Int, selected: T, options: List<Pair<T, Int>>, onSelect: (T) -> Unit) {
     Column(Modifier.padding(vertical = 12.dp)) {
         Text(stringResource(label), style = MaterialTheme.typography.labelLarge)
-        Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(4.dp)) {
+        FlowRow(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             options.forEach { (value, name) ->
-                FilterChip(selected == value, { onSelect(value) }, label = { Text(stringResource(name)) }, Modifier.weight(1f).heightIn(min = 48.dp))
+                FilterChip(selected == value, { onSelect(value) }, label = { Text(stringResource(name)) }, Modifier.heightIn(min = 48.dp))
             }
         }
     }
