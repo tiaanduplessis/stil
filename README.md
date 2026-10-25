@@ -22,7 +22,9 @@ These are captures of the Android app, not the HTML prototype. [Media notes and 
 
 ## Try Stil
 
-For now, build the debug APK from source. Repository access is required while Stil is private.
+Download a test APK from a successful [CI run](https://github.com/tiaanduplessis/stil/actions/workflows/ci.yml): open the run, download its `stil-debug` artifact, and extract the APK. Repository access is required while Stil is private. Build downloads expire after seven days.
+
+Or build from source:
 
 1. Install JDK 17 and Android SDK 36. Set `ANDROID_HOME`, or add `sdk.dir=/absolute/path/to/sdk` to an untracked `local.properties` file.
 2. Clone the repository and build:
@@ -36,7 +38,7 @@ For now, build the debug APK from source. Repository access is required while St
 3. Install `app/build/outputs/apk/debug/app-debug.apk` on your phone. Android may ask you to allow installation from the browser or file manager you used.
 4. Open Stil, choose one to six home apps, then select **Use Stil** in Android's default-home picker.
 
-The debug APK is for testing. Signed releases and store distribution are not configured. To switch launchers later, use **Settings → Default home app**. More setup and recovery steps are in the [user guide](docs/usage.md).
+Debug APKs are for testing; builds from different runners may require uninstalling the previous debug build, which removes its settings. The manual release workflow requires a configured signing key; no signed release has been published. To switch launchers later, use **Settings → Default home app**. More setup and recovery steps are in the [user guide](docs/usage.md).
 
 ## What it does
 
@@ -63,7 +65,9 @@ Preferences and cached photos stay on the device. Read the [privacy notes](docs/
 - [Architecture and motion](docs/development.md)
 - [Release preparation](docs/releasing.md)
 
-Verification stays local by maintainer choice; no hosted CI workflow is configured. Kotlin, Jetpack Compose, DataStore, and WorkManager power the native app. The [HTML prototype](mockups/index.html), [research](docs/research.md), and [design notes](docs/design.md) remain development references. The Android app does not use a WebView, and no source was copied from Olauncher.
+[GitHub Actions](https://github.com/tiaanduplessis/stil/actions) runs on app, build, tooling, or workflow changes pushed to `main`. It builds debug and minified release APKs, runs unit tests and lint, and tests on an Android 16 emulator. Manual release checks also cover Android 8.0. [Release setup](docs/releasing.md) covers signing and manual draft releases.
+
+Kotlin, Jetpack Compose, DataStore, and WorkManager power the native app. The [HTML prototype](mockups/index.html), [research](docs/research.md), and [design notes](docs/design.md) remain development references. The Android app does not use a WebView, and no source was copied from Olauncher.
 
 ## License
 
