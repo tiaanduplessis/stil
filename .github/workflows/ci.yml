@@ -128,7 +128,8 @@ jobs:
           profile: pixel_4
           cores: 2
           ram-size: 2560M
-          emulator-boot-timeout: 600
+          disk-size: 2048M
+          emulator-boot-timeout: 300
           disable-animations: false
           enable-hw-keyboard: true
           emulator-options: -no-window -gpu swiftshader_indirect -no-snapshot -noaudio -no-boot-anim -camera-back none -skin 720x1600 -dpi-device 280
