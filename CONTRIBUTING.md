@@ -28,9 +28,28 @@ adb -s "$stil_device" install -r app/build/outputs/apk/androidTest/debug/app-deb
 adb -s "$stil_device" shell am instrument -w -r app.stil.launcher.test/androidx.test.runner.AndroidJUnitRunner
 ```
 
-Expect `OK` with no failures. JVM and Gradle device reports live in `app/build/reports`. Keep extra logs and raw captures in ignored `.artifacts/`. No hosted CI is configured; include local results in the PR.
+Expect `OK` with no failures. JVM and Gradle device reports live in `app/build/reports`. Keep extra logs and raw captures in ignored `.artifacts/`.
 
 Before a large build or device run, check CPU load, available memory, memory pressure, and swap activity. Use one Gradle worker and one test device. Do not stop another project's emulator or service. Gradle uses a bounded heap by default.
+
+## GitHub Actions
+
+App, build, tooling, or workflow changes pushed to `main` build the debug and minified release APKs, run unit tests and lint, test the signing tool with a disposable key, and run device tests on API 36. PRs, scheduled runs, and documentation-only pushes do not run CI. **Actions → CI → Run workflow** on `main` can run the full API 26/36 device matrix on demand; its default is API 36 only. Device jobs run one at a time, with normal animations enabled.
+
+Successful runs provide a debug APK. Reports, logcat, and a final device capture are retained for seven days, including available diagnostics from failed runs. Debug signing keys are generated on each runner: a new CI APK may require uninstalling an older debug build, which removes its settings. Release updates use a separate durable signing key.
+
+The Gradle wrapper JAR is validated by `setup-gradle`, and the Gradle distribution checksum is pinned. Actions use full commit SHAs; Dependabot proposes weekly action updates. CI jobs have read-only repository permissions and no release credentials. Only `main` writes Gradle caches. Superseded main-branch CI runs are canceled. Private repository runs consume the account's Actions allowance; keep artifact retention and device matrices small.
+
+To run signing-tool checks locally after building the unsigned release APK, set the paths for your SDK:
+
+```sh
+./gradlew :app:assembleRelease --max-workers=1 --no-parallel
+export ANDROID_BUILD_TOOLS="$ANDROID_HOME/build-tools/35.0.0"
+export STIL_TEST_APK=app/build/outputs/apk/release/app-release-unsigned.apk
+python3 -m unittest discover -s scripts/tests -v
+```
+
+These tests create and delete a disposable key. They verify real signatures, metadata, checksums, tamper detection, and rejection of invalid release inputs. They do not need production signing credentials. See [release setup](docs/releasing.md) for manual distribution.
 
 ## Keep the launcher quiet
 
