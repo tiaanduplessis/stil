@@ -6,6 +6,10 @@ import android.graphics.BitmapFactory
 import android.os.Build
 import android.text.format.DateFormat
 import androidx.activity.compose.BackHandler
+import androidx.compose.animation.Crossfade
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -139,7 +143,7 @@ fun StilApp(model: LauncherViewModel, chooseHome: () -> Unit, openClock: () -> U
                 if (!state.ready) {
                     val loadingLabel = stringResource(R.string.loading)
                     Box(content, contentAlignment = UiAlignment.Center) { CircularProgressIndicator(Modifier.semantics { contentDescription = loadingLabel }, color = foreground) }
-                } else when (screen) {
+                } else ScreenTransition(screen) { destination -> when (destination) {
                     Screen.HOME -> HomeScreen(model, settings, content, photoHome, openClock)
                     Screen.APPS -> AppsScreen(model, settings, content)
                     Screen.SETTINGS -> SettingsScreen(model, settings, content, chooseHome)
@@ -147,7 +151,10 @@ fun StilApp(model: LauncherViewModel, chooseHome: () -> Unit, openClock: () -> U
                         Header(R.string.font) { model.navigate(Screen.SETTINGS) }
                         Column(Modifier.weight(1f).verticalScroll(rememberScrollState())) {
                             FontChoice.entries.forEach { font ->
-                                Row(Modifier.fillMaxWidth().heightIn(min = 72.dp)
+                                val selectionColor by animateColorAsState(
+                                    if (settings.font == font) foreground.copy(alpha = 0.06f) else Color.Transparent,
+                                    tween(120), label = "font selection")
+                                Row(Modifier.fillMaxWidth().heightIn(min = 72.dp).background(selectionColor, MaterialTheme.shapes.small)
                                     .selectable(settings.font == font, role = Role.RadioButton, onClick = { model.update { it.copy(font = font) } })
                                     .testTag("font_${font.name}"), verticalAlignment = UiAlignment.CenterVertically) {
                                     Text(stringResource(fontLabel(font)), Modifier.weight(1f), fontFamily = font.family(), fontSize = 28.sp)
@@ -172,6 +179,7 @@ fun StilApp(model: LauncherViewModel, chooseHome: () -> Unit, openClock: () -> U
                         PauseScreen(settings.label(app), model.remaining, content, model::confirmOpen, model::cancelPause)
                     }
                 }
+                }
             }
         }
     }
@@ -182,9 +190,12 @@ private fun WallpaperImage(model: LauncherViewModel, settings: LauncherSettings,
     val bitmap by produceState<android.graphics.Bitmap?>(null, settings.wallpaperFile) {
         value = withContext(Dispatchers.IO) { model.graph.wallpapers.currentFile(settings)?.let { BitmapFactory.decodeFile(it.path) } }
     }
-    bitmap?.let { Image(it.asImageBitmap(), null, Modifier.fillMaxSize(), contentScale = ContentScale.Crop) }
-        ?: Image(painterResource(R.drawable.wallpaper_forest), null, Modifier.fillMaxSize(), contentScale = ContentScale.Crop)
-    if (dim) Box(Modifier.fillMaxSize().background(Color.Black.copy(alpha = settings.dim / 100f)))
+    Crossfade(bitmap, Modifier.fillMaxSize(), tween(240), label = "wallpaper") { photo ->
+        photo?.let { Image(it.asImageBitmap(), null, Modifier.fillMaxSize(), contentScale = ContentScale.Crop) }
+            ?: Image(painterResource(R.drawable.wallpaper_forest), null, Modifier.fillMaxSize(), contentScale = ContentScale.Crop)
+    }
+    val dimAmount by animateFloatAsState(settings.dim / 100f, tween(120), label = "wallpaper dim")
+    if (dim) Box(Modifier.fillMaxSize().background(Color.Black.copy(alpha = dimAmount)))
 }
 
 @Composable
