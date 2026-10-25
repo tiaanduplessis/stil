@@ -10,4 +10,3 @@ First signed [preview release](https://github.com/tiaanduplessis/stil/releases/t
 - Daily cached wallpapers, attribution, keep/off controls, and dimming.
 - Work-profile controls and a separate lockable Private space container on supported devices.
 - Short navigation transitions, wallpaper crossfades, and selection feedback that follow Android's animation settings.
-
