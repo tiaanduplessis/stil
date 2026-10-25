@@ -32,8 +32,8 @@ android {
     testOptions { unitTests.isIncludeAndroidResources = true }
     lint {
         warningsAsErrors = true
-        // Pinned SDK 36 dependencies are intentional; upgrade notices remain visible.
-        informational += setOf("GradleDependency", "NewerVersionAvailable", "AndroidGradlePluginVersion")
+        // SDK 36 is tested and intentional; toolchain and target upgrade notices stay visible.
+        informational += setOf("GradleDependency", "NewerVersionAvailable", "AndroidGradlePluginVersion", "OldTargetApi")
     }
     packaging { resources.excludes += "/META-INF/{AL2.0,LGPL2.1}" }
 }
