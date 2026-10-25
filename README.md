@@ -65,7 +65,7 @@ Preferences and cached photos stay on the device. Read the [privacy notes](docs/
 - [Architecture and motion](docs/development.md)
 - [Release preparation](docs/releasing.md)
 
-[GitHub Actions](https://github.com/tiaanduplessis/stil/actions) builds debug and minified release APKs, runs unit tests and lint, and tests on an Android 16 emulator. Nightly and release checks also cover Android 8.0. [Release setup](docs/releasing.md) covers signing and manual draft releases.
+[GitHub Actions](https://github.com/tiaanduplessis/stil/actions) runs on app, build, tooling, or workflow changes pushed to `main`. It builds debug and minified release APKs, runs unit tests and lint, and tests on an Android 16 emulator. Manual release checks also cover Android 8.0. [Release setup](docs/releasing.md) covers signing and manual draft releases.
 
 Kotlin, Jetpack Compose, DataStore, and WorkManager power the native app. The [HTML prototype](mockups/index.html), [research](docs/research.md), and [design notes](docs/design.md) remain development references. The Android app does not use a WebView, and no source was copied from Olauncher.
 

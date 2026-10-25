@@ -20,7 +20,7 @@ Run the commands in the README with JDK 17. Builds use one worker and a bounded 
 
 Lint treats correctness and accessibility warnings as errors. Dependency availability checks remain visible as informational hints. The SDK 36/AGP 8.13 toolchain and compatible dependency versions are pinned; newer core libraries require SDK 37 and AGP 9.1. Upgrade them together after testing that toolchain, rather than making every build depend on the newest remote version.
 
-GitHub Actions runs these gates and API 36 device tests on PRs and `main`. Nightly and manual release checks also cover API 26. CI builds a minified unsigned release APK and tests the release-signing script with a disposable key. The manual release workflow verifies the exact tagged source before signing and creating a draft GitHub Release. A durable signing key must be configured separately; store publishing is not configured. See [release setup](releasing.md).
+GitHub Actions runs these gates and API 36 device tests only for app, build, tooling, or workflow changes pushed to `main`, or a manual run from `main`. It does not run on PRs or a schedule. Manual release checks also cover API 26. CI builds a minified unsigned release APK and tests the release-signing script with a disposable key. The manual release workflow verifies the exact tagged source before signing and creating a draft GitHub Release. A durable signing key must be configured separately; store publishing is not configured. See [release setup](releasing.md).
 
 ## Device tests
 

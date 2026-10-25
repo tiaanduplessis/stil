@@ -34,11 +34,11 @@ Before a large build or device run, check CPU load, available memory, memory pre
 
 ## GitHub Actions
 
-PRs and pushes to `main` build the debug and minified release APKs, run unit tests and lint, test the signing tool with a disposable key, and run device tests on API 36. Nightly runs at 03:23 UTC also test API 26. **Actions → CI → Run workflow** can run the full device matrix on demand. Device jobs run one at a time, with normal animations enabled.
+App, build, tooling, or workflow changes pushed to `main` build the debug and minified release APKs, run unit tests and lint, test the signing tool with a disposable key, and run device tests on API 36. PRs, scheduled runs, and documentation-only pushes do not run CI. **Actions → CI → Run workflow** on `main` can run the full API 26/36 device matrix on demand; its default is API 36 only. Device jobs run one at a time, with normal animations enabled.
 
 Successful runs provide a debug APK. Reports, logcat, and a final device capture are retained for seven days, including available diagnostics from failed runs. Debug signing keys are generated on each runner: a new CI APK may require uninstalling an older debug build, which removes its settings. Release updates use a separate durable signing key.
 
-The Gradle wrapper JAR is validated by `setup-gradle`, and the Gradle distribution checksum is pinned. Actions use full commit SHAs; Dependabot proposes weekly action updates. PR jobs have read-only repository permissions and no release credentials. Only `main` writes Gradle caches. Superseded PR runs are canceled. Private repository runs consume the account's Actions allowance; keep artifact retention and device matrices small.
+The Gradle wrapper JAR is validated by `setup-gradle`, and the Gradle distribution checksum is pinned. Actions use full commit SHAs; Dependabot proposes weekly action updates. CI jobs have read-only repository permissions and no release credentials. Only `main` writes Gradle caches. Superseded main-branch CI runs are canceled. Private repository runs consume the account's Actions allowance; keep artifact retention and device matrices small.
 
 To run signing-tool checks locally after building the unsigned release APK, set the paths for your SDK:
 

@@ -6,7 +6,7 @@ Stil uses private GitHub build downloads and manual GitHub Releases. The reposit
 
 Open a successful [CI run](https://github.com/tiaanduplessis/stil/actions/workflows/ci.yml) and download its `stil-debug` artifact. Extract the ZIP and install the APK. Downloads require repository access and expire after seven days. Each runner generates a debug signing key, so updating a previous debug install may require uninstalling it first; that removes its settings. A debug install cannot be upgraded to the release signing identity.
 
-PRs and pushes to `main` run builds, unit tests, lint, signing-tool checks, and API 36 emulator tests. Nightly runs at 03:23 UTC also test API 26. Actions use Ubuntu runners, pinned commits, Gradle caching, one Gradle worker, bounded timeouts, and short artifact retention. Private runs consume the account's Actions allowance.
+App, build, tooling, or workflow changes pushed to `main` run builds, unit tests, lint, signing-tool checks, and API 36 emulator tests. PRs, scheduled runs, and documentation-only pushes do not run CI. Manual CI runs from `main` can include API 26; releases always verify both API 26 and 36. Actions use Ubuntu runners, pinned commits, Gradle caching, one Gradle worker, bounded timeouts, and short artifact retention. Private runs consume the account's Actions allowance.
 
 ## Configure release signing once
 
@@ -30,7 +30,7 @@ Android signing background: [app signing](https://developer.android.com/studio/p
 ## Prepare a candidate
 
 1. Start from current `main`; record the commit. Update `versionName` and increase `versionCode` in `app/build.gradle.kts`. Update [CHANGELOG.md](../CHANGELOG.md).
-2. Merge the candidate through CI. Walk setup/default home, real app launch, search, aliases/hiding/recovery, fonts/themes, pause, offline photo failure, and available work/private profiles on a physical device. Emulator checks do not establish OEM compatibility.
+2. Merge the candidate to `main` and wait for its CI run to pass. Walk setup/default home, real app launch, search, aliases/hiding/recovery, fonts/themes, pause, offline photo failure, and available work/private profiles on a physical device. Emulator checks do not establish OEM compatibility.
 3. Review bundled media and resolved dependency notices. Review repository history for credentials or private material before any visibility change. Confirm the [security contact](../SECURITY.md) is monitored and test delivery through the maintainer.
 4. Create and push an annotated tag matching `versionName`, for example `v0.1.0`. The workflow accepts `vX.Y.Z` and prerelease forms such as `v0.1.0-beta.1`. The tag must point to a commit already on `main`.
 5. Open **Actions → Release → Run workflow**, select branch **main**, and enter the existing tag. Dispatching the workflow authorizes preparation of a draft, not publication.

@@ -1,17 +1,23 @@
 name: CI
 
 on:
-  pull_request:
   push:
     branches: [main]
-  schedule:
-    - cron: '23 3 * * *'
+    paths:
+      - 'app/**'
+      - 'gradle/**'
+      - 'gradlew'
+      - 'gradlew.bat'
+      - '*.gradle.kts'
+      - 'gradle.properties'
+      - '.github/workflows/**'
+      - 'scripts/**'
   workflow_dispatch:
     inputs:
       full_device_matrix:
         description: Test both the minimum and target Android versions
         type: boolean
-        default: true
+        default: false
   workflow_call:
     inputs:
       ref:
@@ -26,8 +32,8 @@ permissions:
   contents: read
 
 concurrency:
-  group: ci-${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}-${{ inputs.ref }}
-  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+  group: ci-${{ github.workflow }}-${{ inputs.ref || github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'push' }}
 
 env:
   GRADLE_OPTS: -Dorg.gradle.daemon=false
@@ -35,6 +41,7 @@ env:
 jobs:
   quality:
     name: Build, unit tests, lint
+    if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-24.04
     timeout-minutes: 25
     steps:
@@ -89,7 +96,7 @@ jobs:
       fail-fast: false
       max-parallel: 1
       matrix:
-        api: ${{ fromJSON((github.event_name == 'schedule' || inputs.full_device_matrix) && '[26,36]' || '[36]') }}
+        api: ${{ fromJSON(inputs.full_device_matrix && '[26,36]' || '[36]') }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
