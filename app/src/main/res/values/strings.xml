@@ -45,6 +45,7 @@
     <string name="selected_count">%1$d/6 selected</string>
     <string name="continue_label">Continue</string>
     <string name="use_as_home">Use Stil as home?</string>
+    <string name="home_gestures">Swipe up for apps. Hold empty space for settings.</string>
     <string name="use_stil">Use Stil</string>
     <string name="not_now">Not now</string>
     <string name="preview_home">Preview home</string>

@@ -5,6 +5,7 @@ The baseline is the HTML prototype. No Android application existed before this i
 | Requirement | Expected result | Proof |
 | --- | --- | --- |
 | Default home and setup | Choose 1–6 apps, preview, request Android home role; a visible route changes the default later | Instrumented setup tests and emulator role check |
+| Quiet home navigation | Swipe up from the bottom opens All apps; hold empty space opens Settings; pinned app holds still edit; accessibility and keyboard routes remain available | Gesture, cancellation, pin interaction, semantics, and keyboard device tests |
 | App discovery and launch | Enumerate real launcher activities by component and user serial; react to package changes; start the selected activity | Catalog tests and actual app launch on emulator |
 | Search | Find original names and aliases; confirm before opening; hide excluded apps | Domain tests and Compose tests |
 | Customization | Pin, unpin, rename, reorder, hide, recover; keep 1–6 valid pins | Domain invariants, persistence and UI tests |
