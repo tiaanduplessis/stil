@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## Unreleased (0.2.0)
 
 - Replace home navigation buttons with swipe up for All apps and a hold on empty space for Settings. Keep app editing, accessibility actions, and keyboard navigation available.
 
