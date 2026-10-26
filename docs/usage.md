@@ -26,7 +26,9 @@ These gestures are available in the [0.2.1 preview](https://github.com/tiaandupl
 
 Long-press a home app, or open **Settings → Home apps** and choose an app. Rename it, move it, remove it from home, hide it, or add a launch pause. Stil keeps at least one home app and allows at most six.
 
-Search matches the original app name and any alias. Search does not open an app while you type. Tap a result, or use the keyboard's search action to open the first available match.
+Search matches the original app name and any alias. When your text leaves one available match, Stil opens it. Apps with a launch pause still wait for confirmation. With several matches, keep typing, tap a result, or use the keyboard's search action to open the first available match. Empty searches and unavailable apps do not auto-launch.
+
+The slide-up drawer and automatic search launch are unreleased. The 0.3.0 preview and existing walkthrough show the earlier search flow.
 
 **Hide from Stil** removes an app from Stil's lists; it does not uninstall or disable it. Restore it under **Settings → Hidden apps**. These controls do not hide an app from Android settings or other launchers.
 

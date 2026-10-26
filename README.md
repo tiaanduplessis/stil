@@ -8,7 +8,7 @@ A minimal Android launcher with a short app list, custom fonts, and daily wallpa
 
 <p>
   <img src="docs/media/home.png" width="220" alt="Stil home with a clock, date, and five text app shortcuts on a plain Dark background">
-  <img src="docs/media/apps.png" width="220" alt="All apps filtered by name, with an explicit result to open">
+  <img src="docs/media/apps.png" width="220" alt="All apps showing Calendar and Camera for the search ca">
   <img src="docs/media/settings.png" width="220" alt="Stil settings with Dark appearance selected and controls for fonts and wallpapers">
 </p>
 
@@ -19,6 +19,8 @@ https://github.com/user-attachments/assets/48e13ffa-54a2-4293-bafd-1ffc1d12d761
 [Download the walkthrough (MP4)](docs/media/walkthrough.mp4) · [Text walkthrough](docs/usage.md#walkthrough)
 
 These are captures of the Android app, not the HTML prototype. [Media notes and photo credits](docs/media/README.md).
+
+The next version adds a slide-up app drawer and opens the sole search match as you type. [Watch the new search flow (MP4)](docs/media/app-search.mp4). These changes are not in the 0.3.0 download.
 
 ## Try Stil
 

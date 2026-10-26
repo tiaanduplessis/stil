@@ -129,14 +129,14 @@ class FoldableInstrumentedTest {
 
     @Test fun searchTextAndFocusSurvivePostureChangesAndActivityRecreation() {
         apps()
-        rule.onNodeWithTag("app_search").performClick().performTextInput("My phone")
+        rule.onNodeWithTag("app_search").performClick().performTextInput("Stil fixture")
         rule.onNodeWithTag("app_search").performTextInputSelection(androidx.compose.ui.text.TextRange(2))
         publish(fraction = 0.5f)
-        rule.onNodeWithTag("app_search").assertTextContains("My phone").assertIsFocused().assert(SemanticsMatcher.expectValue(SemanticsProperties.TextSelectionRange, androidx.compose.ui.text.TextRange(2)))
+        rule.onNodeWithTag("app_search").assertTextContains("Stil fixture").assertIsFocused().assert(SemanticsMatcher.expectValue(SemanticsProperties.TextSelectionRange, androidx.compose.ui.text.TextRange(2)))
         rule.activityRule.scenario.recreate()
         waitFor("app_search")
         publish(fraction = 0.6f)
-        rule.onNodeWithTag("app_search").assertTextContains("My phone").assertIsFocused().assert(SemanticsMatcher.expectValue(SemanticsProperties.TextSelectionRange, androidx.compose.ui.text.TextRange(2)))
+        rule.onNodeWithTag("app_search").assertTextContains("Stil fixture").assertIsFocused().assert(SemanticsMatcher.expectValue(SemanticsProperties.TextSelectionRange, androidx.compose.ui.text.TextRange(2)))
         rule.onNode(hasText("My phone") and hasAnyAncestor(hasTestTag("app_list"))).assertIsDisplayed()
     }
 

@@ -7,7 +7,8 @@ The baseline is the HTML prototype. No Android application existed before this i
 | Default home and setup | Choose 1–6 apps, preview, request Android home role; a visible route changes the default later | Instrumented setup tests and emulator role check |
 | Quiet home navigation | Swipe up from the bottom opens All apps; hold empty space opens Settings; pinned app holds still edit; accessibility and keyboard routes remain available | Gesture, cancellation, pin interaction, semantics, and keyboard device tests |
 | App discovery and launch | Enumerate real launcher activities by component and user serial; react to package changes; start the selected activity | Catalog tests and actual app launch on emulator |
-| Search | Find original names and aliases; confirm before opening; hide excluded apps | Domain tests and Compose tests |
+| Search | Find original names and aliases; a committed nonblank edit with one available match opens it; multiple matches stay visible; launch pauses still require confirmation; hidden/private apps stay excluded | Domain, IME edit, and real-activity device tests |
+| App drawer motion | All apps slides up within its safe pane; outgoing content is removed immediately; interrupted navigation and disabled animations work | Controlled-clock device tests and native recording |
 | Customization | Pin, unpin, rename, reorder, hide, recover; keep 1–6 valid pins | Domain invariants, persistence and UI tests |
 | Appearance | Light/Dark/System, four font presets, alignment, type sizes; survive process restart | DataStore and device checks |
 | Pause | Optional per app, off initially; wait three seconds and require Open; Cancel never launches | Timing and Compose tests, device journey |

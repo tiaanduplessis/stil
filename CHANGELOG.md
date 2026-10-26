@@ -1,5 +1,10 @@
 # Changelog
 
+## Unreleased
+
+- Slide All apps up from the bottom, following Android's animation setting.
+- Open the only available search match as you type, including aliases. Keep launch pauses and wait for IME composition to finish.
+
 ## 0.3.0 - 2026-10-26
 
 Signed [preview release](https://github.com/tiaanduplessis/stil/releases/tag/v0.3.0). Updates the signed 0.2.1 preview with the same key and version code 4.
