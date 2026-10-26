@@ -2,7 +2,7 @@
 
 A minimal Android launcher with a short app list, custom fonts, and daily wallpapers.
 
-**Preview.** Android 8.0 or later. Repository access is required while Stil is private. [Download Stil 0.3.0](https://github.com/tiaanduplessis/stil/releases/tag/v0.3.0).
+**Preview.** Android 8.0 or later. Repository access is required while Stil is private. [Download Stil 0.4.0](https://github.com/tiaanduplessis/stil/releases/tag/v0.4.0).
 
 [Build and try Stil](#try-stil) · [User guide](docs/usage.md)
 
@@ -20,11 +20,11 @@ https://github.com/user-attachments/assets/48e13ffa-54a2-4293-bafd-1ffc1d12d761
 
 These are captures of the Android app, not the HTML prototype. [Media notes and photo credits](docs/media/README.md).
 
-The next version adds a slide-up app drawer and opens the sole search match as you type. [Watch the new search flow (MP4)](docs/media/app-search.mp4). These changes are not in the 0.3.0 download.
+In 0.4.0, All apps slides up and opens the sole search match as you type. [Watch the search flow (MP4)](docs/media/app-search.mp4).
 
 ## Try Stil
 
-Download the signed [0.3.0 APK](https://github.com/tiaanduplessis/stil/releases/download/v0.3.0/stil-0.3.0.apk) and install it on your phone. Android may ask you to allow installation from your browser or file manager. Open Stil, choose your home apps, then select **Use Stil** in Android's default-home picker.
+Download the signed [0.4.0 APK](https://github.com/tiaanduplessis/stil/releases/download/v0.4.0/stil-0.4.0.apk) and install it on your phone. Android may ask you to allow installation from your browser or file manager. Open Stil, choose your home apps, then select **Use Stil** in Android's default-home picker.
 
 Development APKs are available from successful [CI runs](https://github.com/tiaanduplessis/stil/actions/workflows/ci.yml) as `stil-debug` artifacts. Those downloads expire after seven days.
 

@@ -10,7 +10,7 @@ If the picker does not appear, open Android's default-app settings and choose St
 
 ## Walkthrough
 
-The [README video](media/walkthrough.mp4) shows the native app:
+The original [README video](media/walkthrough.mp4) shows the native app's settings and earlier search flow:
 
 1. Hold an empty area of home to open **Settings**.
 2. Open **Font**, choose **Serif**, and select **Preview home**.
@@ -28,7 +28,7 @@ Long-press a home app, or open **Settings → Home apps** and choose an app. Ren
 
 Search matches the original app name and any alias. When your text leaves one available match, Stil opens it. Apps with a launch pause still wait for confirmation. With several matches, keep typing, tap a result, or use the keyboard's search action to open the first available match. Empty searches and unavailable apps do not auto-launch.
 
-The slide-up drawer and automatic search launch are unreleased. The 0.3.0 preview and existing walkthrough show the earlier search flow.
+The slide-up drawer and automatic search launch are available in the [0.4.0 preview](https://github.com/tiaanduplessis/stil/releases/tag/v0.4.0). The [search video](media/app-search.mp4) shows the new flow. Install it over the signed 0.3.0 preview to keep your settings.
 
 **Hide from Stil** removes an app from Stil's lists; it does not uninstall or disable it. Restore it under **Settings → Hidden apps**. These controls do not hide an app from Android settings or other launchers.
 

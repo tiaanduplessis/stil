@@ -6,7 +6,7 @@ These are captures of the native Android app on an Android 16 emulator. No HTML 
 - `apps.png`: refreshed on 26 October 2026, showing Calendar and Camera for `ca` in Dark appearance with Serif. The on-screen keyboard has been dismissed.
 - `settings.png`: Dark appearance selected; the saved setting remains compatible with existing installs.
 - `walkthrough.mp4`: hold empty home space → Settings → Font → Serif → Preview home → swipe up → Clock search. Android's touch indicators show the gestures. Motion runs at normal speed; trailing idle time was removed.
-- `app-search.mp4`: captured on 26 October 2026 from the unreleased search update. Swipe up → tap Search apps → tap Gboard's `c` and `l` keys → Clock opens automatically. The 240 ms drawer transition and keyboard motion run at normal speed. The 0.3.0 download uses the earlier search behavior.
+- `app-search.mp4`: captured on 26 October 2026 from the search update released in 0.4.0. Swipe up → tap Search apps → tap Gboard's `c` and `l` keys → Clock opens automatically. The 240 ms drawer transition and keyboard motion run at normal speed.
 The README embeds the video through GitHub's hosted player. The MP4 is also kept here for local playback and as a portable fallback. Access to the hosted attachment follows GitHub's repository permissions. Recheck playback after a fork or visibility change.
 
 These captures use a plain background. Earlier README media in Git history used [James Forbes's forest photo](https://unsplash.com/photos/jrzvClypPq8), downloaded through Lorem Picsum (photo 190), under the [Unsplash License](https://unsplash.com/license). The app's offline fallback and prototype sample credits are listed in [third-party notices](../../THIRD_PARTY_NOTICES.md).
