@@ -73,7 +73,7 @@ For reproducible bugs, [open an issue](https://github.com/tiaanduplessis/stil/is
 
 ## Fold and flip devices
 
-Available in source builds after 0.2.1. The published 0.2.1 preview does not include these layouts.
+Available in the signed [0.3.0 preview](https://github.com/tiaanduplessis/stil/releases/tag/v0.3.0).
 
 Open or close the device as usual. Narrow windows use one column; wider windows place the clock beside your apps. In tabletop posture, the clock sits above the fold and apps sit below it. The left/right alignment setting chooses the app side. Large text and short panes scroll when needed.
 
