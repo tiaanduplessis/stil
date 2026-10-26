@@ -1,6 +1,6 @@
 # README media
 
-These are captures of the native Android app on an Android 16 emulator, taken on 25 October 2026. No HTML mockup or generated phone UI is used. These captures show the typography and spacing refinements in the current source; the published 0.2.0 preview has the earlier screen layouts.
+These are captures of the native Android app on an Android 16 emulator, taken on 25 October 2026. No HTML mockup or generated phone UI is used. These captures show the typography and spacing refinements in the 0.2.1 preview.
 
 - `home.png`: Serif home with five apps in Dark appearance, using gestures instead of navigation buttons.
 - `apps.png`: a name search for Clock in Dark appearance. This emulator uses a hardware keyboard.

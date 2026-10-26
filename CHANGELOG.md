@@ -1,6 +1,8 @@
 # Changelog
 
-## Unreleased (0.2.1)
+## 0.2.1 - 2026-10-26
+
+Signed [preview release](https://github.com/tiaanduplessis/stil/releases/tag/v0.2.1). Updates the signed 0.2.0 preview without removing settings.
 
 - Unify screen headers, typography, spacing, setting rows, and neutral control colours.
 - Improve app editing and wallpaper controls at large text sizes; keep Back and Preview home reachable.
