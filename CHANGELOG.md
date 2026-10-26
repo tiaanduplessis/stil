@@ -1,5 +1,12 @@
 # Changelog
 
+## Unreleased (0.2.1)
+
+- Unify screen headers, typography, spacing, setting rows, and neutral control colours.
+- Improve app editing and wallpaper controls at large text sizes; keep Back and Preview home reachable.
+- Refresh native screenshots and the walkthrough to match the refined UI.
+- Fix emulator CI scripts, diagnostic cleanup, and setup-test timing.
+
 ## 0.2.0 - 2026-10-25
 
 Signed [preview release](https://github.com/tiaanduplessis/stil/releases/tag/v0.2.0). Updates the signed 0.1.0 preview without removing settings.
