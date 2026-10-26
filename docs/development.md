@@ -10,6 +10,8 @@
 
 `LauncherViewModel` owns user actions and navigation. The launch pause uses elapsed real time, survives configuration changes through the ViewModel, and requires explicit confirmation. App launches recheck current profile and activity availability.
 
+All apps auto-launches when a committed, nonblank text edit leaves exactly one available result. The same search rules match aliases and original names and preserve profile identities. IME composition waits for commitment. Cursor moves, restored queries, and catalog or preference updates do not launch. The action uses the normal launch route, including per-app pauses.
+
 `data/WallpaperRepository.kt` serializes updates, bounds download size and decoded dimensions, writes a new cache file before applying, and retains the previous image on provider/decode failures. Worker and foreground actions share this repository. WorkManager uses unique periodic and catch-up requests, with network constraints. Mode Off/Keep cancels automatic work. Native scheduling is inexact; no exact alarm is requested.
 
 `ui/StilApp.kt` renders Compose screens. Android owns system indicators and role selection. Home uses the selected typeface and optional dimmed photo; other screens use solid backgrounds. Screens share a header, setting row, and app row, and a neutral Material color scheme mapped to the design tokens. Text uses theme type roles in scalable units, rows have minimum touch targets, and toggle/radio controls expose semantics.
@@ -40,6 +42,6 @@ API 26–27 work-profile controls open Android settings because the public quiet
 
 ## Motion
 
-Navigation uses a 160 ms entrance fade from 92% opacity with an 8 dp shift that follows navigation depth and layout direction. Initial rendering and the launch-pause flow stay immediate. Each new screen disposes the old content at once, including private app content and input fields; navigation never waits for an animation.
+All apps enters with a 240 ms upward slide from the bottom of its reading pane. The pane clips motion so content cannot cross a separating hinge. Other navigation uses a 160 ms entrance fade from 92% opacity with an 8 dp shift that follows navigation depth and layout direction. Initial rendering and the launch-pause flow stay immediate. Each new screen disposes the old content at once, including private app content and input fields; navigation never waits for an animation.
 
 Wallpaper changes crossfade over 240 ms, with 120 ms dimming and font-selection feedback. There are no repeating or idle animations. Compose's platform motion-duration scale controls these effects, including Android's disabled-animation setting. Device tests use a controlled animation clock to check interrupted navigation, interaction during transitions, and zero-duration motion.

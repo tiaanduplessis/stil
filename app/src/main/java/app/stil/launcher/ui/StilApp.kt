@@ -180,9 +180,10 @@ fun StilApp(model: LauncherViewModel, chooseHome: () -> Unit, openClock: () -> U
                         Box(Modifier.fillMaxSize(), contentAlignment = UiAlignment.Center) {
                             CircularProgressIndicator(Modifier.semantics { contentDescription = loadingLabel }, color = foreground)
                         }
-                    } else ScreenTransition(screen) { destination ->
-                        if (destination == Screen.HOME) HomeScreen(model, settings, Modifier.fillMaxSize(), window, photoHome, openClock)
-                        else SafePane(window, settings.alignment) { page ->
+                    } else ScreenTransition(screen) { destination, motion ->
+                        if (destination == Screen.HOME) HomeScreen(model, settings, Modifier.fillMaxSize().then(motion), window, photoHome, openClock)
+                        else SafePane(window, settings.alignment) { pane ->
+                            val page = pane.then(motion)
                             when (destination) {
                                 Screen.APPS -> AppsScreen(model, settings, page)
                                 Screen.SETTINGS -> SettingsScreen(model, settings, page, chooseHome)
@@ -419,7 +420,14 @@ private fun AppsScreen(model: LauncherViewModel, settings: LauncherSettings, mod
                 }
             }
         }
-        OutlinedTextField(query, { query = it }, Modifier.fillMaxWidth().padding(top = 8.dp).testTag("app_search").restoreFieldFocus(),
+        OutlinedTextField(query, { next ->
+            val committedEdit = isCommittedSearchEdit(query, next)
+            query = next
+            if (committedEdit) LauncherRules.singleSearchMatch(state.catalog.apps, settings, next.text)?.let { app ->
+                keyboard?.hide()
+                model.open(app)
+            }
+        }, Modifier.fillMaxWidth().padding(top = 8.dp).testTag("app_search").restoreFieldFocus(),
             label = { Text(stringResource(R.string.search_apps)) }, singleLine = true,
             keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
             keyboardActions = KeyboardActions(onSearch = { results.firstOrNull { it.available }?.let { keyboard?.hide(); model.open(it) } }))

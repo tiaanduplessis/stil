@@ -50,6 +50,28 @@ class LauncherRulesTest {
         assertEquals(32, LauncherRules.rename(original, apps.first().id, "x".repeat(100)).settings.aliases.getValue(apps.first().id).length)
     }
 
+    @Test fun `automatic search opens only one nonblank available match including aliases`() {
+        val renamed = settings.copy(aliases = mapOf(apps.first().id to "Go places"))
+        assertEquals(apps.first(), LauncherRules.singleSearchMatch(apps, renamed, " GO PLA "))
+        assertEquals(apps.first(), LauncherRules.singleSearchMatch(apps, renamed, "app 1"))
+        assertNull(LauncherRules.singleSearchMatch(apps, settings, "app"))
+        assertNull(LauncherRules.singleSearchMatch(apps, settings, "absent"))
+        assertNull(LauncherRules.singleSearchMatch(apps.take(1), settings, "  "))
+        assertNull(LauncherRules.singleSearchMatch(listOf(apps.first().copy(available = false)), settings, "app 1"))
+    }
+
+    @Test fun `automatic search excludes hidden and private apps and keeps profile ambiguity`() {
+        val personal = apps.first()
+        val work = personal.copy(id = "12:pkg1/Main", profile = ProfileKind.WORK)
+        val private = personal.copy(id = "14:pkg1/Main", profile = ProfileKind.PRIVATE)
+        assertEquals(personal, LauncherRules.singleSearchMatch(listOf(personal, private), settings, "app 1"))
+        assertNull(LauncherRules.singleSearchMatch(listOf(private), settings, "app 1"))
+        assertNull(LauncherRules.singleSearchMatch(apps, settings.copy(hidden = setOf(personal.id)), "app 1"))
+        assertNull(LauncherRules.singleSearchMatch(listOf(personal, work), settings, "app 1"))
+        assertNull(LauncherRules.singleSearchMatch(listOf(personal, work.copy(available = false)), settings, "app 1"))
+        assertEquals(work, LauncherRules.singleSearchMatch(listOf(work), settings, "app 1"))
+    }
+
     @Test fun `reordering preserves identity and other app order`() {
         val moved = LauncherRules.move(settings, apps[2].id, -1)
         assertEquals(listOf(apps[0].id, apps[2].id, apps[1].id, apps[3].id, apps[4].id), moved.pins)
