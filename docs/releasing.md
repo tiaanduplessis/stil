@@ -1,12 +1,12 @@
 # Releases
 
-Stil uses private GitHub build downloads and manual GitHub Releases. The current signed preview is [0.2.0](https://github.com/tiaanduplessis/stil/releases/tag/v0.2.0). It updates the signed 0.1.0 preview with the same signing identity. A durable signing identity is configured in the GitHub `release` environment. The maintainer keeps the encrypted keystore locally, with its password in macOS Keychain; back up both separately. The repository remains private. Publishing a release or changing repository visibility requires an explicit maintainer decision.
+Stil uses private GitHub build downloads and manual GitHub Releases. The current signed preview is [0.2.1](https://github.com/tiaanduplessis/stil/releases/tag/v0.2.1). It updates the signed 0.2.0 preview with the same signing identity. A durable signing identity is configured in the GitHub `release` environment. The maintainer keeps the encrypted keystore locally, with its password in macOS Keychain; back up both separately. The repository remains private. Publishing a release or changing repository visibility requires an explicit maintainer decision.
 
 ## Test builds
 
 Open a successful [CI run](https://github.com/tiaanduplessis/stil/actions/workflows/ci.yml) and download its `stil-debug` artifact. Extract the ZIP and install the APK. Downloads require repository access and expire after seven days. Each runner generates a debug signing key, so updating a previous debug install may require uninstalling it first; that removes its settings. A debug install cannot be upgraded to the release signing identity.
 
-App, build, tooling, or workflow changes pushed to `main` run builds, unit tests, lint, signing-tool checks, and API 36 emulator tests. PRs, scheduled runs, and documentation-only pushes do not run CI. Manual CI runs from `main` can include API 26; releases always verify both API 26 and 36. Actions use Ubuntu runners, pinned commits, Gradle caching, one Gradle worker, bounded timeouts, and short artifact retention. Private runs consume the account's Actions allowance.
+App, build, tooling, or workflow changes pushed to `main` run builds, unit tests, lint, signing-tool checks, and API 36 emulator tests. PRs, scheduled runs, and documentation-only pushes do not run CI. Manual CI runs from `main` can include API 26; the release workflow verifies both API 26 and 36. Local private previews record their actual device coverage in the release notes. Actions use Ubuntu runners, pinned commits, Gradle caching, one Gradle worker, bounded timeouts, and short artifact retention. Private runs consume the account's Actions allowance.
 
 ## Configure release signing once
 
