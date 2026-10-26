@@ -77,6 +77,9 @@ object LauncherRules {
         }
     }
 
+    fun singleSearchMatch(apps: List<LaunchableApp>, settings: LauncherSettings, query: String): LaunchableApp? =
+        if (query.isBlank()) null else search(apps, settings, query).singleOrNull()?.takeIf { it.available }
+
     fun pin(settings: LauncherSettings, app: LaunchableApp): SettingsEdit = when {
         app.profile == ProfileKind.PRIVATE -> SettingsEdit(settings, EditError.PRIVATE_HOME_APP)
         app.id in settings.pins -> SettingsEdit(settings)

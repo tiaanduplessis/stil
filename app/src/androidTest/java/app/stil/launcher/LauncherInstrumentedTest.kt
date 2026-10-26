@@ -91,13 +91,16 @@ class LauncherInstrumentedTest {
         repeat(3) { rule.onNodeWithText("Back").performClick() }
         rule.activityRule.scenario.recreate()
         openApps()
-        rule.onNodeWithTag("app_search").performTextInput("Go places")
+        rule.onNodeWithTag("app_search").performTextInput("Stil fixture")
         rule.waitUntil(5_000) { rule.onNode(hasText("Go places") and hasAnyAncestor(hasTestTag("app_list"))).isDisplayed() }
         rule.onNode(hasText("Go places") and hasAnyAncestor(hasTestTag("app_list"))).assertIsDisplayed()
         rule.onNodeWithText("All apps").assertIsDisplayed()
-        rule.onNodeWithTag("app_search").performTextReplacement("Stil fixture")
-        rule.waitUntil(5_000) { rule.onNode(hasText("Go places") and hasAnyAncestor(hasTestTag("app_list"))).isDisplayed() }
-        rule.onNode(hasText("Go places") and hasAnyAncestor(hasTestTag("app_list"))).assertIsDisplayed()
+        observeLaunch { launched ->
+            rule.onNodeWithTag("app_search").performTextReplacement("Go places")
+            rule.waitUntil(15_000) { launched.get() != null }
+            assertEquals(FixtureActivity::class.java.name, launched.get())
+            returnToStil()
+        }
     }
 
     @Test fun hiddenAppCanBeRecovered() {
@@ -115,6 +118,66 @@ class LauncherInstrumentedTest {
         rule.onNodeWithText("Hidden apps").performScrollTo().performClick()
         rule.onNodeWithText("Stil fixture", substring = false).performClick()
         rule.waitUntil(5_000) { runBlocking { firstId !in graph.settings.current().hidden } }
+    }
+
+    @Test fun narrowingSearchToOneMatchLaunchesAndReopeningStartsWithAnEmptyQuery() {
+        observeLaunch { launched ->
+            openApps()
+            rule.onNodeWithTag("app_search").performTextInput("Stil fixture")
+            rule.onNodeWithTag("app_search").assertIsDisplayed()
+            assertNull(launched.get())
+            rule.onNodeWithTag("app_search").performTextInput(" extra")
+            rule.waitUntil(15_000) { launched.get() != null }
+            assertEquals(SecondFixtureActivity::class.java.name, launched.get())
+            returnToStil()
+            rule.onNodeWithTag("home_surface").assertIsDisplayed()
+            openApps()
+            rule.onNodeWithTag("app_search").assertTextEquals("Search apps", "")
+        }
+    }
+
+    @Test fun emptyMissingAndMultipleSearchMatchesStayInTheDrawer() {
+        observeLaunch { launched ->
+            openApps()
+            rule.onNodeWithTag("app_search").performTextInput("no app matches this query")
+            rule.onNodeWithText("No matches").assertIsDisplayed()
+            rule.onNodeWithText("Clear search").performClick()
+            rule.onNodeWithTag("app_search").performTextInput("   ")
+            rule.onNodeWithTag("app_search").assertIsDisplayed()
+            rule.onNodeWithTag("app_search").performTextReplacement("Stil fixture")
+            rule.onNodeWithTag("app_search").assertIsDisplayed()
+            assertNull(launched.get())
+        }
+    }
+
+    @Test fun resultChangesRestorationAndCursorMovementCannotAutoLaunch() {
+        observeLaunch { launched ->
+            openApps()
+            rule.onNodeWithTag("app_search").performClick().performTextInput("Unique alias")
+            rule.onNodeWithText("No matches").assertIsDisplayed()
+            runBlocking { graph.settings.update { it.copy(aliases = mapOf(firstId to "Unique alias")) } }
+            rule.waitUntil(5_000) { rule.onNode(hasText("Unique alias") and hasAnyAncestor(hasTestTag("app_list"))).isDisplayed() }
+            rule.activityRule.scenario.recreate()
+            rule.onNodeWithTag("app_search").assertTextContains("Unique alias").assertIsFocused()
+            rule.onNodeWithTag("app_search").performTextInputSelection(androidx.compose.ui.text.TextRange(2))
+            rule.onNodeWithTag("app_search").assertIsDisplayed()
+            assertNull(launched.get())
+        }
+    }
+
+    @Test fun automaticMatchKeepsThePauseAndCancelDoesNotLaunch() {
+        observeLaunch { launched ->
+            runBlocking { graph.settings.update { it.copy(paused = setOf(secondId)) } }
+            rule.waitForIdle()
+            openApps()
+            rule.onNodeWithTag("app_search").performTextInput("Stil fixture extra")
+            rule.onNodeWithTag("confirm_open").assertIsNotEnabled()
+            rule.waitUntil(6_000) { rule.onAllNodesWithText("Ready").fetchSemanticsNodes().isNotEmpty() }
+            assertNull(launched.get())
+            rule.onNodeWithText("Cancel").performClick()
+            rule.onNodeWithTag("app_search").assertIsDisplayed()
+            assertNull(launched.get())
+        }
     }
 
     @Test fun cancelPauseNeverLaunchesTheApp() {
@@ -238,12 +301,20 @@ class LauncherInstrumentedTest {
         rule.onNodeWithText("Appearance").assertIsDisplayed()
     }
 
+    private fun returnToStil() {
+        rule.activity.runOnUiThread {
+            rule.activity.startActivity(Intent(rule.activity, MainActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT))
+        }
+        rule.waitUntil(10_000) { rule.onAllNodesWithTag("home_surface").fetchSemanticsNodes(atLeastOneRootRequired = false).isNotEmpty() }
+    }
+
     private fun observeLaunch(block: (AtomicReference<String?>) -> Unit) {
         val launched = AtomicReference<String?>(null)
         val receiver = object : BroadcastReceiver() {
             override fun onReceive(context: Context, intent: Intent) { launched.set(intent.getStringExtra("activity")) }
         }
-        ContextCompat.registerReceiver(rule.activity, receiver, IntentFilter("app.stil.launcher.test.FIXTURE_OPENED"), ContextCompat.RECEIVER_EXPORTED)
-        try { block(launched) } finally { rule.activity.unregisterReceiver(receiver) }
+        val context = rule.activity.applicationContext
+        ContextCompat.registerReceiver(context, receiver, IntentFilter("app.stil.launcher.test.FIXTURE_OPENED"), ContextCompat.RECEIVER_EXPORTED)
+        try { block(launched) } finally { context.unregisterReceiver(receiver) }
     }
 }
