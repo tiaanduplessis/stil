@@ -2,7 +2,7 @@
 
 A minimal Android launcher with a short app list, custom fonts, and daily wallpapers.
 
-**Preview.** Android 8.0 or later. Repository access is required while Stil is private. [Download Stil 0.2.1](https://github.com/tiaanduplessis/stil/releases/tag/v0.2.1).
+**Preview.** Android 8.0 or later. Repository access is required while Stil is private. [Download Stil 0.3.0](https://github.com/tiaanduplessis/stil/releases/tag/v0.3.0).
 
 [Build and try Stil](#try-stil) · [User guide](docs/usage.md)
 
@@ -22,7 +22,7 @@ These are captures of the Android app, not the HTML prototype. [Media notes and 
 
 ## Try Stil
 
-Download the signed [0.2.1 APK](https://github.com/tiaanduplessis/stil/releases/download/v0.2.1/stil-0.2.1.apk) and install it on your phone. Android may ask you to allow installation from your browser or file manager. Open Stil, choose your home apps, then select **Use Stil** in Android's default-home picker.
+Download the signed [0.3.0 APK](https://github.com/tiaanduplessis/stil/releases/download/v0.3.0/stil-0.3.0.apk) and install it on your phone. Android may ask you to allow installation from your browser or file manager. Open Stil, choose your home apps, then select **Use Stil** in Android's default-home picker.
 
 Development APKs are available from successful [CI runs](https://github.com/tiaanduplessis/stil/actions/workflows/ci.yml) as `stil-debug` artifacts. Those downloads expire after seven days.
 
@@ -48,14 +48,14 @@ Remove a debug install before installing the signed preview; their signing ident
 - **Your type and background.** Choose System, Sans, Serif, or Mono; Light, Dark, or System appearance; alignment and text size. Use daily photos, keep one, or turn wallpaper off.
 - **A deliberate pause.** Selected apps can wait three seconds before an explicit **Open**. **Cancel** returns immediately.
 - **Separate profiles.** Work apps have profile controls. On supported devices, Private space has its own lockable container and search. Private apps stay out of global search and home pins.
-- **Fold and flip layouts.** Source builds after 0.2.1 adapt Home to narrow, wide, and tabletop windows, with hinge clearance and continuous editing. The published 0.2.1 preview does not include this yet.
+- **Fold and flip layouts.** Home adapts to narrow, wide, and tabletop windows, with hinge clearance and continuous editing.
 - **Quiet motion.** Short transitions respond to navigation and selection. Android's animation settings control them.
 
 Private space requires Android 15 or later and selection as the default home app. Profile availability and system gestures vary by device. Runtime verification currently uses an Android 16 emulator; physical devices have not yet been tested.
 
-## Foldable source preview
+## Fold and flip devices
 
-These layouts are in source builds after 0.2.1.
+Home adjusts when you open, close, or partly fold the device.
 
 <p>
   <img src="docs/media/fold-wide.png" width="360" alt="Unfolded Stil home with a clock on the left and five right-aligned apps on the right">
