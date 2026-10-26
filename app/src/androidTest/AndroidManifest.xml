@@ -12,5 +12,17 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name="app.stil.launcher.ThirdFixtureActivity" android:exported="true" android:label="Stil fixture three">
+            <intent-filter><action android:name="android.intent.action.MAIN" /><category android:name="android.intent.category.LAUNCHER" /></intent-filter>
+        </activity>
+        <activity android:name="app.stil.launcher.FourthFixtureActivity" android:exported="true" android:label="Stil fixture four">
+            <intent-filter><action android:name="android.intent.action.MAIN" /><category android:name="android.intent.category.LAUNCHER" /></intent-filter>
+        </activity>
+        <activity android:name="app.stil.launcher.FifthFixtureActivity" android:exported="true" android:label="Stil fixture five">
+            <intent-filter><action android:name="android.intent.action.MAIN" /><category android:name="android.intent.category.LAUNCHER" /></intent-filter>
+        </activity>
+        <activity android:name="app.stil.launcher.SixthFixtureActivity" android:exported="true" android:label="Stil fixture six">
+            <intent-filter><action android:name="android.intent.action.MAIN" /><category android:name="android.intent.category.LAUNCHER" /></intent-filter>
+        </activity>
     </application>
 </manifest>

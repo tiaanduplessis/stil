@@ -70,3 +70,11 @@ Profile setup, unlock prompts, gestures, and availability depend on Android and 
 | You want to stop using Stil | Select another home app in Android's default-app settings before uninstalling. |
 
 For reproducible bugs, [open an issue](https://github.com/tiaanduplessis/stil/issues/new/choose) with Android version, device model, steps, and the expected result. Keep personal app names, account details, and message contents out of captures.
+
+## Fold and flip devices
+
+Available in source builds after 0.2.1. The published 0.2.1 preview does not include these layouts.
+
+Open or close the device as usual. Narrow windows use one column; wider windows place the clock beside your apps. In tabletop posture, the clock sits above the fold and apps sit below it. The left/right alignment setting chooses the app side. Large text and short panes scroll when needed.
+
+Swipe up at either safe bottom edge on a book fold to open All apps. Hold empty space for Settings. Your search, cursor position, unsaved name, and launch pause continue when the window changes. Cover-display access depends on Android and the device maker; Stil does not install a separate cover-screen widget.
