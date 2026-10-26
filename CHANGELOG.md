@@ -1,6 +1,8 @@
 # Changelog
 
-## Unreleased
+## 0.4.0 - 2026-10-26
+
+Release candidate for the app search update.
 
 - Slide All apps up from the bottom, following Android's animation setting.
 - Open the only available search match as you type, including aliases. Keep launch pauses and wait for IME composition to finish.
