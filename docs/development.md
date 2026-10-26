@@ -32,7 +32,7 @@ GitHub Actions runs these gates and API 36 device tests only for app, build, too
 
 ## Device tests
 
-The instrumentation APK provides six exported launcher activities in its test-only manifest. They establish real catalog discovery and cross-package launch behavior without relying on a third-party app. The production APK has no test activities or test hooks.
+The instrumentation APK provides six exported launcher activities in its test-only manifest. They establish real catalog discovery and cross-package launch behavior without relying on a third-party app. The production APK has no test activities or test hooks. Foldable tests publish hinge bounds through WindowManager's test rule; the book scenario temporarily lowers display density when needed for two readable panes, then restores the original override. The launch fixture uses the foreground broadcast queue so its signal remains prompt on busy emulators.
 
 Storage and wallpaper tests use separate temporary DataStore files and injected photo sources. They establish persistence, invalid-state recovery, network/decode failure handling, and disabled-worker behavior. Live photo delivery is a separate manual check and depends on the provider/network.
 

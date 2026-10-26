@@ -39,6 +39,7 @@ class FoldableInstrumentedTest {
     private lateinit var firstId: String
     private lateinit var pins: List<String>
     private var originalFontScale = 1f
+    private var densityToRestore: String? = null
 
     @Before fun configure() {
         originalFontScale = Settings.System.getFloat(rule.activity.contentResolver, Settings.System.FONT_SCALE, 1f)
@@ -55,16 +56,16 @@ class FoldableInstrumentedTest {
         shell("settings put system font_scale $originalFontScale")
         rule.activityRule.scenario.onActivity { it.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED }
         folds.overrideWindowLayoutInfo(TestWindowLayoutInfo())
+        densityToRestore?.let { shell("wm density $it") }
     }
 
-    private fun shell(command: String) {
-        InstrumentationRegistry.getInstrumentation().uiAutomation.executeShellCommand(command).use { descriptor ->
-            android.os.ParcelFileDescriptor.AutoCloseInputStream(descriptor).use { it.readBytes() }
-        }
-    }
+    private fun shell(command: String): String =
+        android.os.ParcelFileDescriptor.AutoCloseInputStream(
+            InstrumentationRegistry.getInstrumentation().uiAutomation.executeShellCommand(command)
+        ).bufferedReader().use { it.readText() }
 
     private fun waitFor(tag: String) {
-        rule.waitUntil(10_000) { rule.onAllNodesWithTag(tag).fetchSemanticsNodes().isNotEmpty() }
+        rule.waitUntil(10_000) { rule.onAllNodesWithTag(tag).fetchSemanticsNodes(atLeastOneRootRequired = false).isNotEmpty() }
         rule.waitForIdle()
     }
 
@@ -104,6 +105,13 @@ class FoldableInstrumentedTest {
     }
 
     @Test fun bookPostureKeepsBothBottomGesturesAndMirrorsThePinnedPane() {
+        // This scenario requires two readable panes; the CI phone defaults to only 582x214dp in landscape.
+        if (rule.activity.resources.displayMetrics.densityDpi > 240) {
+            densityToRestore = Regex("Override density: (\\d+)").find(shell("wm density"))?.groupValues?.get(1) ?: "reset"
+            shell("wm density 240")
+            rule.waitUntil(10_000) { rule.activity.resources.displayMetrics.densityDpi == 240 }
+            waitFor("home_surface")
+        }
         rule.activityRule.scenario.onActivity { it.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE }
         waitFor("home_layout_WIDE")
         val feature = publish(FoldingFeature.Orientation.VERTICAL, fraction = 0.48f, size = 16)
@@ -213,7 +221,7 @@ class FoldableInstrumentedTest {
             rule.waitUntil(1_500) { rule.onAllNodesWithText("Ready").fetchSemanticsNodes().isNotEmpty() }
             assertNull(launched.get())
             rule.onNodeWithTag("confirm_open").assertIsDisplayed().assertIsEnabled().performClick()
-            rule.waitUntil(5_000) { launched.get() != null }
+            rule.waitUntil(15_000) { launched.get() != null }
             assertEquals(FixtureActivity::class.java.name, launched.get())
         } finally { receiverContext.unregisterReceiver(receiver) }
     }

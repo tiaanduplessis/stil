@@ -13,7 +13,7 @@ open class FixtureActivity : Activity() {
 
     override fun onResume() {
         super.onResume()
-        sendBroadcast(Intent("app.stil.launcher.test.FIXTURE_OPENED").setPackage("app.stil.launcher")
+        sendBroadcast(Intent("app.stil.launcher.test.FIXTURE_OPENED").setPackage("app.stil.launcher").addFlags(Intent.FLAG_RECEIVER_FOREGROUND)
             .putExtra("activity", javaClass.name))
     }
 }

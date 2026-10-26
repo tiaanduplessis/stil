@@ -25,6 +25,14 @@ class FoldLayoutTest {
         assertTrue(right.clock.right < right.apps.left)
     }
 
+    @Test fun shortNarrowLandscapeKeepsOneReadablePane() {
+        val home = FoldLayout.home(582f, 214f, 1f, Alignment.LEFT, emptyList())
+        assertEquals(HomeArrangement.STACKED, home.arrangement)
+        assertTrue(home.clock.bottom <= home.apps.top)
+        assertTrue(home.apps.height >= 48)
+        assertEquals(56f, home.gestures.single().height)
+    }
+
     @Test fun largeTextFallsBackWhenTwoReadablePanesWillNotFit() {
         val home = FoldLayout.home(700f, 700f, 2f, Alignment.LEFT, emptyList())
         assertEquals(HomeArrangement.STACKED, home.arrangement)
