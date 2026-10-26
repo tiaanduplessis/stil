@@ -1,6 +1,6 @@
 # Releases
 
-Stil uses private GitHub build downloads and manual GitHub Releases. The current signed preview is [0.3.0](https://github.com/tiaanduplessis/stil/releases/tag/v0.3.0). It updates the signed 0.2.1 preview with the same signing identity. A durable signing identity is configured in the GitHub `release` environment. The maintainer keeps the encrypted keystore locally, with its password in macOS Keychain; back up both separately. The repository remains private. Publishing a release or changing repository visibility requires an explicit maintainer decision.
+Stil uses private GitHub build downloads and manual GitHub Releases. The current signed preview is [0.4.0](https://github.com/tiaanduplessis/stil/releases/tag/v0.4.0). It updates the signed 0.3.0 preview with the same signing identity. A durable signing identity is configured in the GitHub `release` environment. The maintainer keeps the encrypted keystore locally, with its password in macOS Keychain; back up both separately. The repository remains private. Publishing a release or changing repository visibility requires an explicit maintainer decision.
 
 ## Test builds
 

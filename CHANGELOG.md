@@ -2,7 +2,7 @@
 
 ## 0.4.0 - 2026-10-26
 
-Release candidate for the app search update.
+Signed [preview release](https://github.com/tiaanduplessis/stil/releases/tag/v0.4.0). Updates the signed 0.3.0 preview with the same key and version code 5.
 
 - Slide All apps up from the bottom, following Android's animation setting.
 - Open the only available search match as you type, including aliases. Keep launch pauses and wait for IME composition to finish.
