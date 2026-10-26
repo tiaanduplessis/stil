@@ -2,6 +2,8 @@
 
 ## 0.3.0 - 2026-10-26
 
+Signed [preview release](https://github.com/tiaanduplessis/stil/releases/tag/v0.3.0). Updates the signed 0.2.1 preview with the same key and version code 4.
+
 - Adapt Home to narrow, wide, and tabletop windows. Keep content clear of separating folds and hinges.
 - Keep search, cursor selection, unsaved names, scroll position, and launch pauses through posture and configuration changes.
 - Fit navigation and scrolling content into short panes and large system text.
