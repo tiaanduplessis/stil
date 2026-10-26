@@ -42,6 +42,8 @@ The Gradle wrapper JAR is validated by `setup-gradle`, and the Gradle distributi
 
 The emulator job removes unused .NET, Swift, and NDK toolchains from its disposable runner. It checks for 10 GiB free before booting: the API 36 image needs more space than a small userdata setting suggests. This app does not build native code with the NDK.
 
+For workflow script changes, run `actionlint`, `shellcheck scripts/run_device_tests.sh`, and `python3 -m unittest discover -s scripts/tests -p test_emulator_scripts.py -v`. These checks cover disk limits, diagnostics, logger cleanup, and failure propagation without starting an emulator or building the app. The emulator runner inputs call scripts because the action executes each input line in a separate shell.
+
 To run signing-tool checks locally after building the unsigned release APK, set the paths for your SDK:
 
 ```sh
