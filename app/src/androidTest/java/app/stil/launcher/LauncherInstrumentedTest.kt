@@ -48,6 +48,7 @@ class LauncherInstrumentedTest {
         runBlocking { graph.settings.update { LauncherSettings() } }
         rule.waitUntil(10_000) { rule.onAllNodesWithText("Choose home apps").fetchSemanticsNodes().isNotEmpty() }
         rule.onNodeWithTag("finish_setup").assertIsEnabled().performClick()
+        rule.waitUntil(10_000) { rule.onNodeWithText("Use Stil as home?").isDisplayed() }
         rule.onNodeWithText("Use Stil as home?").assertIsDisplayed()
         val saved = runBlocking { graph.settings.current() }
         assertTrue(saved.onboarded)

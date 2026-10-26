@@ -64,7 +64,7 @@ jobs:
           ./gradlew :app:assembleDebug :app:assembleRelease
           :app:testDebugUnitTest :app:lintDebug
           --no-daemon --max-workers=1 --no-parallel --console=plain
-      - name: Test release signing and failure paths with a disposable key
+      - name: Test CI scripts and release signing with a disposable key
         env:
           STIL_TEST_APK: app/build/outputs/apk/release/app-release-unsigned.apk
         run: |
@@ -136,23 +136,8 @@ jobs:
           disable-animations: false
           enable-hw-keyboard: true
           emulator-options: -no-window -gpu swiftshader_indirect -no-snapshot -noaudio -no-boot-anim -camera-back none -skin 720x1600 -dpi-device 280
-          pre-emulator-launch-script: |
-            python3 - <<'PY'
-            from pathlib import Path
-            import shutil
-            free = shutil.disk_usage(Path.home()).free
-            required = 10 * 1024 ** 3
-            print(f"Emulator disk space: {free / 1024 ** 3:.1f} GiB free")
-            if free < required:
-                raise SystemExit("At least 10 GiB free is required for the Android test emulator")
-            PY
-          script: |
-            mkdir -p .artifacts/emulator
-            adb logcat -c
-            adb logcat -v threadtime > .artifacts/emulator/logcat.txt &
-            logcat_pid=$!
-            trap 'adb exec-out screencap -p > .artifacts/emulator/final-screen.png; kill "$logcat_pid" || true' EXIT
-            ./gradlew :app:connectedDebugAndroidTest --no-daemon --max-workers=1 --no-parallel --console=plain
+          pre-emulator-launch-script: python3 scripts/check_emulator_disk.py
+          script: bash scripts/run_device_tests.sh
       - name: Upload device reports and diagnostics
         if: ${{ !cancelled() }}
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
