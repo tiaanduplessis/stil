@@ -14,6 +14,14 @@
 
 `ui/StilApp.kt` renders Compose screens. Android owns system indicators and role selection. Home uses the selected typeface and optional dimmed photo; other screens use solid backgrounds. Screens share a header, setting row, and app row, and a neutral Material color scheme mapped to the design tokens. Text uses theme type roles in scalable units, rows have minimum touch targets, and toggle/radio controls expose semantics.
 
+## Foldable windows
+
+`WindowInfoTracker` supplies separating folds and occluding hinges. `FoldViewport` converts window pixel bounds into the visible content's dp coordinates after system and keyboard insets. Pure `FoldLayout` rules choose safe regions and reserve bottom gesture areas. Home uses one column on narrow windows, separate clock and app panes on wide windows, and upper clock/lower apps in tabletop posture. App alignment selects the left or right pane. Feedback messages use the same safe region. Large text falls back to a single readable pane when two will not fit.
+
+Other screens use one safe pane, capped at 600dp. Short panes use a compact header. Layout changes reposition stable composition slots; they do not navigate or restart the pause. Search and rename use saveable text values, including cursor selection, and restore focus only when that field was previously focused. Android remains responsible for orientation, window resizing, the keyboard, and cover-display availability.
+
+Use Android's [fold-aware layout guidance](https://developer.android.com/develop/adaptive-apps/guides/foldables/make-your-app-fold-aware) and [screen testing tools](https://developer.android.com/training/testing/different-screens/tools) when extending these layouts. Window size and `FoldingFeature` bounds are the inputs; no device-name list is maintained.
+
 ## Quality gates
 
 Run the commands in the README with JDK 17. Builds use one worker and a bounded heap by default. Test reports live under `app/build/reports`; task receipts belong in ignored `.artifacts/`.
@@ -24,7 +32,7 @@ GitHub Actions runs these gates and API 36 device tests only for app, build, too
 
 ## Device tests
 
-The instrumentation APK provides two exported launcher activities in its test-only manifest. They establish real catalog discovery and cross-package launch behavior without relying on a third-party app. The production APK has no test activities or test hooks.
+The instrumentation APK provides six exported launcher activities in its test-only manifest. They establish real catalog discovery and cross-package launch behavior without relying on a third-party app. The production APK has no test activities or test hooks.
 
 Storage and wallpaper tests use separate temporary DataStore files and injected photo sources. They establish persistence, invalid-state recovery, network/decode failure handling, and disabled-worker behavior. Live photo delivery is a separate manual check and depends on the provider/network.
 

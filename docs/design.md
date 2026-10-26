@@ -13,6 +13,12 @@ Stil uses typography and empty space to make a short list of chosen apps the mai
 - Home: left aligned by default, optional right alignment; chosen apps sit in the lower portion. The clock anchors the otherwise open upper area.
 - Native list and settings screens share one structure: a 48dp navigation bar, a headline title, then rows. The one-time home prompt stays centered. App names use the title-large role; setting labels use body-large with muted supporting text or values. Spacing, not dividers, separates rows. Chips and buttons share a 40dp visual height with 48dp touch targets.
 
+## Foldable Home
+
+Home follows the available window, not a device-model list. Narrow windows retain a single column. Wide windows place apps on the chosen side and the clock across from them. Tabletop posture places the clock above the fold and apps below. Separating folds and hinges have a 12dp clear margin. The 56dp bottom gesture strip stays outside the app scroll area; book posture exposes it on both safe bottom edges. No extra labels, controls, or posture animations are added.
+
+Large type can fall back to one safe pane. App lists scroll. Other screens retain one reading column, capped at 600dp; short panes combine navigation and title in one header row.
+
 ## Layout sketch
 
 ```text

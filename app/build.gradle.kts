@@ -50,6 +50,7 @@ dependencies {
     implementation("androidx.compose.ui:ui-tooling-preview")
     implementation("androidx.lifecycle:lifecycle-runtime-compose:2.9.4")
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.9.4")
+    implementation("androidx.window:window:1.4.0")
     implementation("androidx.datastore:datastore-preferences:1.1.7")
     implementation("androidx.work:work-runtime-ktx:2.10.5")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.9.0")
@@ -63,6 +64,7 @@ dependencies {
     androidTestImplementation("androidx.test:rules:1.6.1")
     androidTestImplementation("androidx.compose.ui:ui-test-junit4")
     androidTestImplementation("androidx.work:work-testing:2.10.5")
+    androidTestImplementation("androidx.window:window-testing:1.4.0")
     debugImplementation("androidx.compose.ui:ui-tooling")
     debugImplementation("androidx.compose.ui:ui-test-manifest")
 }

@@ -48,9 +48,19 @@ Remove a debug install before installing the signed preview; their signing ident
 - **Your type and background.** Choose System, Sans, Serif, or Mono; Light, Dark, or System appearance; alignment and text size. Use daily photos, keep one, or turn wallpaper off.
 - **A deliberate pause.** Selected apps can wait three seconds before an explicit **Open**. **Cancel** returns immediately.
 - **Separate profiles.** Work apps have profile controls. On supported devices, Private space has its own lockable container and search. Private apps stay out of global search and home pins.
+- **Fold and flip layouts.** Source builds after 0.2.1 adapt Home to narrow, wide, and tabletop windows, with hinge clearance and continuous editing. The published 0.2.1 preview does not include this yet.
 - **Quiet motion.** Short transitions respond to navigation and selection. Android's animation settings control them.
 
 Private space requires Android 15 or later and selection as the default home app. Profile availability and system gestures vary by device. Runtime verification currently uses an Android 16 emulator; physical devices have not yet been tested.
+
+## Foldable source preview
+
+These layouts are in source builds after 0.2.1.
+
+<p>
+  <img src="docs/media/fold-wide.png" width="360" alt="Unfolded Stil home with a clock on the left and five right-aligned apps on the right">
+  <img src="docs/media/fold-tabletop.png" width="240" alt="Stil in tabletop posture with the clock above the fold and five apps below it">
+</p>
 
 ## Privacy
 
