@@ -3,6 +3,7 @@ package app.stil.launcher
 import android.app.Application
 import app.stil.launcher.data.AppCatalog
 import app.stil.launcher.data.SettingsStore
+import app.stil.launcher.data.LaunchStatsStore
 import app.stil.launcher.data.WallpaperRepository
 import app.stil.launcher.data.launcherDataStore
 import app.stil.launcher.core.ProfileKind
@@ -27,6 +28,7 @@ class StilApplication : Application() {
 class AppGraph(application: Application) {
     val scope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
     val settings = SettingsStore(application.launcherDataStore)
+    val stats = LaunchStatsStore(application.launcherDataStore)
     val catalog = AppCatalog(application, scope)
     val wallpapers = WallpaperRepository(application, settings)
 

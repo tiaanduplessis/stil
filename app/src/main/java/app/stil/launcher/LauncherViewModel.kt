@@ -13,6 +13,7 @@ import app.stil.launcher.core.LaunchPause
 import app.stil.launcher.core.LaunchableApp
 import app.stil.launcher.core.LauncherRules
 import app.stil.launcher.core.LauncherSettings
+import app.stil.launcher.core.LaunchHistory
 import app.stil.launcher.core.ProfileKind
 import app.stil.launcher.core.SettingsEdit
 import app.stil.launcher.data.CatalogState
@@ -23,17 +24,23 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
-enum class Screen { HOME, APPS, SETTINGS, FONT, WALLPAPER, MANAGE, EDIT, HIDDEN, SETUP, DEFAULT, PAUSE }
+enum class Screen { HOME, APPS, SETTINGS, STATS, FONT, WALLPAPER, MANAGE, EDIT, HIDDEN, SETUP, DEFAULT, PAUSE }
 data class AppState(val settings: LauncherSettings = LauncherSettings(), val catalog: CatalogState = CatalogState(), val ready: Boolean = false)
+data class StatsState(val history: LaunchHistory? = null, val failed: Boolean = false)
 
 class LauncherViewModel(application: Application) : AndroidViewModel(application) {
     val graph = (application as StilApplication).graph
     val state = combine(graph.settings.settings, graph.catalog.state) { settings, catalog -> AppState(settings, catalog, catalog.loaded) }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), AppState())
     val messages = MutableSharedFlow<Int>(extraBufferCapacity = 8)
+    val stats = graph.stats.history.map { StatsState(history = it) }.catch {
+        if (it is IOException) emit(StatsState(failed = true)) else throw it
+    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(0), StatsState())
     var screen by mutableStateOf(Screen.HOME); private set
     var editId by mutableStateOf<String?>(null); private set
     var pending by mutableStateOf<LaunchableApp?>(null); private set
@@ -132,6 +139,9 @@ class LauncherViewModel(application: Application) : AndroidViewModel(application
 
     private fun launch(app: LaunchableApp) {
         if (!graph.catalog.launch(app)) messages.tryEmit(R.string.app_unavailable)
+        else graph.scope.launch {
+            try { graph.stats.record(app) } catch (_: IOException) { messages.emit(R.string.stats_save_failed) }
+        }
         navigate(Screen.HOME)
     }
 
