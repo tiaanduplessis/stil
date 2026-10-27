@@ -137,7 +137,7 @@ class FoldableInstrumentedTest {
         waitFor("app_search")
         publish(fraction = 0.6f)
         rule.onNodeWithTag("app_search").assertTextContains("Stil fixture").assertIsFocused().assert(SemanticsMatcher.expectValue(SemanticsProperties.TextSelectionRange, androidx.compose.ui.text.TextRange(2)))
-        rule.onNode(hasText("My phone") and hasAnyAncestor(hasTestTag("app_list"))).assertIsDisplayed()
+        rule.onNode(hasText("My phone") and hasAnyAncestor(hasTestTag("app_list"))).performScrollTo().assertIsDisplayed()
     }
 
     @Test fun unsavedRenameAndFocusSurviveARecreatedActivity() {
