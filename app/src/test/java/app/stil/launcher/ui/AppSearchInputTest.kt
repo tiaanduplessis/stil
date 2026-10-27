@@ -7,20 +7,20 @@ import org.junit.Test
 
 class AppSearchInputTest {
     @Test fun `typing pasting and deleting committed text can launch`() {
-        assertTrue(isCommittedSearchEdit(TextFieldValue(), TextFieldValue("Maps")))
-        assertTrue(isCommittedSearchEdit(TextFieldValue("Maps!"), TextFieldValue("Maps")))
+        assertTrue(isSearchTextEdit(TextFieldValue(), TextFieldValue("Maps")))
+        assertTrue(isSearchTextEdit(TextFieldValue("Maps!"), TextFieldValue("Maps")))
     }
 
     @Test fun `cursor changes and repeated values do not launch`() {
         val value = TextFieldValue("Maps", selection = TextRange(4))
-        assertFalse(isCommittedSearchEdit(value, value.copy(selection = TextRange(1))))
-        assertFalse(isCommittedSearchEdit(value, value))
+        assertFalse(isSearchTextEdit(value, value.copy(selection = TextRange(1))))
+        assertFalse(isSearchTextEdit(value, value))
     }
 
-    @Test fun `IME composition waits for commitment even when the text stays the same`() {
+    @Test fun `composing keyboards can launch without committing the word`() {
         val composing = TextFieldValue("Maps", composition = TextRange(0, 4))
-        assertFalse(isCommittedSearchEdit(TextFieldValue(), composing))
-        assertFalse(isCommittedSearchEdit(composing, composing.copy(text = "Map", composition = TextRange(0, 3))))
-        assertTrue(isCommittedSearchEdit(composing, composing.copy(composition = null)))
+        assertTrue(isSearchTextEdit(TextFieldValue(), composing))
+        assertTrue(isSearchTextEdit(composing, composing.copy(text = "Map", composition = TextRange(0, 3))))
+        assertFalse(isSearchTextEdit(composing, composing.copy(composition = null)))
     }
 }

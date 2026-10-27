@@ -164,7 +164,7 @@ fun StilApp(model: LauncherViewModel, chooseHome: () -> Unit, openClock: () -> U
         when (screen) {
             Screen.HOME -> Unit
             Screen.PAUSE -> model.cancelPause()
-            Screen.FONT, Screen.WALLPAPER, Screen.MANAGE, Screen.HIDDEN -> model.navigate(Screen.SETTINGS)
+            Screen.STATS, Screen.FONT, Screen.WALLPAPER, Screen.MANAGE, Screen.HIDDEN -> model.navigate(Screen.SETTINGS)
             Screen.EDIT -> model.navigate(Screen.MANAGE)
             else -> model.navigate(Screen.HOME)
         }
@@ -187,6 +187,7 @@ fun StilApp(model: LauncherViewModel, chooseHome: () -> Unit, openClock: () -> U
                             when (destination) {
                                 Screen.APPS -> AppsScreen(model, settings, page)
                                 Screen.SETTINGS -> SettingsScreen(model, settings, page, chooseHome)
+                                Screen.STATS -> StatsScreen(model, settings, state.catalog.apps, page)
                                 Screen.FONT -> FontScreen(model, settings, page)
                                 Screen.WALLPAPER -> WallpaperScreen(model, settings, page)
                                 Screen.MANAGE -> ManageScreen(model, settings, page)
@@ -319,7 +320,7 @@ private fun Header(title: String, leading: @Composable RowScope.() -> Unit, trai
 }
 
 @Composable
-private fun Header(title: Int, onBack: () -> Unit) {
+internal fun Header(title: Int, onBack: () -> Unit) {
     Header(stringResource(title), leading = { NavButton(R.string.back, onClick = onBack) })
 }
 
@@ -421,9 +422,9 @@ private fun AppsScreen(model: LauncherViewModel, settings: LauncherSettings, mod
             }
         }
         OutlinedTextField(query, { next ->
-            val committedEdit = isCommittedSearchEdit(query, next)
+            val textEdit = isSearchTextEdit(query, next)
             query = next
-            if (committedEdit) LauncherRules.singleSearchMatch(state.catalog.apps, settings, next.text)?.let { app ->
+            if (textEdit) LauncherRules.singleSearchMatch(state.catalog.apps, settings, next.text)?.let { app ->
                 keyboard?.hide()
                 model.open(app)
             }
@@ -483,6 +484,7 @@ private fun SettingsScreen(model: LauncherViewModel, settings: LauncherSettings,
     Column(modifier) {
         Header(R.string.settings) { model.navigate(Screen.HOME) }
         Column(Modifier.weight(1f).verticalScroll(rememberScrollState()).testTag("settings_list")) {
+            SettingLink(R.string.launch_stats, supporting = stringResource(R.string.stats_link_hint)) { model.navigate(Screen.STATS) }
             Choices(R.string.appearance, settings.theme, listOf(ThemeMode.LIGHT to R.string.light, ThemeMode.BLACK to R.string.dark, ThemeMode.SYSTEM to R.string.system)) { value -> model.update { it.copy(theme = value) } }
             SettingLink(R.string.font, stringResource(fontLabel(settings.font))) { model.navigate(Screen.FONT) }
             SettingLink(R.string.wallpaper, stringResource(wallpaperLabel(settings.wallpaper))) { model.navigate(Screen.WALLPAPER) }

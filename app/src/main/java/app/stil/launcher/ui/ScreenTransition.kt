@@ -45,6 +45,6 @@ private val Screen.depth: Int
     get() = when (this) {
         Screen.HOME, Screen.SETUP, Screen.DEFAULT, Screen.PAUSE -> 0
         Screen.APPS, Screen.SETTINGS -> 1
-        Screen.FONT, Screen.WALLPAPER, Screen.MANAGE, Screen.HIDDEN -> 2
+        Screen.STATS, Screen.FONT, Screen.WALLPAPER, Screen.MANAGE, Screen.HIDDEN -> 2
         Screen.EDIT -> 3
     }

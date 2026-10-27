@@ -10,6 +10,7 @@ A minimal Android launcher with a short app list, custom fonts, and daily wallpa
   <img src="docs/media/home.png" width="220" alt="Stil home with a clock, date, and five text app shortcuts on a plain Dark background">
   <img src="docs/media/apps.png" width="220" alt="All apps showing Calendar and Camera for the search ca">
   <img src="docs/media/settings.png" width="220" alt="Stil settings with Dark appearance selected and controls for fonts and wallpapers">
+  <img src="docs/media/stats.png" width="220" alt="Launch stats with a selectable period, daily activity, and per-app open counts">
 </p>
 
 ## See it in use
@@ -49,6 +50,7 @@ Remove a debug install before installing the signed preview; their signing ident
 - **A short home screen.** Swipe up for apps; hold empty space for settings. Pin up to six apps, rename and reorder them, or hide apps and restore them later. Search finds original names and aliases.
 - **Your type and background.** Choose System, Sans, Serif, or Mono; Light, Dark, or System appearance; alignment and text size. Use daily photos, keep one, or turn wallpaper off.
 - **A deliberate pause.** Selected apps can wait three seconds before an explicit **Open**. **Cancel** returns immediately.
+- **Local launch stats.** Settings shows opens by app for Today, 7 days, or 30 days, with daily activity. Private space is never recorded; hidden apps stay out of the views. This feature is in the current source and is not yet in the signed 0.4.0 preview.
 - **Separate profiles.** Work apps have profile controls. On supported devices, Private space has its own lockable container and search. Private apps stay out of global search and home pins.
 - **Fold and flip layouts.** Home adapts to narrow, wide, and tabletop windows, with hinge clearance and continuous editing.
 - **Quiet motion.** Short transitions respond to navigation and selection. Android's animation settings control them.
@@ -66,9 +68,9 @@ Home adjusts when you open, close, or partly fold the device.
 
 ## Privacy
 
-No account, ads, analytics, usage access, accessibility service, or notification access. Core launcher features work offline. Optional photo downloads use Lorem Picsum and retain photographer/source attribution. Failed downloads keep the current photo; Android may delay background updates.
+No account, ads, telemetry, usage access, accessibility service, or notification access. Core launcher features work offline. Optional photo downloads use Lorem Picsum and retain photographer/source attribution. Failed downloads keep the current photo; Android may delay background updates.
 
-Preferences and cached photos stay on the device. Read the [privacy notes](docs/privacy.md) for network requests, permissions, and wallpaper behavior. Bundled photo credits are in [third-party notices](THIRD_PARTY_NOTICES.md).
+Preferences, launch counts, and cached photos stay on the device. Read the [privacy notes](docs/privacy.md) for network requests, permissions, and wallpaper behavior. Bundled photo credits are in [third-party notices](THIRD_PARTY_NOTICES.md).
 
 ## Build, contribute, and get help
 
