@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.5.0 - 2026-10-27
+
+Release candidate with version code 6, prepared to update the signed 0.4.0 preview.
+
+- Open the sole search match while a predictive keyboard is still composing the word. Preserve launch pauses and ignore cursor-only changes.
+- Add on-device launch stats under Settings with Today, 7-day, and 30-day views, daily activity, and per-app open counts.
+- Count successful launcher opens once. Exclude canceled pauses, failed launches, and Private space; keep hidden and removed apps out of stats.
+- Scroll the foldable search-continuity test to its result before checking visibility in a short pane.
+
 ## 0.4.0 - 2026-10-26
 
 Signed [preview release](https://github.com/tiaanduplessis/stil/releases/tag/v0.4.0). Updates the signed 0.3.0 preview with the same key and version code 5.
