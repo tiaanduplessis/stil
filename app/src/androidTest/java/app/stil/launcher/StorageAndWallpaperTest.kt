@@ -16,6 +16,8 @@ import app.stil.launcher.data.DownloadedPhoto
 import app.stil.launcher.data.Photo
 import app.stil.launcher.data.PhotoSource
 import app.stil.launcher.data.SettingsStore
+import app.stil.launcher.data.LaunchStatsStore
+import app.stil.launcher.core.LaunchableApp
 import app.stil.launcher.data.WallpaperRepository
 import app.stil.launcher.data.WallpaperUpdate
 import app.stil.launcher.data.DailyWallpaperWorker
@@ -29,6 +31,9 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.first
 import org.junit.After
 import org.junit.Assert.*
 import org.junit.Before
@@ -63,6 +68,28 @@ class StorageAndWallpaperTest {
         data.edit { it[stringPreferencesKey("settings_v1")] = "not-json" }
         assertEquals(LauncherSettings(), store.current())
         store.update { it.copy(font = FontChoice.MONO) }
+        assertEquals(FontChoice.MONO, store.current().font)
+    }
+
+    @Test fun concurrentLaunchesPersistWithoutLosingSettings() = runBlocking {
+        store.update { it.copy(font = FontChoice.SERIF) }
+        val stats = LaunchStatsStore(data)
+        val app = LaunchableApp("0:pkg/Main", "pkg", "Maps")
+        coroutineScope { repeat(20) { launch { stats.record(app) } } }
+        assertEquals(20, LaunchStatsStore(data).history.first().days[LocalDate.now().toString()]?.get(app.id))
+        assertEquals(FontChoice.SERIF, SettingsStore(data).current().font)
+        assertTrue(file.length() > 0)
+    }
+
+    @Test fun legacySettingsAndCorruptStatsRecoverIndependently() = runBlocking {
+        store.update { it.copy(font = FontChoice.MONO) }
+        val stats = LaunchStatsStore(data)
+        assertTrue(stats.history.first().days.isEmpty())
+        data.edit { it[stringPreferencesKey("launch_stats_v1")] = "not-json" }
+        assertTrue(stats.history.first().days.isEmpty())
+        val app = LaunchableApp("0:pkg/Main", "pkg", "Maps")
+        stats.record(app)
+        assertEquals(1, stats.history.first().days[LocalDate.now().toString()]?.get(app.id))
         assertEquals(FontChoice.MONO, store.current().font)
     }
 

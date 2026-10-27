@@ -4,7 +4,8 @@ These are captures of the native Android app on an Android 16 emulator. No HTML 
 
 - `home.png`: Serif home with five apps in Dark appearance, using gestures instead of navigation buttons.
 - `apps.png`: refreshed on 26 October 2026, showing Calendar and Camera for `ca` in Dark appearance with Serif. The on-screen keyboard has been dismissed.
-- `settings.png`: Dark appearance selected; the saved setting remains compatible with existing installs.
+- `settings.png`: refreshed on 27 October 2026 with the Launch stats entry and Dark appearance selected; the saved setting remains compatible with existing installs.
+- `stats.png`: captured on 27 October 2026, showing a 7-day view in Dark appearance with local counts from test fixture apps and Camera. It is from current source; the signed 0.4.0 preview predates stats.
 - `walkthrough.mp4`: hold empty home space → Settings → Font → Serif → Preview home → swipe up → Clock search. Android's touch indicators show the gestures. Motion runs at normal speed; trailing idle time was removed.
 - `app-search.mp4`: captured on 26 October 2026 from the search update released in 0.4.0. Swipe up → tap Search apps → tap Gboard's `c` and `l` keys → Clock opens automatically. The 240 ms drawer transition and keyboard motion run at normal speed.
 The README embeds the video through GitHub's hosted player. The MP4 is also kept here for local playback and as a portable fallback. Access to the hosted attachment follows GitHub's repository permissions. Recheck playback after a fork or visibility change.

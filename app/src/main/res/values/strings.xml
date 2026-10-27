@@ -88,4 +88,21 @@
     <string name="missing_app">Unavailable app</string>
     <string name="clock">Clock</string>
     <string name="manage_work">Manage work profile</string>
+    <string name="launch_stats">Launch stats</string>
+    <string name="stats_link_hint">See which apps you open through Stil.</string>
+    <string name="today">Today</string>
+    <string name="last_7_days">7 days</string>
+    <string name="last_30_days">30 days</string>
+    <string name="stats_date_range">%1$s – %2$s</string>
+    <plurals name="stats_opens">
+        <item quantity="one">app open</item>
+        <item quantity="other">app opens</item>
+    </plurals>
+    <string name="daily_opens">Daily opens</string>
+    <string name="most_opened">Most opened</string>
+    <string name="stats_day_count">%1$s: %2$s app opens</string>
+    <string name="stats_empty">No opens in this period. Open an app through Stil to start.</string>
+    <string name="stats_scope">Only opens through Stil, for apps visible here. Hidden and private apps are excluded. Last 30 days, on this device.</string>
+    <string name="stats_save_failed">App opened. Couldn’t save its launch count.</string>
+    <string name="stats_load_failed">Couldn’t load stats. Reopen this screen to try again.</string>
 </resources>

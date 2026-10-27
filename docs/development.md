@@ -10,7 +10,9 @@
 
 `LauncherViewModel` owns user actions and navigation. The launch pause uses elapsed real time, survives configuration changes through the ViewModel, and requires explicit confirmation. App launches recheck current profile and activity availability.
 
-All apps auto-launches when a committed, nonblank text edit leaves exactly one available result. The same search rules match aliases and original names and preserve profile identities. IME composition waits for commitment. Cursor moves, restored queries, and catalog or preference updates do not launch. The action uses the normal launch route, including per-app pauses.
+All apps auto-launches when a nonblank text edit leaves exactly one available result, including text still under composition by a predictive keyboard. The same search rules match aliases and original names and preserve profile identities. Cursor moves, composition-only changes, restored queries, and catalog or preference updates do not launch. The action uses the normal launch route, including per-app pauses.
+
+`data/LaunchStatsStore.kt` stores daily per-component/profile counts under a separate key in the same application DataStore. Only successful launcher dispatches record a count; canceled pauses and failed launches do not. Private apps are never recorded. Recording removes buckets outside the latest 30 local calendar dates. `core/LaunchStats.kt` builds Today, 7-day, and 30-day summaries for currently visible apps, excluding hidden/private/removed entries from both totals and charts. The Stats screen uses current aliases, distinguishes work copies, and refreshes its calendar date while open. No usage-access permission or network request is involved.
 
 `data/WallpaperRepository.kt` serializes updates, bounds download size and decoded dimensions, writes a new cache file before applying, and retains the previous image on provider/decode failures. Worker and foreground actions share this repository. WorkManager uses unique periodic and catch-up requests, with network constraints. Mode Off/Keep cancels automatic work. Native scheduling is inexact; no exact alarm is requested.
 

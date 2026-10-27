@@ -28,6 +28,8 @@ Long-press a home app, or open **Settings → Home apps** and choose an app. Ren
 
 Search matches the original app name and any alias. When your text leaves one available match, Stil opens it. Apps with a launch pause still wait for confirmation. With several matches, keep typing, tap a result, or use the keyboard's search action to open the first available match. Empty searches and unavailable apps do not auto-launch.
 
+Predictive keyboards can leave the current word underlined. Single-match launch now works with that composing text too; it does not wait for a space or the search key. Moving the cursor or returning to a saved search does not open an app.
+
 The slide-up drawer and automatic search launch are available in the [0.4.0 preview](https://github.com/tiaanduplessis/stil/releases/tag/v0.4.0). The [search video](media/app-search.mp4) shows the new flow. Install it over the signed 0.3.0 preview to keep your settings.
 
 **Hide from Stil** removes an app from Stil's lists; it does not uninstall or disable it. Restore it under **Settings → Hidden apps**. These controls do not hide an app from Android settings or other launchers.
@@ -52,6 +54,14 @@ Stil requests a system/home wallpaper update. It does not request a lock-screen 
 ## Launch pause
 
 Enable **Launch pause** for an app through its edit screen. Wait three seconds, then tap **Open**. **Cancel** returns without launching. This applies only to launches made through Stil.
+
+## Launch stats
+
+Open **Settings → Launch stats** to see how often you open apps through Stil. Choose **Today**, **7 days**, or **30 days**. Each period includes today and uses your device's local dates. The total, daily chart, and ranked app counts update together. Counts start when you install a build with this feature; earlier opens cannot be recovered.
+
+Home taps, drawer taps, keyboard search, and automatic single-match launches all count once after Stil opens the app. A launch pause counts only after **Open** succeeds. Canceled pauses and failed launches do not count. These are open counts, not screen time; notifications, recents, and other launchers are outside the totals.
+
+Counts stay on this device. Private space is never recorded. Hidden and uninstalled apps are excluded from every view; restoring a hidden app can reveal counts still within the last 30 days. Personal and work copies remain separate. The current source includes this feature; the signed 0.4.0 preview predates it.
 
 ## Work apps and Private space
 

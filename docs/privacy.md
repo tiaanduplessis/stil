@@ -8,7 +8,9 @@ Stil reads launchable app names and components through Android's launcher APIs. 
 
 Preferences include home apps, aliases, hidden apps, launch-pause choices, appearance, and wallpaper settings. They are stored in the app's local DataStore. Downloaded wallpaper files stay in app storage; the cache keeps the current and previous image. Photo source, author, and last-update date are also stored locally.
 
-Android backup and device-transfer rules exclude Stil's app data. Clearing Stil's storage or uninstalling it removes local preferences and cached files. A photo already applied as Android's system wallpaper is managed separately by Android and is not restored automatically when Stil is uninstalled.
+Launch stats store daily counts of successful app opens through Stil, by component and user serial. They show the last 30 local calendar dates; older buckets are removed on the next recorded open. Private space launches are never recorded. Hidden and uninstalled apps are omitted from stats, including totals and charts. Hiding an app does not erase its existing counts; restoring it can show counts still within the period. Stil does not measure screen time or opens from notifications, recents, or other launchers, and never sends launch counts off the device.
+
+Android backup and device-transfer rules exclude Stil's app data. Clearing Stil's storage or uninstalling it removes local preferences, launch counts, and cached files. A photo already applied as Android's system wallpaper is managed separately by Android and is not restored automatically when Stil is uninstalled.
 
 ## Network requests
 

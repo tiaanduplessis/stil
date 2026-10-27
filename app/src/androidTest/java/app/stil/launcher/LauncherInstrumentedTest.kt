@@ -20,6 +20,12 @@ import androidx.compose.ui.graphics.toPixelMap
 import app.stil.launcher.core.LauncherSettings
 import app.stil.launcher.core.WallpaperMode
 import app.stil.launcher.data.DailyWallpaperWorker
+import app.stil.launcher.data.launcherDataStore
+import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.stringPreferencesKey
+import androidx.lifecycle.ViewModelProvider
+import java.time.LocalDate
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 import org.junit.Assert.*
 import org.junit.Before
@@ -217,6 +223,62 @@ class LauncherInstrumentedTest {
         assertEquals(ListenableWorker.Result.success(), worker.doWork())
         assertEquals(before, graph.settings.current())
         assertEquals(WallpaperMode.OFF, graph.settings.current().wallpaper)
+    }
+
+    @Test fun actualLaunchesCountOnceWhileCancellationAndFailedLaunchDoNot() {
+        runBlocking { rule.activity.launcherDataStore.edit { it.remove(stringPreferencesKey("launch_stats_v1")) } }
+        observeLaunch { launched ->
+            rule.onNodeWithTag("home_$firstId").performClick()
+            rule.waitUntil(15_000) { launched.get() != null }
+            returnToStil()
+            rule.waitUntil(5_000) { runBlocking { graph.stats.history.first().days[LocalDate.now().toString()]?.get(firstId) == 1 } }
+            launched.set(null)
+            openApps()
+            rule.onNodeWithTag("app_search").performTextInput("Stil fixture extra")
+            rule.waitUntil(15_000) { launched.get() != null }
+            returnToStil()
+            runBlocking { graph.settings.update { it.copy(paused = setOf(firstId)) } }
+            rule.waitForIdle()
+            rule.onNodeWithTag("home_$firstId").performClick()
+            rule.onNodeWithText("Cancel").performClick()
+            val model = ViewModelProvider(rule.activity)[LauncherViewModel::class.java]
+            rule.runOnIdle { model.open(graph.catalog.state.value.apps.first { it.id == firstId }.copy(id = "0:missing.pkg/None")) }
+            rule.waitForIdle()
+            assertEquals(mapOf(firstId to 1, secondId to 1), runBlocking { graph.stats.history.first().days[LocalDate.now().toString()] })
+            rule.waitUntil(8_000) { rule.onAllNodesWithText(rule.activity.getString(R.string.app_unavailable)).fetchSemanticsNodes().isEmpty() }
+            launched.set(null)
+            rule.onNodeWithTag("home_$firstId").performClick()
+            rule.waitUntil(6_000) { rule.onAllNodesWithText("Ready").fetchSemanticsNodes().isNotEmpty() }
+            assertNull(launched.get())
+            rule.onNodeWithTag("confirm_open").performClick()
+            rule.waitUntil(15_000) { launched.get() != null }
+            returnToStil()
+            rule.waitUntil(5_000) { runBlocking { graph.stats.history.first().days[LocalDate.now().toString()]?.get(firstId) == 2 } }
+        }
+    }
+
+    @Test fun statsPeriodsShowPersistedCountsAndExcludeHiddenApps() {
+        runBlocking {
+            rule.activity.launcherDataStore.edit { it.remove(stringPreferencesKey("launch_stats_v1")) }
+            val first = graph.catalog.state.value.apps.first { it.id == firstId }
+            val second = graph.catalog.state.value.apps.first { it.id == secondId }
+            repeat(2) { graph.stats.record(first, LocalDate.now().minusDays(29)) }
+            repeat(3) { graph.stats.record(second, LocalDate.now().minusDays(6)) }
+            graph.stats.record(first)
+        }
+        openSettings()
+        rule.onNodeWithText("Launch stats").performClick()
+        rule.onNodeWithTag("stats_total", useUnmergedTree = true).assertTextEquals("4")
+        rule.onNodeWithText("Today").performClick()
+        rule.onNodeWithTag("stats_total", useUnmergedTree = true).assertTextEquals("1")
+        rule.onNodeWithText("30 days").performClick()
+        rule.onNodeWithTag("stats_total", useUnmergedTree = true).assertTextEquals("6")
+        rule.activityRule.scenario.recreate()
+        rule.onNodeWithTag("stats_total", useUnmergedTree = true).assertTextEquals("6")
+        runBlocking { graph.settings.update { it.copy(hidden = setOf(secondId)) } }
+        rule.waitUntil(5_000) { rule.onNodeWithTag("stats_total", useUnmergedTree = true).fetchSemanticsNode().config[androidx.compose.ui.semantics.SemanticsProperties.Text].first().text == "3" }
+        rule.onNodeWithText("Back").performClick()
+        rule.onNodeWithText("Settings").assertIsDisplayed()
     }
 
     private fun openSettings() {
