@@ -32,7 +32,7 @@ class EmulatorDiskTest(unittest.TestCase):
 
 
 class DeviceRunnerTest(unittest.TestCase):
-    def run_device_script(self, gradle_status, capture_status, clear_failures=0, package_failures=0):
+    def run_device_script(self, gradle_status, capture_status, clear_failures=0, package_failures=0, density=280):
         with tempfile.TemporaryDirectory(prefix="stil-emulator-test-") as directory:
             root = Path(directory)
             binary = root / "bin"
@@ -54,6 +54,9 @@ case "$1 $2" in
         attempts=$(cat package-attempts.txt 2>/dev/null || echo 0)
         echo $((attempts + 1)) > package-attempts.txt
         [[ "$attempts" -ge "$STIL_PACKAGE_FAILURES" ]] || { echo "cmd: Can't find service: package" >&2; exit 20; } ;;
+    'shell wm')
+        [[ "$3" == density && "$#" -eq 3 ]] && { echo "Physical density: 440"; echo "Override density: $STIL_DENSITY"; }
+        exit 0 ;;
     'exec-out screencap')
         echo 'final screenshot'
         exit "$STIL_CAPTURE_STATUS" ;;
@@ -76,9 +79,14 @@ exit 92
             gradle.chmod(0o700)
             env = dict(os.environ, PATH=str(binary) + os.pathsep + os.environ["PATH"],
                        STIL_GRADLE_STATUS=str(gradle_status), STIL_CAPTURE_STATUS=str(capture_status), STIL_CLEAR_FAILURES=str(clear_failures),
-                       STIL_PACKAGE_FAILURES=str(package_failures), STIL_LOGCAT_RETRY_DELAY="0")
+                       STIL_PACKAGE_FAILURES=str(package_failures), STIL_LOGCAT_RETRY_DELAY="0", STIL_DENSITY=str(density))
             result = subprocess.run(["bash", str(SCRIPTS / "run_device_tests.sh")], cwd=root,
                                     env=env, capture_output=True, text=True, timeout=10)
+            if density != 280:
+                self.assertEqual(result.returncode, 1)
+                self.assertIn("not 280", result.stderr)
+                self.assertFalse((root / "gradle-args.txt").exists())
+                return
             self.assertEqual(result.returncode, gradle_status, result.stderr)
             self.assertEqual((root / ".artifacts/emulator/logcat.txt").read_text(), "device log\n")
             self.assertEqual((root / ".artifacts/emulator/final-screen.png").read_text(), "final screenshot\n")
@@ -100,6 +108,9 @@ exit 92
 
     def test_logcat_clear_that_never_succeeds_does_not_stop_the_tests(self):
         self.run_device_script(0, 0, clear_failures=99)
+
+    def test_a_density_that_does_not_apply_stops_before_gradle(self):
+        self.run_device_script(0, 0, density=440)
 
     def test_early_logcat_clear_failure_is_retried(self):
         self.run_device_script(0, 0, clear_failures=1)

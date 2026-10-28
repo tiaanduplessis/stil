@@ -38,6 +38,7 @@ import java.util.concurrent.atomic.AtomicReference
 
 @RunWith(AndroidJUnit4::class)
 class LauncherInstrumentedTest {
+    @get:Rule(order = Int.MIN_VALUE) val watchdog = HangWatchdog()
     @get:Rule val rule = createAndroidComposeRule<MainActivity>()
     private val graph get() = (rule.activity.application as StilApplication).graph
     private lateinit var firstId: String
@@ -105,7 +106,7 @@ class LauncherInstrumentedTest {
         rule.onNodeWithText("All apps").assertIsDisplayed()
         observeLaunch { launched ->
             rule.onNodeWithTag("app_search").performTextReplacement("Go places")
-            rule.waitUntil(15_000) { launched.get() != null }
+            rule.waitUntil(30_000) { launched.get() != null }
             assertEquals(FixtureActivity::class.java.name, launched.get())
             returnToStil()
         }
@@ -135,7 +136,7 @@ class LauncherInstrumentedTest {
             rule.onNodeWithTag("app_search").assertIsDisplayed()
             assertNull(launched.get())
             rule.onNodeWithTag("app_search").performTextInput(" extra")
-            rule.waitUntil(15_000) { launched.get() != null }
+            rule.waitUntil(30_000) { launched.get() != null }
             assertEquals(SecondFixtureActivity::class.java.name, launched.get())
             returnToStil()
             rule.onNodeWithTag("home_surface").assertIsDisplayed()
@@ -231,13 +232,13 @@ class LauncherInstrumentedTest {
         runBlocking { rule.activity.launcherDataStore.edit { it.remove(stringPreferencesKey("launch_stats_v1")) } }
         observeLaunch { launched ->
             rule.onNodeWithTag("home_$firstId").performClick()
-            rule.waitUntil(15_000) { launched.get() != null }
+            rule.waitUntil(30_000) { launched.get() != null }
             returnToStil()
             rule.waitUntil(5_000) { runBlocking { graph.stats.history.first().days[LocalDate.now().toString()]?.get(firstId) == 1 } }
             launched.set(null)
             openApps()
             rule.onNodeWithTag("app_search").performTextInput("Stil fixture extra")
-            rule.waitUntil(15_000) { launched.get() != null }
+            rule.waitUntil(30_000) { launched.get() != null }
             returnToStil()
             runBlocking { graph.settings.update { it.copy(paused = setOf(firstId)) } }
             rule.waitForIdle()
@@ -253,7 +254,7 @@ class LauncherInstrumentedTest {
             rule.waitUntil(6_000) { rule.onAllNodesWithText("Ready").fetchSemanticsNodes().isNotEmpty() }
             assertNull(launched.get())
             rule.onNodeWithTag("confirm_open").performClick()
-            rule.waitUntil(15_000) { launched.get() != null }
+            rule.waitUntil(30_000) { launched.get() != null }
             returnToStil()
             rule.waitUntil(5_000) { runBlocking { graph.stats.history.first().days[LocalDate.now().toString()]?.get(firstId) == 2 } }
         }

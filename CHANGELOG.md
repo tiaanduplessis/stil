@@ -15,6 +15,8 @@ Release candidate with version code 6, prepared to update the signed 0.4.0 previ
 - Wait for the emulator's package service before the device-test script starts Gradle.
 - Make the Android 8 device tests pass: bring Stil back through the shell after a fixture launch, and let the settings scroll offset clamp when a pane crosses the compact-height threshold. Place the tabletop test's fold at the middle so the All apps pane is the lower one on a 720x1600 phone at 2.75 density.
 - Upload device diagnostics even when a hung emulator job is cancelled, and cap that job at 20 minutes.
+- Pin the emulator to 280 dpi in the device-test script, since hosted runs came up at 440 dpi. The book-posture test now changes density only on a device too narrow for two panes, which removes the mid-suite density flip that preceded the API 36 hangs.
+- Log every thread's stack from a device test that runs past 90 seconds, and wait up to 30 seconds for a fixture launch.
 - Add store listing text, icon, and screenshots under `fastlane/` for F-Droid and IzzyOnDroid.
 - Update repository documents for public use and add Gradle to Dependabot.
 
