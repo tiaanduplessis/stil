@@ -36,8 +36,8 @@ data class LauncherSettings(
     val wallpaperDate: String = "",
     val wallpaperId: String = "",
     val wallpaperFile: String = "",
-    val wallpaperAuthor: String = "Alvin Engler",
-    val wallpaperSource: String = "https://unsplash.com/photos/aerial-view-of-trees-LnbWqObX0TQ",
+    val wallpaperAuthor: String = "",
+    val wallpaperSource: String = "",
     val privateSpaceVisible: Boolean = true,
 ) {
     fun label(app: LaunchableApp): String = aliases[app.id]?.takeIf(String::isNotBlank) ?: app.name

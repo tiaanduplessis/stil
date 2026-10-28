@@ -10,8 +10,8 @@ Reports are handled by the maintainer as availability permits. There is no guara
 
 ## Supported versions
 
-Stil has no published APK release yet. Report issues against the current primary branch and include the exact commit. Supported released versions will be documented when releases exist.
+Security fixes target the latest [release](https://github.com/tiaanduplessis/stil/releases) and the current `main` branch. Older previews do not receive fixes; update to the latest release. Include the exact version or commit in a report.
 
 ## Reporting availability
 
-The email address above is the reporting route while the repository is private. GitHub's private vulnerability-reporting feature has not been advertised as active. Recheck that feature and the monitored contact before any public release.
+The email address above is the reporting route. Use GitHub's private vulnerability reporting from the repository's **Security** tab only if that option is shown there.

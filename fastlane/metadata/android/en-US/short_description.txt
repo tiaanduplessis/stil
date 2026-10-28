@@ -1,0 +1,1 @@
+A minimal launcher with a short app list, custom fonts, and daily wallpapers

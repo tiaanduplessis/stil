@@ -1,0 +1,1 @@
+Open the only search match as you type, including while the keyboard is composing. Add on-device launch stats for Today, 7 days, and 30 days. Home no longer bundles a photo; with daily photos it stays plain black until one downloads.

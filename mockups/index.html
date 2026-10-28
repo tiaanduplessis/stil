@@ -83,7 +83,6 @@ h2 { font-size:29px; font-weight:400; letter-spacing:-.8px; margin:16px 0; line-
 .dim-row label { margin:0; }
 .setting input[type=range] { width:100%; min-height:48px; accent-color:var(--ink); margin:4px 0 0; }
 .photo-credit { font-size:12px; color:var(--sub); line-height:1.5; margin:12px 0; }
-.photo-credit a { display:inline-block; padding:7px 0; }
 .plain-copy { font-size:14px; line-height:1.6; color:var(--sub); }
 .screen .primary { background:var(--ink); color:var(--paper); border-radius:12px; min-height:50px; padding:12px 16px; width:100%; font-size:16px; }
 .screen .secondary { border:1px solid var(--rule); border-radius:12px; min-height:48px; width:100%; padding:10px; font-size:15px; }
@@ -202,9 +201,9 @@ const fonts = [
  {id:'mono',name:'Mono',family:'ui-monospace, "Courier New", monospace'}
 ];
 const wallpapers = [
- {src:'assets/forest.jpg',name:'Forest',credit:'Alvin Engler',url:'https://unsplash.com/photos/aerial-view-of-trees-LnbWqObX0TQ'},
- {src:'assets/lake.jpg',name:'Lake',credit:'Alvin Engler',url:'https://unsplash.com/photos/grass-near-body-of-water-uB1RyCeJl5A'},
- {src:'assets/ferns.jpg',name:'Ferns',credit:'Alvin Engler',url:'https://unsplash.com/photos/green-ferns-during-daytime-vIf2fJN1vdA'}
+ {css:'linear-gradient(160deg,#1f3a2b,#4f7a5a 55%,#a9c29b)',name:'Forest'},
+ {css:'linear-gradient(160deg,#1c2f45,#3f6f8f 55%,#9cc3d5)',name:'Lake'},
+ {css:'linear-gradient(160deg,#2a3b20,#6a8d3f 55%,#c3d58a)',name:'Ferns'}
 ];
 const fresh = () => ({theme:'light',align:'left',size:32,font:'system',wallpaper:'off',wallpaperIndex:0,wallpaperDay:'',dim:65,pins:['phone','messages','maps','camera','spotify'],aliases:{},hidden:[],paused:['instagram']});
 const key = 'stil-design-study-v1';
@@ -229,7 +228,7 @@ const save=()=>{try{localStorage.setItem(key,JSON.stringify(state));}catch{}};
 function dayStamp(){const d=new Date();d.setDate(d.getDate()+demoDays);return `${d.getFullYear()}-${d.getMonth()+1}-${d.getDate()}`;}
 function nextWallpaper(){state.wallpaperIndex=(state.wallpaperIndex+1+Math.floor(Math.random()*(wallpapers.length-1)))%wallpapers.length;state.wallpaperDay=dayStamp();save();}
 function syncWallpaper(){if(state.wallpaper==='daily'&&state.wallpaperDay!==dayStamp()){nextWallpaper();return true;}return false;}
-function wallpaperBackground(){const image=wallpapers[state.wallpaperIndex];return `linear-gradient(rgb(0 0 0 / ${state.dim/100}),rgb(0 0 0 / ${state.dim/100})),url("${image.src}")`;}
+function wallpaperBackground(){const image=wallpapers[state.wallpaperIndex];return `linear-gradient(rgb(0 0 0 / ${state.dim/100}),rgb(0 0 0 / ${state.dim/100})),${image.css}`;}
 function applyStyle(){
  const glass=document.querySelector('.glass');
  glass.style.setProperty('--launcher-font',fonts.find(f=>f.id===state.font).family);
@@ -275,7 +274,7 @@ function render(){
  screen.innerHTML=`<section class="screen" aria-label="Font">${back('settings','Settings')}<h2>Font</h2><div class="scroll" role="radiogroup" aria-label="Font family">${fonts.map(f=>`<button class="app-row font-option" style='font-family:${f.family}' data-font="${f.id}" role="radio" tabindex="${state.font===f.id?0:-1}" aria-checked="${state.font===f.id}"><span>${f.name}</span><span class="choice" aria-hidden="true">${state.font===f.id?'✓':''}</span></button>`).join('')}</div><div class="bottom-action"><button class="secondary" data-action="home">Preview home</button></div></section>`;
  } else if(view==='wallpaper'){
  const current=wallpapers[state.wallpaperIndex],photo=state.wallpaper!=='off';
- screen.innerHTML=`<section class="screen" aria-label="Wallpaper">${back('settings','Settings')}<h2>Wallpaper</h2><div class="scroll"><div class="wallpaper-preview ${photo?'photo':''}" aria-label="${photo?current.name:'Plain'} wallpaper preview"><strong>09:41</strong><span>Phone<br>Messages</span></div>${selectButtons('Rotation','wallpaper',[['off','Off'],['daily','Daily'],['keep','Keep']])}<div class="wallpaper-actions"><button class="secondary" data-action="next-wallpaper" ${photo?'':'disabled'}>Next image</button><button class="secondary" data-action="home">Preview home</button></div><div class="setting"><div class="dim-row"><label for="wallpaper-dim">Dim</label><output id="dim-value" for="wallpaper-dim">${state.dim}%</output></div><input id="wallpaper-dim" type="range" min="60" max="85" step="5" value="${state.dim}" ${photo?'':'disabled'}></div><p class="photo-credit">${photo?`${current.name} by <a href="${current.url}" target="_blank" rel="noreferrer">${current.credit}</a>`:'Plain background'}</p><p class="hint">Sample photos</p></div></section>`;
+ screen.innerHTML=`<section class="screen" aria-label="Wallpaper">${back('settings','Settings')}<h2>Wallpaper</h2><div class="scroll"><div class="wallpaper-preview ${photo?'photo':''}" aria-label="${photo?current.name:'Plain'} wallpaper preview"><strong>09:41</strong><span>Phone<br>Messages</span></div>${selectButtons('Rotation','wallpaper',[['off','Off'],['daily','Daily'],['keep','Keep']])}<div class="wallpaper-actions"><button class="secondary" data-action="next-wallpaper" ${photo?'':'disabled'}>Next image</button><button class="secondary" data-action="home">Preview home</button></div><div class="setting"><div class="dim-row"><label for="wallpaper-dim">Dim</label><output id="dim-value" for="wallpaper-dim">${state.dim}%</output></div><input id="wallpaper-dim" type="range" min="60" max="85" step="5" value="${state.dim}" ${photo?'':'disabled'}></div><p class="photo-credit">${photo?`${current.name} sample`:'Plain background'}</p><p class="hint">Sample gradients</p></div></section>`;
  } else if(view==='manage'){
  const pinned=state.pins.filter(id=>!state.hidden.includes(id));const others=catalog.filter(a=>!state.pins.includes(a.id)&&!state.hidden.includes(a.id));
  screen.innerHTML=`<section class="screen" aria-label="Manage home">${back('settings','Settings')}<h2>Home apps</h2><div class="scroll"><p class="hint">Home (${pinned.length}/6)</p>${pinned.map((id,i)=>`<button class="app-row" data-edit="${id}"><span>${esc(name(id))}</span><span class="mark">${i+1}</span></button>`).join('')}<p class="hint">Other apps</p>${others.map(a=>`<button class="app-row" data-edit="${a.id}"><span>${esc(name(a.id))}</span></button>`).join('')}</div></section>`;
