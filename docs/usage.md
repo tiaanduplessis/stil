@@ -47,7 +47,7 @@ Navigation and selection use short transitions. Disable animations in Android's 
 - **Keep** stops automatic changes. **Next image** still fetches another photo when you request one.
 - **Dim** keeps text legible over the photo. Downloads use unmetered networking by default through **Wi-Fi downloads**.
 
-The bundled forest appears until a downloaded photo is available. A failed download keeps the current image. Photographer credit in Wallpaper settings opens the photo's source.
+With **Daily** or **Keep**, Home stays plain black until a photo downloads. A failed download keeps the current image. Photographer credit in Wallpaper settings opens the photo's source.
 
 Stil requests a system/home wallpaper update. It does not request a lock-screen update. **Off** changes Stil's background but does not restore the previous system wallpaper; the last applied photo may still appear elsewhere in Android.
 

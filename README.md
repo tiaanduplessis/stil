@@ -2,7 +2,7 @@
 
 A minimal Android launcher with a short app list, custom fonts, and daily wallpapers.
 
-**Preview.** Android 8.0 or later. Repository access is required while Stil is private. [Download Stil 0.4.0](https://github.com/tiaanduplessis/stil/releases/tag/v0.4.0).
+**Preview.** Android 8.0 or later. [Download Stil 0.4.0](https://github.com/tiaanduplessis/stil/releases/tag/v0.4.0).
 
 [Build and try Stil](#try-stil) · [User guide](docs/usage.md)
 
@@ -70,7 +70,7 @@ Home adjusts when you open, close, or partly fold the device.
 
 No account, ads, telemetry, usage access, accessibility service, or notification access. Core launcher features work offline. Optional photo downloads use Lorem Picsum and retain photographer/source attribution. Failed downloads keep the current photo; Android may delay background updates.
 
-Preferences, launch counts, and cached photos stay on the device. Read the [privacy notes](docs/privacy.md) for network requests, permissions, and wallpaper behavior. Bundled photo credits are in [third-party notices](THIRD_PARTY_NOTICES.md).
+Preferences, launch counts, and cached photos stay on the device. Read the [privacy notes](docs/privacy.md) for network requests, permissions, and wallpaper behavior. Photo credits and licenses are in [third-party notices](THIRD_PARTY_NOTICES.md).
 
 ## Build, contribute, and get help
 
