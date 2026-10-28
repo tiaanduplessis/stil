@@ -2,6 +2,12 @@
 set -euo pipefail
 
 mkdir -p .artifacts/emulator
+# sys.boot_completed can precede the package service on a slow runner; installs fail until it answers.
+for attempt in $(seq 1 60); do
+    adb shell pm path android > /dev/null 2>&1 && break
+    [[ "$attempt" -lt 60 ]] || { echo "The emulator's package service never became ready." >&2; exit 1; }
+    sleep 2
+done
 # The emulator action resizes the log buffer as it boots, which can make an early clear fail.
 for attempt in 1 2 3 4 5; do
     adb logcat -c && break
