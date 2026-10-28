@@ -94,8 +94,8 @@ class FoldableInstrumentedTest {
     }
 
     @Test fun tabletopUsesRealFoldBoundsAndKeepsAppsAndGesturesBelowIt() {
-        // Equal panes: below a 75% area ratio All apps opens in the larger upper pane, as on a 720x1600 phone at 2.75 density.
-        val feature = publish(fraction = 0.5f, size = 12)
+        // An off-center fold with the larger pane below it: at 0.55 on a 720x1600 phone at 2.75 density the lower pane falls under primaryPane's 75% ratio and All apps opens above the fold.
+        val feature = publish(fraction = 0.45f, size = 12)
         waitFor("home_layout_TABLETOP")
         val density = rule.activity.resources.displayMetrics.density
         val clockBottom = rule.onNodeWithTag("home_clock").getUnclippedBoundsInRoot().bottom.value
