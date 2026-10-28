@@ -8,11 +8,11 @@ for attempt in $(seq 1 60); do
     [[ "$attempt" -lt 60 ]] || { echo "The emulator's package service never became ready." >&2; exit 1; }
     sleep 2
 done
-# The emulator action resizes the log buffer as it boots, which can make an early clear fail.
+# Clearing the log only tidies diagnostics. An API 26 emulator can reject it for a minute after boot, so retry and carry on.
 for attempt in 1 2 3 4 5; do
     adb logcat -c && break
-    [[ "$attempt" -lt 5 ]] || exit 1
-    sleep 3
+    [[ "$attempt" -lt 5 ]] || echo "Could not clear the logcat buffer; continuing with the existing log." >&2
+    sleep "${STIL_LOGCAT_RETRY_DELAY:-3}"
 done
 adb logcat -v threadtime > .artifacts/emulator/logcat.txt &
 logcat_pid=$!
