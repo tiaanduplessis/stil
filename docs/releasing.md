@@ -1,12 +1,12 @@
 # Releases
 
-Stil uses private GitHub build downloads and manual GitHub Releases. The current signed preview is [0.4.0](https://github.com/tiaanduplessis/stil/releases/tag/v0.4.0). It updates the signed 0.3.0 preview with the same signing identity. A durable signing identity is configured in the GitHub `release` environment. The maintainer keeps the encrypted keystore locally, with its password in macOS Keychain; back up both separately. The repository remains private. Publishing a release or changing repository visibility requires an explicit maintainer decision.
+Stil uses GitHub build downloads and manual GitHub Releases. The current signed preview is [0.4.0](https://github.com/tiaanduplessis/stil/releases/tag/v0.4.0). It updates the signed 0.3.0 preview with the same signing identity. A durable signing identity is configured in the GitHub `release` environment. The maintainer keeps the encrypted keystore locally, with its password in macOS Keychain; back up both separately. Publishing a release or changing repository visibility requires an explicit maintainer decision.
 
 ## Test builds
 
-Open a successful [CI run](https://github.com/tiaanduplessis/stil/actions/workflows/ci.yml) and download its `stil-debug` artifact. Extract the ZIP and install the APK. Downloads require repository access and expire after seven days. Each runner generates a debug signing key, so updating a previous debug install may require uninstalling it first; that removes its settings. A debug install cannot be upgraded to the release signing identity.
+Open a successful [CI run](https://github.com/tiaanduplessis/stil/actions/workflows/ci.yml) and download its `stil-debug` artifact. Extract the ZIP and install the APK. Downloads require a GitHub sign-in and expire after seven days. Each runner generates a debug signing key, so updating a previous debug install may require uninstalling it first; that removes its settings. A debug install cannot be upgraded to the release signing identity.
 
-App, build, tooling, or workflow changes pushed to `main` run builds, unit tests, lint, signing-tool checks, and API 36 emulator tests. PRs, scheduled runs, and documentation-only pushes do not run CI. Manual CI runs from `main` can include API 26; the release workflow verifies both API 26 and 36. Local private previews record their actual device coverage in the release notes. Actions use Ubuntu runners, pinned commits, Gradle caching, one Gradle worker, bounded timeouts, and short artifact retention. Private runs consume the account's Actions allowance.
+App, build, tooling, or workflow changes pushed to `main` run builds, unit tests, lint, signing-tool checks, and API 36 emulator tests. PRs, scheduled runs, and documentation-only pushes do not run CI. Manual CI runs from `main` can include API 26; the release workflow verifies both API 26 and 36. Local previews record their actual device coverage in the release notes. Actions use Ubuntu runners, pinned commits, Gradle caching, one Gradle worker, bounded timeouts, and short artifact retention.
 
 ## Configure release signing once
 
@@ -44,12 +44,16 @@ The draft receives:
 - `release.json`, its source commit, version code, certificate fingerprint, and APK digest.
 - `mapping.txt.gz`, the compressed R8 mapping needed to interpret obfuscated crash traces. Decompress it before use.
 
-Verified files and mapping are also retained as a private Actions artifact for 30 days. Draft release assets persist independently of that artifact retention. Existing releases are not overwritten. No release runs automatically on a merge or tag push.
+Verified files and mapping are also retained as an Actions artifact for 30 days. Draft release assets persist independently of that artifact retention. Existing releases are not overwritten. No release runs automatically on a merge or tag push.
 
 ## Review and publish manually
 
 Download the signed APK from the draft, verify its checksum and certificate, and install that exact artifact on the test device. Test updating an earlier signed release when one exists. Check default-home selection and app launching on the minified build; debug instrumentation tests exercise the debug variant.
 
-Edit the generated release notes to describe changes, supported Android versions, tested devices, and known limits. Publish only after the maintainer approves the candidate. GitHub Releases inherit repository visibility, so publishing a release in this private repository does not make the repository public.
+Edit the generated release notes to describe changes, supported Android versions, tested devices, and known limits. Publish only after the maintainer approves the candidate.
 
-Update README status and download links only after a release exists. Recheck reporting settings before public use: GitHub's [private vulnerability reporting](https://docs.github.com/en/code-security/how-tos/report-and-fix-vulnerabilities/configure-vulnerability-reporting/configure-for-a-repository) is documented for public repositories. Do not advertise an inactive form.
+Update README status and download links only after a release exists. Keep reporting settings current: GitHub's [private vulnerability reporting](https://docs.github.com/en/code-security/how-tos/report-and-fix-vulnerabilities/configure-vulnerability-reporting/configure-for-a-repository) is available for public repositories. Do not advertise an inactive form.
+
+## Store listings
+
+`fastlane/metadata/android/en-US/` holds the title, descriptions, icon, screenshots, and per-version changelogs used by F-Droid and IzzyOnDroid. Add `changelogs/<versionCode>.txt` for each release. Refresh the screenshots when `docs/media/` changes. Distribute only the APK signed with the durable release key; F-Droid's own builds are signed with its key unless its build is verified as reproducible against the release APK.

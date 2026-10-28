@@ -29,6 +29,10 @@ android {
         targetCompatibility = JavaVersion.VERSION_17
     }
     buildFeatures { compose = true }
+    dependenciesInfo {
+        includeInApk = false
+        includeInBundle = false
+    }
     testOptions { unitTests.isIncludeAndroidResources = true }
     lint {
         warningsAsErrors = true

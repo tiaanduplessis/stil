@@ -65,4 +65,4 @@ Use short action labels. Keep review notes and research collapsed by default. Th
 
 Settings > Font previews each family. The choice persists across reloads. Settings > Wallpaper provides Off, Daily, and Keep modes, Next image, Preview home, and Dim. Only home shows the wallpaper; settings and search keep solid backgrounds.
 
-Try Daily, preview home, then return and use Next day below the phone to simulate daily rotation. Keep holds the current image. Off restores the selected light or dark theme. The three sample photos are local files in `mockups/assets`; no runtime download is needed for the mockup. Photo credit stays in wallpaper settings.
+Try Daily, preview home, then return and use Next day below the phone to simulate daily rotation. Keep holds the current image. Off restores the selected light or dark theme. The three sample backgrounds are generated gradients; no photo files or downloads are needed for the mockup.

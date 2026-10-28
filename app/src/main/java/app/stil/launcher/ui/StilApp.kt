@@ -46,7 +46,6 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.platform.testTag
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.heading
@@ -218,7 +217,7 @@ private fun WallpaperImage(model: LauncherViewModel, settings: LauncherSettings,
     }
     Crossfade(bitmap, Modifier.fillMaxSize(), tween(240), label = "wallpaper") { photo ->
         photo?.let { Image(it.asImageBitmap(), null, Modifier.fillMaxSize(), contentScale = ContentScale.Crop) }
-            ?: Image(painterResource(R.drawable.wallpaper_forest), null, Modifier.fillMaxSize(), contentScale = ContentScale.Crop)
+            ?: Box(Modifier.fillMaxSize().background(Color.Black))
     }
     val dimAmount by animateFloatAsState(settings.dim / 100f, tween(120), label = "wallpaper dim")
     if (dim) Box(Modifier.fillMaxSize().background(Color.Black.copy(alpha = dimAmount)))
@@ -657,9 +656,11 @@ private fun WallpaperScreen(model: LauncherViewModel, settings: LauncherSettings
             Slider(settings.dim.toFloat(), { value -> model.update { it.copy(dim = value.toInt()) } }, valueRange = 60f..85f, steps = 4, enabled = photo,
                 modifier = Modifier.testTag("wallpaper_dim"))
             Toggle(R.string.wifi_only, settings.wifiOnly) { value -> model.update { it.copy(wifiOnly = value) } }
-            Muted(stringResource(R.string.photo_credit, settings.wallpaperAuthor), Modifier.fillMaxWidth().heightIn(min = 48.dp)
-                .clickable(role = Role.Button) { runCatching { context.startActivity(Intent(Intent.ACTION_VIEW, settings.wallpaperSource.toUri())) } }
-                .wrapContentHeight(UiAlignment.CenterVertically))
+            if (settings.wallpaperFile.isNotBlank()) {
+                Muted(stringResource(R.string.photo_credit, settings.wallpaperAuthor), Modifier.fillMaxWidth().heightIn(min = 48.dp)
+                    .clickable(role = Role.Button) { runCatching { context.startActivity(Intent(Intent.ACTION_VIEW, settings.wallpaperSource.toUri())) } }
+                    .wrapContentHeight(UiAlignment.CenterVertically))
+            }
             Muted(stringResource(R.string.photo_provider))
         }
         OutlinedButton(onClick = { model.navigate(Screen.HOME) }, Modifier.fillMaxWidth().padding(top = 12.dp)) { Text(stringResource(R.string.preview_home)) }

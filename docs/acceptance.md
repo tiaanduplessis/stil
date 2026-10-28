@@ -20,7 +20,7 @@ The baseline is the HTML prototype. No Android application existed before this i
 | Fold continuity | Search and cursor, unsaved rename, scroll, pins, appearance, and the active launch pause survive resizing and recreation | Instrumented continuity tests and native fold/unfold checks |
 | Delivery | Reproducible wrapper build, debug APK, tests, lint, scoped commit and PR | Build receipts, exact revision, PR checks when hosting is available |
 
-Minimum Android version: 8.0 (API 26). Target and compile SDK: 36. The wallpaper provider is Lorem Picsum, with photographer/source attribution. It requires no account or secret. Core use and the bundled fallback remain offline. Photo delivery by this third-party service is best effort.
+Minimum Android version: 8.0 (API 26). Target and compile SDK: 36. The wallpaper provider is Lorem Picsum, with photographer/source attribution. It requires no account or secret. Core use remains offline; with Daily or Keep, Home shows a plain black background until a photo downloads. Photo delivery by this third-party service is best effort.
 
 Generated run artifacts belong in ignored `.artifacts/`, not in source commits. Profile and OEM behavior that cannot be exercised must be reported separately from passing tests.
 

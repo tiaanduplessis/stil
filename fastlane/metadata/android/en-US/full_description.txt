@@ -1,0 +1,17 @@
+Stil is a quiet Android home screen. It shows a clock and up to six apps you choose. Swipe up for everything else.
+
+<b>What it does</b>
+<ul>
+<li>Pin, rename, reorder, and hide apps. Search finds original names and aliases.</li>
+<li>Choose System, Sans, Serif, or Mono type, Light, Dark, or System appearance, alignment, and text size.</li>
+<li>Show a daily photo, keep one, or use a plain background.</li>
+<li>Add a three-second pause before selected apps open.</li>
+<li>See how often you open apps, kept on your device.</li>
+<li>Use work profiles and Private space, with private apps kept out of search and home.</li>
+<li>Adapt to folding phones in wide and tabletop postures.</li>
+</ul>
+
+<b>Privacy</b>
+No account, ads, analytics, usage access, accessibility service, or notification access. Everything except the optional photo download works offline. Photos come from the Lorem Picsum service, which sees your IP address when you request one. Photographer credit is shown in Wallpaper settings.
+
+Stil needs Android 8.0 or later. Select Use Stil in Android's default home app picker after setup.

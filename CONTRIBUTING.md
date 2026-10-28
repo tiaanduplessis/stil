@@ -1,6 +1,6 @@
 # Contributing
 
-Stil is in early development. Repository access is required while it is private. Use an issue to discuss substantial changes before starting them.
+Stil is in early development. Use an issue to discuss substantial changes before starting them. By contributing, you agree that your work is licensed under the project's [MIT license](LICENSE).
 
 ## Build and test
 
@@ -38,7 +38,7 @@ App, build, tooling, or workflow changes pushed to `main` build the debug and mi
 
 Successful runs provide a debug APK. Reports, logcat, and a final device capture are retained for seven days, including available diagnostics from failed runs. Debug signing keys are generated on each runner: a new CI APK may require uninstalling an older debug build, which removes its settings. Release updates use a separate durable signing key.
 
-The Gradle wrapper JAR is validated by `setup-gradle`, and the Gradle distribution checksum is pinned. Actions use full commit SHAs; Dependabot proposes weekly action updates. CI jobs have read-only repository permissions and no release credentials. Only `main` writes Gradle caches. Superseded main-branch CI runs are canceled. Private repository runs consume the account's Actions allowance; keep artifact retention and device matrices small.
+The Gradle wrapper JAR is validated by `setup-gradle`, and the Gradle distribution checksum is pinned. Actions use full commit SHAs; Dependabot proposes weekly action and Gradle dependency updates. CI jobs have read-only repository permissions and no release credentials. Only `main` writes Gradle caches. Superseded main-branch CI runs are canceled. Keep artifact retention and device matrices small.
 
 The emulator job removes unused .NET, Swift, and NDK toolchains from its disposable runner. It checks for 10 GiB free before booting: the API 36 image needs more space than a small userdata setting suggests. This app does not build native code with the NDK.
 

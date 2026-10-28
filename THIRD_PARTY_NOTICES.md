@@ -2,17 +2,9 @@
 
 ## Photos
 
-The following bundled photos are by [Alvin Engler](https://unsplash.com/@englr) and are used under the [Unsplash License](https://unsplash.com/license). The project's MIT license does not replace those terms.
+Stil bundles no photographs. The app downloads optional photos through [Lorem Picsum](https://picsum.photos/). It retains each photo's author and source URL and exposes that credit in Wallpaper settings. Downloaded photos retain their own rights and terms.
 
-| Photo | Files |
-| --- | --- |
-| [Forest](https://unsplash.com/photos/aerial-view-of-trees-LnbWqObX0TQ) | `app/src/main/res/drawable-nodpi/wallpaper_forest.jpg`, `mockups/assets/forest.jpg` |
-| [Lake](https://unsplash.com/photos/grass-near-body-of-water-uB1RyCeJl5A) | `mockups/assets/lake.jpg` |
-| [Ferns](https://unsplash.com/photos/green-ferns-during-daytime-vIf2fJN1vdA) | `mockups/assets/ferns.jpg` |
-
-The application downloads optional photos through [Lorem Picsum](https://picsum.photos/). It retains each photo's author and source URL and exposes that credit in Wallpaper settings. Downloaded photos retain their own rights and terms.
-
-Earlier README screenshots and video in Git history show [James Forbes's forest photo](https://unsplash.com/photos/jrzvClypPq8), downloaded through Lorem Picsum (photo 190). That photo remains under the Unsplash License; its use in the documentation is separate from the project's MIT license. Current captures use a plain background.
+Earlier README screenshots and video in Git history show [James Forbes's forest photo](https://unsplash.com/photos/jrzvClypPq8), downloaded through Lorem Picsum (photo 190). That photo remains under the Unsplash License; its use in the documentation is separate from the project's MIT license. Earlier revisions also bundled three [Alvin Engler](https://unsplash.com/@englr) photos for the app fallback and the HTML prototype; they have been removed. Current captures use a plain background.
 
 ## Gradle wrapper
 

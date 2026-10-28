@@ -8,6 +8,11 @@ Release candidate with version code 6, prepared to update the signed 0.4.0 previ
 - Add on-device launch stats under Settings with Today, 7-day, and 30-day views, daily activity, and per-app open counts.
 - Count successful launcher opens once. Exclude canceled pauses, failed launches, and Private space; keep hidden and removed apps out of stats.
 - Scroll the foldable search-continuity test to its result before checking visibility in a short pane.
+- Remove the bundled forest photo. With Daily or Keep, Home shows a plain black background until a photo downloads; the Wallpaper credit appears only once a photo exists, and the HTML prototype uses generated gradients.
+- Omit Gradle dependency metadata from the APK signing block.
+- Fix the foldable search test to scroll the lazy app list to its result.
+- Add store listing text, icon, and screenshots under `fastlane/` for F-Droid and IzzyOnDroid.
+- Update repository documents for public use and add Gradle to Dependabot.
 
 ## 0.4.0 - 2026-10-26
 
