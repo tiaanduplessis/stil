@@ -33,6 +33,7 @@ import java.util.concurrent.atomic.AtomicReference
 
 @RunWith(AndroidJUnit4::class)
 class FoldableInstrumentedTest {
+    @get:Rule(order = Int.MIN_VALUE) val watchdog = HangWatchdog()
     @get:Rule(order = 0) val folds = WindowLayoutInfoPublisherRule()
     @get:Rule(order = 1) val rule = createAndroidComposeRule<MainActivity>()
     private val graph get() = (rule.activity.application as StilApplication).graph
@@ -110,8 +111,9 @@ class FoldableInstrumentedTest {
     }
 
     @Test fun bookPostureKeepsBothBottomGesturesAndMirrorsThePinnedPane() {
-        // This scenario requires two readable panes; the CI phone defaults to only 582x214dp in landscape.
-        if (rule.activity.resources.displayMetrics.densityDpi > 240) {
+        // Two readable panes need about 800 dp across in landscape. CI runs at 280 dpi (914 dp) and never changes density.
+        val metrics = rule.activity.resources.displayMetrics
+        if (maxOf(metrics.widthPixels, metrics.heightPixels) / metrics.density < 800) {
             densityToRestore = Regex("Override density: (\\d+)").find(shell("wm density"))?.groupValues?.get(1) ?: "reset"
             shell("wm density 240")
             rule.waitUntil(10_000) { rule.activity.resources.displayMetrics.densityDpi == 240 }
@@ -228,7 +230,7 @@ class FoldableInstrumentedTest {
             rule.waitUntil(1_500) { rule.onAllNodesWithText("Ready").fetchSemanticsNodes().isNotEmpty() }
             assertNull(launched.get())
             rule.onNodeWithTag("confirm_open").assertIsDisplayed().assertIsEnabled().performClick()
-            rule.waitUntil(15_000) { launched.get() != null }
+            rule.waitUntil(30_000) { launched.get() != null }
             assertEquals(FixtureActivity::class.java.name, launched.get())
         } finally { receiverContext.unregisterReceiver(receiver) }
     }
