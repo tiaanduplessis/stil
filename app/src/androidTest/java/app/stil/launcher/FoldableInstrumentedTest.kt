@@ -96,12 +96,16 @@ class FoldableInstrumentedTest {
         val feature = publish(fraction = 0.55f, size = 12)
         waitFor("home_layout_TABLETOP")
         val density = rule.activity.resources.displayMetrics.density
-        assertTrue(rule.onNodeWithTag("home_clock").getUnclippedBoundsInRoot().bottom.value < feature.bounds.top / density)
-        assertTrue(rule.onNodeWithTag("home_apps").getUnclippedBoundsInRoot().top.value > feature.bounds.bottom / density)
+        val clockBottom = rule.onNodeWithTag("home_clock").getUnclippedBoundsInRoot().bottom.value
+        val appsTop = rule.onNodeWithTag("home_apps").getUnclippedBoundsInRoot().top.value
+        val foldTop = feature.bounds.top / density
+        val foldBottom = feature.bounds.bottom / density
+        assertTrue("clock bottom $clockBottom, fold top $foldTop (density $density)", clockBottom < foldTop)
+        assertTrue("apps top $appsTop, fold bottom $foldBottom (density $density)", appsTop > foldBottom)
         rule.onNodeWithTag("home_$firstId").assertIsDisplayed()
         apps()
         val search = rule.onNodeWithTag("app_search").getUnclippedBoundsInRoot()
-        assertTrue(search.top.value > feature.bounds.bottom / density)
+        assertTrue("search top ${search.top.value}, fold bottom $foldBottom (density $density)", search.top.value > foldBottom)
     }
 
     @Test fun bookPostureKeepsBothBottomGesturesAndMirrorsThePinnedPane() {
@@ -161,12 +165,13 @@ class FoldableInstrumentedTest {
         waitFor("home_layout_TABLETOP")
         settings()
         rule.onNodeWithText("Default home app").performScrollTo()
-        fun offset() = rule.onNodeWithTag("settings_list").fetchSemanticsNode().config[SemanticsProperties.VerticalScrollAxisRange].value()
-        val before = offset()
+        fun range() = rule.onNodeWithTag("settings_list").fetchSemanticsNode().config[SemanticsProperties.VerticalScrollAxisRange]
+        val before = range().value()
         assertTrue(before > 0)
         publish(fraction = 0.55f)
         rule.waitForIdle()
-        assertEquals(before, offset(), 1f)
+        // A pane that crosses the compact-height threshold (a bottom pane under a navigation bar) shrinks the content, so the offset may clamp to the new maximum.
+        range().let { after -> assertEquals(minOf(before, after.maxValue()), after.value(), 1f) }
         rule.onNodeWithText("Back").assertIsDisplayed()
     }
 
