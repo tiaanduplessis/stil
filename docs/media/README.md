@@ -10,7 +10,7 @@ These are captures of the native Android app on an Android 16 emulator. No HTML 
 - `app-search.mp4`: captured on 26 October 2026 from the search update released in 0.4.0. Swipe up → tap Search apps → tap Gboard's `c` and `l` keys → Clock opens automatically. The 240 ms drawer transition and keyboard motion run at normal speed.
 The README embeds the video through GitHub's hosted player. The MP4 is also kept here for local playback and as a portable fallback. Access to the hosted attachment follows GitHub's repository permissions. Recheck playback after a fork or visibility change.
 
-These captures use a plain background. Earlier README media in Git history used [James Forbes's forest photo](https://unsplash.com/photos/jrzvClypPq8), downloaded through Lorem Picsum (photo 190), under the [Unsplash License](https://unsplash.com/license). Third-party credits are listed in [third-party notices](../../THIRD_PARTY_NOTICES.md).
+These captures use a plain background. Third-party credits are listed in [third-party notices](../../THIRD_PARTY_NOTICES.md).
 
 `fold-wide.png` and `fold-tabletop.png` were captured on 26 October 2026 from the Android 16 Pixel Fold emulator. They show the fold layouts released in 0.3.0, with five apps, Dark appearance, Serif, and right alignment. The wide capture uses the open inner display; tabletop uses the half-open state rotated so the fold is horizontal. They are native app captures with no drawn hinge or device frame.
 

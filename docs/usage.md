@@ -30,7 +30,7 @@ Search matches the original app name and any alias. When your text leaves one av
 
 Predictive keyboards can leave the current word underlined. Single-match launch now works with that composing text too; it does not wait for a space or the search key. Moving the cursor or returning to a saved search does not open an app.
 
-The slide-up drawer and automatic search launch are available in the [0.4.0 preview](https://github.com/tiaanduplessis/stil/releases/tag/v0.4.0). The [search video](media/app-search.mp4) shows the new flow. Install it over the signed 0.3.0 preview to keep your settings.
+The slide-up drawer and automatic search launch arrived in the [0.4.0 preview](https://github.com/tiaanduplessis/stil/releases/tag/v0.4.0) and are in every later one. The [search video](media/app-search.mp4) shows the flow. Install a newer preview over the previous signed one to keep your settings.
 
 **Hide from Stil** removes an app from Stil's lists; it does not uninstall or disable it. Restore it under **Settings → Hidden apps**. These controls do not hide an app from Android settings or other launchers.
 
@@ -61,7 +61,7 @@ Open **Settings → Launch stats** to see how often you open apps through Stil. 
 
 Home taps, drawer taps, keyboard search, and automatic single-match launches all count once after Stil opens the app. A launch pause counts only after **Open** succeeds. Canceled pauses and failed launches do not count. These are open counts, not screen time; notifications, recents, and other launchers are outside the totals.
 
-Counts stay on this device. Private space is never recorded. Hidden and uninstalled apps are excluded from every view; restoring a hidden app can reveal counts still within the last 30 days. Personal and work copies remain separate. The current source includes this feature; the signed 0.4.0 preview predates it.
+Counts stay on this device. Private space is never recorded. Hidden and uninstalled apps are excluded from every view; restoring a hidden app can reveal counts still within the last 30 days. Personal and work copies remain separate. Launch stats arrived in the 0.5.0 preview.
 
 ## Work apps and Private space
 
