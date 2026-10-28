@@ -12,6 +12,7 @@ Release candidate with version code 6, prepared to update the signed 0.4.0 previ
 - Omit Gradle dependency metadata from the APK signing block.
 - Fix the foldable search test to scroll the lazy app list to its result.
 - Retry clearing logcat in the device-test script when an API 26 emulator rejects the first attempt.
+- Wait for the emulator's package service before the device-test script starts Gradle.
 - Add store listing text, icon, and screenshots under `fastlane/` for F-Droid and IzzyOnDroid.
 - Update repository documents for public use and add Gradle to Dependabot.
 

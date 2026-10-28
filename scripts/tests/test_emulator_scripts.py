@@ -32,7 +32,7 @@ class EmulatorDiskTest(unittest.TestCase):
 
 
 class DeviceRunnerTest(unittest.TestCase):
-    def run_device_script(self, gradle_status, capture_status, clear_failures=0):
+    def run_device_script(self, gradle_status, capture_status, clear_failures=0, package_failures=0):
         with tempfile.TemporaryDirectory(prefix="stil-emulator-test-") as directory:
             root = Path(directory)
             binary = root / "bin"
@@ -50,6 +50,10 @@ case "$1 $2" in
         trap 'exit 0' TERM
         echo 'device log'
         while :; do sleep 0.01; done ;;
+    'shell pm')
+        attempts=$(cat package-attempts.txt 2>/dev/null || echo 0)
+        echo $((attempts + 1)) > package-attempts.txt
+        [[ "$attempts" -ge "$STIL_PACKAGE_FAILURES" ]] || { echo "cmd: Can't find service: package" >&2; exit 20; } ;;
     'exec-out screencap')
         echo 'final screenshot'
         exit "$STIL_CAPTURE_STATUS" ;;
@@ -71,7 +75,8 @@ exit 92
 ''')
             gradle.chmod(0o700)
             env = dict(os.environ, PATH=str(binary) + os.pathsep + os.environ["PATH"],
-                       STIL_GRADLE_STATUS=str(gradle_status), STIL_CAPTURE_STATUS=str(capture_status), STIL_CLEAR_FAILURES=str(clear_failures))
+                       STIL_GRADLE_STATUS=str(gradle_status), STIL_CAPTURE_STATUS=str(capture_status), STIL_CLEAR_FAILURES=str(clear_failures),
+                       STIL_PACKAGE_FAILURES=str(package_failures))
             result = subprocess.run(["bash", str(SCRIPTS / "run_device_tests.sh")], cwd=root,
                                     env=env, capture_output=True, text=True, timeout=10)
             self.assertEqual(result.returncode, gradle_status, result.stderr)
@@ -81,12 +86,17 @@ exit 92
                 ":app:connectedDebugAndroidTest", "--no-daemon", "--max-workers=1",
                 "--no-parallel", "--console=plain",
             ])
+            if package_failures:
+                self.assertEqual((root / "package-attempts.txt").read_text().strip(), str(package_failures + 1))
             pid = int((root / "logcat.pid").read_text())
             with self.assertRaises(ProcessLookupError):
                 os.kill(pid, 0)
 
     def test_success_captures_diagnostics_and_stops_its_logger(self):
         self.run_device_script(0, 0)
+
+    def test_device_tests_wait_for_the_package_service(self):
+        self.run_device_script(0, 0, package_failures=2)
 
     def test_early_logcat_clear_failure_is_retried(self):
         self.run_device_script(0, 0, clear_failures=1)
