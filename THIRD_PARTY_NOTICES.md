@@ -4,8 +4,6 @@
 
 Stil bundles no photographs. The app downloads optional photos through [Lorem Picsum](https://picsum.photos/). It retains each photo's author and source URL and exposes that credit in Wallpaper settings. Downloaded photos retain their own rights and terms.
 
-Earlier README screenshots and video in Git history show [James Forbes's forest photo](https://unsplash.com/photos/jrzvClypPq8), downloaded through Lorem Picsum (photo 190). That photo remains under the Unsplash License; its use in the documentation is separate from the project's MIT license. Earlier revisions also bundled three [Alvin Engler](https://unsplash.com/@englr) photos for the app fallback and the HTML prototype; they have been removed. Current captures use a plain background.
-
 ## Gradle wrapper
 
 The checked-in Gradle wrapper JAR and generated scripts are Gradle project material under Apache-2.0. The JAR includes its license at `META-INF/LICENSE`, and the scripts retain their copyright/license headers. The project MIT license does not relicense them.
