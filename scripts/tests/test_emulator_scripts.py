@@ -76,7 +76,7 @@ exit 92
             gradle.chmod(0o700)
             env = dict(os.environ, PATH=str(binary) + os.pathsep + os.environ["PATH"],
                        STIL_GRADLE_STATUS=str(gradle_status), STIL_CAPTURE_STATUS=str(capture_status), STIL_CLEAR_FAILURES=str(clear_failures),
-                       STIL_PACKAGE_FAILURES=str(package_failures))
+                       STIL_PACKAGE_FAILURES=str(package_failures), STIL_LOGCAT_RETRY_DELAY="0")
             result = subprocess.run(["bash", str(SCRIPTS / "run_device_tests.sh")], cwd=root,
                                     env=env, capture_output=True, text=True, timeout=10)
             self.assertEqual(result.returncode, gradle_status, result.stderr)
@@ -97,6 +97,9 @@ exit 92
 
     def test_device_tests_wait_for_the_package_service(self):
         self.run_device_script(0, 0, package_failures=2)
+
+    def test_logcat_clear_that_never_succeeds_does_not_stop_the_tests(self):
+        self.run_device_script(0, 0, clear_failures=99)
 
     def test_early_logcat_clear_failure_is_retried(self):
         self.run_device_script(0, 0, clear_failures=1)
