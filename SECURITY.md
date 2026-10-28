@@ -14,4 +14,4 @@ Security fixes target the latest [release](https://github.com/tiaanduplessis/sti
 
 ## Reporting availability
 
-The email address above is the reporting route. Use GitHub's private vulnerability reporting from the repository's **Security** tab only if that option is shown there.
+You can also report through GitHub: open the repository's **Security** tab and choose **Report a vulnerability**. Both routes are private.
