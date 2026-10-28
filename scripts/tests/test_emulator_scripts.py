@@ -32,7 +32,7 @@ class EmulatorDiskTest(unittest.TestCase):
 
 
 class DeviceRunnerTest(unittest.TestCase):
-    def run_device_script(self, gradle_status, capture_status):
+    def run_device_script(self, gradle_status, capture_status, clear_failures=0):
         with tempfile.TemporaryDirectory(prefix="stil-emulator-test-") as directory:
             root = Path(directory)
             binary = root / "bin"
@@ -41,7 +41,10 @@ class DeviceRunnerTest(unittest.TestCase):
             adb.write_text('''#!/usr/bin/env bash
 set -eu
 case "$1 $2" in
-    'logcat -c') exit 0 ;;
+    'logcat -c')
+        attempts=$(cat clear-attempts.txt 2>/dev/null || echo 0)
+        echo $((attempts + 1)) > clear-attempts.txt
+        [[ "$attempts" -ge "$STIL_CLEAR_FAILURES" ]] || { echo "failed to clear the 'main' log" >&2; exit 1; } ;;
     'logcat -v')
         echo $$ > logcat.pid
         trap 'exit 0' TERM
@@ -68,7 +71,7 @@ exit 92
 ''')
             gradle.chmod(0o700)
             env = dict(os.environ, PATH=str(binary) + os.pathsep + os.environ["PATH"],
-                       STIL_GRADLE_STATUS=str(gradle_status), STIL_CAPTURE_STATUS=str(capture_status))
+                       STIL_GRADLE_STATUS=str(gradle_status), STIL_CAPTURE_STATUS=str(capture_status), STIL_CLEAR_FAILURES=str(clear_failures))
             result = subprocess.run(["bash", str(SCRIPTS / "run_device_tests.sh")], cwd=root,
                                     env=env, capture_output=True, text=True, timeout=10)
             self.assertEqual(result.returncode, gradle_status, result.stderr)
@@ -84,6 +87,9 @@ exit 92
 
     def test_success_captures_diagnostics_and_stops_its_logger(self):
         self.run_device_script(0, 0)
+
+    def test_early_logcat_clear_failure_is_retried(self):
+        self.run_device_script(0, 0, clear_failures=1)
 
     def test_device_test_failure_is_preserved_after_cleanup(self):
         self.run_device_script(7, 0)
