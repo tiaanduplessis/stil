@@ -5,11 +5,13 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.semantics.SemanticsActions
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
+import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.os.ParcelFileDescriptor
 import android.os.SystemClock
 import androidx.core.content.ContextCompat
 import androidx.work.ListenableWorker
@@ -364,9 +366,9 @@ class LauncherInstrumentedTest {
     }
 
     private fun returnToStil() {
-        rule.activity.runOnUiThread {
-            rule.activity.startActivity(Intent(rule.activity, MainActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT))
-        }
+        val command = "am start -n ${rule.activity.packageName}/${MainActivity::class.java.name}"
+        ParcelFileDescriptor.AutoCloseInputStream(InstrumentationRegistry.getInstrumentation().uiAutomation.executeShellCommand(command))
+            .bufferedReader().use { it.readText() }
         rule.waitUntil(10_000) { rule.onAllNodesWithTag("home_surface").fetchSemanticsNodes(atLeastOneRootRequired = false).isNotEmpty() }
     }
 
