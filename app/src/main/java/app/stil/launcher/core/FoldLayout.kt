@@ -24,7 +24,7 @@ data class HomePlacement(val arrangement: HomeArrangement, val clock: Pane, val 
 
 object FoldLayout {
     private const val HINGE_MARGIN = 12f
-    private const val GESTURE_HEIGHT = 56f
+    private const val GESTURE_HEIGHT = 96f
 
     fun safePanes(width: Float, height: Float, folds: List<Fold>): List<Pane> {
         var panes = listOf(Pane(0f, 0f, width, height))

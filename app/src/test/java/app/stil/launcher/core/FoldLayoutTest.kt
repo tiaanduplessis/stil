@@ -14,7 +14,7 @@ class FoldLayoutTest {
         assertTrue(home.clock.bottom <= home.apps.top)
         assertTrue(home.apps.bottom <= home.gestures.single().top)
         assertEquals(800f, home.gestures.single().bottom)
-        assertEquals(56f, home.gestures.single().height)
+        assertEquals(96f, home.gestures.single().height)
     }
 
     @Test fun wideFlatWindowRespectsThePreferredSide() {
@@ -30,7 +30,7 @@ class FoldLayoutTest {
         assertEquals(HomeArrangement.STACKED, home.arrangement)
         assertTrue(home.clock.bottom <= home.apps.top)
         assertTrue(home.apps.height >= 48)
-        assertEquals(56f, home.gestures.single().height)
+        assertEquals(96f, home.gestures.single().height)
     }
 
     @Test fun largeTextFallsBackWhenTwoReadablePanesWillNotFit() {

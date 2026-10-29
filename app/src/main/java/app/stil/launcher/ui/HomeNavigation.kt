@@ -66,12 +66,13 @@ internal fun Modifier.homeDrawerGesture(onAllApps: () -> Unit): Modifier {
     val openApps by rememberUpdatedState(onAllApps)
     val threshold = with(LocalDensity.current) { 36.dp.toPx() }
     return this.testTag("home_drawer_gesture").pointerInput(threshold) {
-        var movement = Offset.Zero
+        var start = Offset.Zero
         detectDragGestures(
-            onDragStart = { movement = Offset.Zero },
-            onDrag = { change, amount -> movement += amount; change.consume() },
-            onDragCancel = { movement = Offset.Zero },
-            onDragEnd = {
+            orientationLock = null,
+            onDragStart = { down, _, _ -> start = down.position },
+            onDrag = { change, _ -> change.consume() },
+            onDragEnd = { up ->
+                val movement = up.position - start
                 if (movement.y <= -threshold && -movement.y > abs(movement.x)) openApps()
             },
         )

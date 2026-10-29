@@ -305,6 +305,22 @@ class LauncherInstrumentedTest {
         rule.onNodeWithText("All apps").assertIsDisplayed()
     }
 
+    @Test fun swipeStartingAboveTheOldBottomStripOpensApps() {
+        val density = rule.activity.resources.displayMetrics.density
+        rule.onNodeWithTag("home_surface").performTouchInput {
+            swipe(Offset(centerX, bottom - 80f * density), Offset(centerX, bottom - 200f * density), 300)
+        }
+        rule.onNodeWithTag("app_search").assertIsDisplayed()
+    }
+
+    @Test fun shortDeliberateBottomSwipeCountsTheDistanceBeforeTouchSlop() {
+        val density = rule.activity.resources.displayMetrics.density
+        rule.onNodeWithTag("home_surface").performTouchInput {
+            swipe(Offset(centerX, bottom - 8f * density), Offset(centerX + 12f * density, bottom - 48f * density), 200)
+        }
+        rule.onNodeWithTag("app_search").assertIsDisplayed()
+    }
+
     @Test fun holdingEmptySpaceOpensSettings() {
         openSettings()
         rule.onNodeWithText("Appearance").assertIsDisplayed()
@@ -312,9 +328,12 @@ class LauncherInstrumentedTest {
 
     @Test fun tapsShortHorizontalDownwardAndCancelledSwipesKeepHome() {
         val home = rule.onNodeWithTag("home_surface")
+        val density = rule.activity.resources.displayMetrics.density
         home.performTouchInput { click(Offset(centerX, height * 0.4f)) }
         home.assertIsDisplayed()
         home.performTouchInput { swipe(Offset(centerX, bottom - 8f), Offset(centerX, bottom - 18f), 200) }
+        home.assertIsDisplayed()
+        home.performTouchInput { swipe(Offset(centerX, bottom - 8f * density), Offset(centerX, bottom - 40f * density), 200) }
         home.assertIsDisplayed()
         home.performTouchInput { swipe(Offset(centerX, bottom - 24f), Offset(right - 16f, bottom - 24f), 300) }
         home.assertIsDisplayed()
