@@ -1,0 +1,1 @@
+Make the bottom swipe into All apps search more reliable with a taller gesture area and full swipe-distance detection. Preserve accidental-swipe protection and pinned-app interactions.

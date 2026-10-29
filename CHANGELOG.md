@@ -1,7 +1,8 @@
 # Changelog
 
-## Unreleased
+## 0.5.1 - 2026-10-29
 
+- Make the bottom swipe into All apps search more forgiving: accept starts within the bottom 96 dp and count the full swipe distance. Keep cancellation, direction checks, and pinned-app gestures separate.
 - Pin the emulator to 280 dpi in the device-test script, since hosted runs came up at 440 dpi. The book-posture test now changes density only on a device too narrow for two panes, which removes the mid-suite density flip that preceded the API 36 hangs.
 - Log every thread's stack from a device test that runs past 90 seconds, and wait up to 30 seconds for a fixture launch.
 - Remove the photo credits for earlier revisions from the notices after rewriting the repository history to drop the Unsplash photos.
